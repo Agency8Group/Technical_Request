@@ -7,15 +7,14 @@
     <style>
         /* ===== 필수 스타일 (절대 지우지 마세요!) ===== */
         body {
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            max-width: 1000px;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans KR', Roboto, sans-serif;
+            max-width: 800px;
             margin: 0 auto;
-            padding: 40px 20px;
-            background: linear-gradient(135deg, #0f172a 0%, #1e293b 25%, #334155 50%, #475569 75%, #64748b 100%);
+            padding: 30px 20px;
+            background: #0f1419;
             min-height: 100vh;
-            color: #1f2937;
+            color: #e2e8f0;
             position: relative;
-            overflow-x: hidden;
         }
         
         body::before {
@@ -26,25 +25,19 @@
             width: 100%;
             height: 100%;
             background: 
-                radial-gradient(circle at 20% 80%, rgba(59, 130, 246, 0.15) 0%, transparent 50%),
-                radial-gradient(circle at 80% 20%, rgba(139, 92, 246, 0.15) 0%, transparent 50%),
-                radial-gradient(circle at 40% 40%, rgba(236, 72, 153, 0.1) 0%, transparent 50%);
+                linear-gradient(135deg, #1a202c 0%, #2d3748 50%, #1a202c 100%);
             pointer-events: none;
             z-index: -1;
         }
         .form-container {
-            background: rgba(255, 255, 255, 0.98);
-            backdrop-filter: blur(30px);
+            background: #1a202c;
             padding: 40px;
-            border-radius: 24px;
+            border-radius: 12px;
             box-shadow: 
-                0 20px 40px -8px rgba(0, 0, 0, 0.25),
-                0 0 0 1px rgba(255, 255, 255, 0.1),
-                inset 0 1px 0 rgba(255, 255, 255, 0.2);
-            border: 1px solid rgba(255, 255, 255, 0.3);
+                0 20px 25px -5px rgba(0, 0, 0, 0.3),
+                0 10px 10px -5px rgba(0, 0, 0, 0.2);
+            border: 1px solid #2d3748;
             position: relative;
-            overflow: hidden;
-            transform: translateZ(0);
             max-width: 600px;
             margin: 0 auto;
         }
@@ -55,10 +48,8 @@
             top: 0;
             left: 0;
             right: 0;
-            height: 6px;
-            background: linear-gradient(90deg, #3b82f6, #8b5cf6, #ec4899, #3b82f6);
-            background-size: 200% 100%;
-            animation: gradient-shift 3s ease infinite;
+            height: 4px;
+            background: linear-gradient(90deg, #1e40af, #3b82f6, #1e40af);
         }
         
         @keyframes gradient-shift {
@@ -77,63 +68,57 @@
             left: 0;
             right: 0;
             height: 1px;
-            background: linear-gradient(90deg, transparent, rgba(59, 130, 246, 0.15), transparent);
+            background: #f1f5f9;
         }
         
         label {
             display: block;
-            margin-bottom: 8px;
+            margin-bottom: 6px;
             font-weight: 600;
-            color: #111827;
-            font-size: 12px;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
+            color: #e2e8f0;
+            font-size: 14px;
             position: relative;
         }
         
         label::before {
             content: '';
             display: inline-block;
-            width: 4px;
-            height: 4px;
+            width: 3px;
+            height: 3px;
             background: #3b82f6;
             border-radius: 50%;
-            margin-right: 8px;
+            margin-right: 6px;
             vertical-align: middle;
         }
         input[type="text"], input[type="email"], textarea {
             width: 100%;
-            padding: 14px 18px;
-            border: 2px solid #e5e7eb;
-            border-radius: 12px;
-            font-size: 15px;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            padding: 12px 16px;
+            border: 1px solid #4a5568;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: all 0.2s ease;
             box-sizing: border-box;
-            background: rgba(255, 255, 255, 0.9);
-            backdrop-filter: blur(15px);
-            font-weight: 500;
-            color: #1f2937;
+            background: #2d3748;
+            font-weight: 400;
+            color: #e2e8f0;
         }
-        input[type="file"] {
+        input[type="file"], select {
             width: 100%;
-            padding: 14px 18px;
-            border: 2px solid #e5e7eb;
-            border-radius: 12px;
-            font-size: 15px;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            padding: 12px 16px;
+            border: 1px solid #4a5568;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: all 0.2s ease;
             box-sizing: border-box;
-            background: rgba(248, 250, 252, 0.9);
-            backdrop-filter: blur(15px);
+            background: #2d3748;
             cursor: pointer;
+            color: #e2e8f0;
         }
-        input:focus, textarea:focus {
+        input:focus, textarea:focus, select:focus {
             outline: none;
             border-color: #3b82f6;
-            box-shadow: 
-                0 0 0 4px rgba(59, 130, 246, 0.1),
-                0 8px 25px -8px rgba(59, 130, 246, 0.3);
-            transform: translateY(-2px);
-            background: rgba(255, 255, 255, 0.95);
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+            background: #374151;
         }
         textarea {
             resize: vertical;
@@ -142,22 +127,22 @@
             font-family: 'Inter', sans-serif;
         }
         button {
-            background: linear-gradient(135deg, #1e40af 0%, #3b82f6 25%, #8b5cf6 50%, #ec4899 75%, #3b82f6 100%);
+            background: linear-gradient(135deg, #1e40af 0%, #3b82f6 50%, #1e40af 100%);
             background-size: 200% 200%;
             color: white;
             padding: 18px 32px;
             border: none;
-            border-radius: 16px;
+            border-radius: 10px;
             font-size: 16px;
             font-weight: 700;
             cursor: pointer;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            transition: all 0.3s ease;
             width: 100%;
             position: relative;
             overflow: hidden;
             box-shadow: 
-                0 6px 24px -6px rgba(59, 130, 246, 0.4),
-                0 0 0 1px rgba(255, 255, 255, 0.1);
+                0 8px 25px -8px rgba(59, 130, 246, 0.4),
+                0 0 0 1px rgba(59, 130, 246, 0.2);
             letter-spacing: 0.5px;
         }
         button:hover {
@@ -198,25 +183,25 @@
             border-radius: 12px;
             text-align: center;
             font-weight: 600;
-            backdrop-filter: blur(20px);
-            border: 1px solid rgba(255, 255, 255, 0.3);
-            box-shadow: 0 6px 24px -6px rgba(0, 0, 0, 0.1);
+            border: 1px solid #2d3748;
+            box-shadow: 0 6px 24px -6px rgba(0, 0, 0, 0.3);
             font-size: 14px;
             letter-spacing: 0.3px;
+            background: #2d3748;
         }
         .success {
-            background: rgba(34, 197, 94, 0.1);
-            color: #166534;
+            background: rgba(34, 197, 94, 0.15);
+            color: #4ade80;
             border: 1px solid rgba(34, 197, 94, 0.3);
         }
         .error {
-            background: rgba(239, 68, 68, 0.1);
-            color: #dc2626;
+            background: rgba(239, 68, 68, 0.15);
+            color: #f87171;
             border: 1px solid rgba(239, 68, 68, 0.3);
         }
         .loading {
-            background: rgba(59, 130, 246, 0.1);
-            color: #1d4ed8;
+            background: rgba(59, 130, 246, 0.15);
+            color: #60a5fa;
             border: 1px solid rgba(59, 130, 246, 0.3);
             animation: pulse 2s infinite;
         }
@@ -228,10 +213,10 @@
         .file-info {
             margin-top: 10px;
             font-size: 12px;
-            color: #64748b;
+            color: #a0aec0;
             font-weight: 500;
             padding: 8px 12px;
-            background: rgba(59, 130, 246, 0.05);
+            background: rgba(59, 130, 246, 0.1);
             border-radius: 8px;
             border-left: 3px solid #3b82f6;
         }
@@ -248,7 +233,7 @@
         .logo h1 {
             font-size: 28px;
             font-weight: 800;
-            background: linear-gradient(135deg, #1e40af, #3b82f6, #8b5cf6, #ec4899);
+            background: linear-gradient(135deg, #3b82f6, #60a5fa, #3b82f6);
             background-size: 200% 200%;
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
@@ -260,7 +245,7 @@
         
         .logo .subtitle {
             font-size: 16px;
-            color: #64748b;
+            color: #a0aec0;
             margin-top: 8px;
             font-weight: 600;
             letter-spacing: 0.5px;
@@ -282,8 +267,46 @@
             </div>
             
             <div class="form-group">
+                <label for="developmentType">개발유형 <span class="required">*</span></label>
+                <select id="developmentType" name="developmentType" required>
+                    <option value="">개발 유형을 선택하세요</option>
+                    <option value="UX/UI 개선">UX/UI 개선</option>
+                    <option value="기능 추가">기능 추가</option>
+                    <option value="메뉴 추가">메뉴 추가</option>
+                    <option value="계정 관리">계정 관리</option>
+                    <option value="권한 관리">권한 관리</option>
+                    <option value="사용자 관리">사용자 관리</option>
+                    <option value="데이터 관리">데이터 관리</option>
+                    <option value="보고서 개발">보고서 개발</option>
+                    <option value="대시보드 개발">대시보드 개발</option>
+                    <option value="검색 기능">검색 기능</option>
+                    <option value="필터링 기능">필터링 기능</option>
+                    <option value="정렬 기능">정렬 기능</option>
+                    <option value="엑셀 업로드/다운로드">엑셀 업로드/다운로드</option>
+                    <option value="PDF 생성">PDF 생성</option>
+                    <option value="이메일 발송">이메일 발송</option>
+                    <option value="알림 기능">알림 기능</option>
+                    <option value="로그 관리">로그 관리</option>
+                    <option value="백업/복원">백업/복원</option>
+                    <option value="버그 수정">버그 수정</option>
+                    <option value="성능 최적화">성능 최적화</option>
+                    <option value="보안 강화">보안 강화</option>
+                    <option value="데이터베이스 개선">데이터베이스 개선</option>
+                    <option value="API 개발">API 개발</option>
+                    <option value="모바일 대응">모바일 대응</option>
+                    <option value="반응형 웹">반응형 웹</option>
+                    <option value="다국어 지원">다국어 지원</option>
+                    <option value="접근성 개선">접근성 개선</option>
+                    <option value="테스트 자동화">테스트 자동화</option>
+                    <option value="배포 자동화">배포 자동화</option>
+                    <option value="모니터링 시스템">모니터링 시스템</option>
+                    <option value="기타">기타</option>
+                </select>
+            </div>
+            
+            <div class="form-group">
                 <label for="menuLocation">메뉴위치 <span class="required">*</span></label>
-                <input type="text" id="menuLocation" name="menuLocation" placeholder="메뉴 위치를 입력하세요 (예: 관리자 > 사용자관리)" required>
+                <input type="text" id="menuLocation" name="menuLocation" placeholder="메뉴 위치를 정확하게 입력하세요 (예: 관리자 > 사용자관리)" required>
             </div>
             
             <div class="form-group">
@@ -314,7 +337,7 @@
     <script>
         // ===== 필수 설정 (절대 지우지 마세요!) =====
         // Google Apps Script URL - 배포 후 여기에 붙여넣기
-        const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzMdAoHWBWJmrZBfik64eU-ZmqLwpern0wGXVxN6_mU2tRjRwc7VeLQ93UvCajWb-Qa/exec';
+        const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbysi_UiNaSVipBcAXZsamUbYPJeHlixG2UmTHg_CP1sFDnhP-XIVNKhgsh8xR9p-WGQ/exec';
         
         // ===== 폼 제출 처리 (핵심 로직) =====
         document.getElementById('dataForm').addEventListener('submit', async function(e) {
@@ -322,6 +345,44 @@
             
             const submitBtn = document.getElementById('submitBtn');
             const statusDiv = document.getElementById('status');
+            
+            // ===== 필수 필드 검증 =====
+            const requester = document.getElementById('requester').value.trim();
+            const developmentType = document.getElementById('developmentType').value;
+            const menuLocation = document.getElementById('menuLocation').value.trim();
+            const requestContent = document.getElementById('requestContent').value.trim();
+            
+            // 필수 필드 검증
+            if (!requester) {
+                showStatus('❌ 요청자 이름을 입력해주세요.', 'error');
+                document.getElementById('requester').focus();
+                return;
+            }
+            
+            if (!developmentType) {
+                showStatus('❌ 개발유형을 선택해주세요.', 'error');
+                document.getElementById('developmentType').focus();
+                return;
+            }
+            
+            if (!menuLocation) {
+                showStatus('❌ 메뉴위치를 입력해주세요.', 'error');
+                document.getElementById('menuLocation').focus();
+                return;
+            }
+            
+            if (!requestContent) {
+                showStatus('❌ 요청내용을 입력해주세요.', 'error');
+                document.getElementById('requestContent').focus();
+                return;
+            }
+            
+            // 요청내용 최소 길이 검증 (최소 10자)
+            if (requestContent.length < 10) {
+                showStatus('❌ 요청내용은 최소 10자 이상 입력해주세요.', 'error');
+                document.getElementById('requestContent').focus();
+                return;
+            }
             
             // 버튼 비활성화 및 로딩 표시
             submitBtn.disabled = true;
@@ -332,9 +393,10 @@
                 // ===== 데이터 수집 =====
                 const formData = new FormData(e.target);
                 const payload = {
-                    requester: formData.get('requester'),
-                    menuLocation: formData.get('menuLocation'),
-                    requestContent: formData.get('requestContent'),
+                    requester: requester,
+                    developmentType: developmentType,
+                    menuLocation: menuLocation,
+                    requestContent: requestContent,
                     timestamp: new Date().toISOString()
                 };
                 
@@ -425,6 +487,42 @@
                 }, 8000); // 8초로 연장
             }
         }
+        
+        // ===== 실시간 필드 검증 =====
+        function validateField(fieldId, minLength = 0) {
+            const field = document.getElementById(fieldId);
+            const value = field.value.trim();
+            
+            if (!value) {
+                field.style.borderColor = '#ef4444';
+                return false;
+            }
+            
+            if (minLength > 0 && value.length < minLength) {
+                field.style.borderColor = '#f59e0b';
+                return false;
+            }
+            
+            field.style.borderColor = '#3b82f6';
+            return true;
+        }
+        
+        // 실시간 검증 이벤트 리스너
+        document.getElementById('requester').addEventListener('input', function() {
+            validateField('requester');
+        });
+        
+        document.getElementById('developmentType').addEventListener('change', function() {
+            validateField('developmentType');
+        });
+        
+        document.getElementById('menuLocation').addEventListener('input', function() {
+            validateField('menuLocation');
+        });
+        
+        document.getElementById('requestContent').addEventListener('input', function() {
+            validateField('requestContent', 10);
+        });
         
         // ===== 파일 선택 시 정보 표시 =====
         document.getElementById('photoUpload').addEventListener('change', function(e) {

@@ -47,8 +47,8 @@ function saveToSheet(data) {
     // 시트가 없으면 생성
     const newSheet = spreadsheet.insertSheet(SHEET_NAME);
     // 헤더 설정
-    newSheet.getRange(1, 1, 1, 6).setValues([['접수일시', '요청자', '메뉴위치', '요청내용', '사진파일', '엑셀파일']]);
-    newSheet.getRange(1, 1, 1, 6).setFontWeight('bold');
+    newSheet.getRange(1, 1, 1, 7).setValues([['접수일시', '요청자', '개발유형', '메뉴위치', '요청내용', '사진파일', '엑셀파일']]);
+    newSheet.getRange(1, 1, 1, 7).setFontWeight('bold');
   }
   
   const targetSheet = sheet || spreadsheet.getSheetByName(SHEET_NAME);
@@ -57,6 +57,7 @@ function saveToSheet(data) {
   const rowData = [
     new Date().toLocaleString('ko-KR'),
     data.requester,
+    data.developmentType || '',
     data.menuLocation,
     data.requestContent,
     data.photos ? data.photos.map(p => p.name).join(', ') : '',
@@ -104,13 +105,14 @@ function saveExcelToSheet(data) {
 
 // ===== 이메일 전송 (사진과 엑셀 파일 첨부) =====
 function sendEmailWithAttachments(data) {
-  const subject = `[동수 기술개발 요청] ${data.requester} - ${data.menuLocation}`;
+  const subject = `[동수 기술개발 요청] ${data.requester} - ${data.developmentType || '기타'} - ${data.menuLocation}`;
   
   let body = `
 🔧 동수 기술개발 요청 접수
 
 📋 요청 정보:
 • 요청자: ${data.requester}
+• 개발유형: ${data.developmentType || '기타'}
 • 메뉴위치: ${data.menuLocation}
 • 접수일시: ${new Date().toLocaleString('ko-KR')}
 
@@ -169,6 +171,7 @@ function sendTeamroomNotification(data) {
     const message = {
       text: `🔧 동수 기술개발 요청 접수 완료!\n\n` +
             `📋 요청자: ${data.requester}\n` +
+            `🔧 개발유형: ${data.developmentType || '기타'}\n` +
             `📍 메뉴위치: ${data.menuLocation}\n` +
             `📝 요청내용: ${data.requestContent.substring(0, 100)}${data.requestContent.length > 100 ? '...' : ''}\n\n` +
             `📎 첨부파일:\n` +
