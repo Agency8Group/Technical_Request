@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>동수 기술개발 요청 접수</title>
+    <style>
+        /* ===== 필수 스타일 (절대 지우지 마세요!) ===== */
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 40px 20px;
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 25%, #334155 50%, #475569 75%, #64748b 100%);
+            min-height: 100vh;
+            color: #1f2937;
+            position: relative;
+            overflow-x: hidden;
+        }
+        
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                radial-gradient(circle at 20% 80%, rgba(59, 130, 246, 0.15) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(139, 92, 246, 0.15) 0%, transparent 50%),
+                radial-gradient(circle at 40% 40%, rgba(236, 72, 153, 0.1) 0%, transparent 50%);
+            pointer-events: none;
+            z-index: -1;
+        }
+        .form-container {
+            background: rgba(255, 255, 255, 0.98);
+            backdrop-filter: blur(30px);
+            padding: 40px;
+            border-radius: 24px;
+            box-shadow: 
+                0 20px 40px -8px rgba(0, 0, 0, 0.25),
+                0 0 0 1px rgba(255, 255, 255, 0.1),
+                inset 0 1px 0 rgba(255, 255, 255, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            position: relative;
+            overflow: hidden;
+            transform: translateZ(0);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        
+        .form-container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 6px;
+            background: linear-gradient(90deg, #3b82f6, #8b5cf6, #ec4899, #3b82f6);
+            background-size: 200% 100%;
+            animation: gradient-shift 3s ease infinite;
+        }
+        
+        @keyframes gradient-shift {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+        .form-group {
+            margin-bottom: 24px;
+            position: relative;
+        }
+        
+        .form-group::after {
+            content: '';
+            position: absolute;
+            bottom: -12px;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(59, 130, 246, 0.15), transparent);
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #111827;
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            position: relative;
+        }
+        
+        label::before {
+            content: '';
+            display: inline-block;
+            width: 4px;
+            height: 4px;
+            background: #3b82f6;
+            border-radius: 50%;
+            margin-right: 8px;
+            vertical-align: middle;
+        }
+        input[type="text"], input[type="email"], textarea {
+            width: 100%;
+            padding: 14px 18px;
+            border: 2px solid #e5e7eb;
+            border-radius: 12px;
+            font-size: 15px;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            box-sizing: border-box;
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(15px);
+            font-weight: 500;
+            color: #1f2937;
+        }
+        input[type="file"] {
+            width: 100%;
+            padding: 14px 18px;
+            border: 2px solid #e5e7eb;
+            border-radius: 12px;
+            font-size: 15px;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            box-sizing: border-box;
+            background: rgba(248, 250, 252, 0.9);
+            backdrop-filter: blur(15px);
+            cursor: pointer;
+        }
+        input:focus, textarea:focus {
+            outline: none;
+            border-color: #3b82f6;
+            box-shadow: 
+                0 0 0 4px rgba(59, 130, 246, 0.1),
+                0 8px 25px -8px rgba(59, 130, 246, 0.3);
+            transform: translateY(-2px);
+            background: rgba(255, 255, 255, 0.95);
+        }
+        textarea {
+            resize: vertical;
+            min-height: 120px;
+            line-height: 1.6;
+            font-family: 'Inter', sans-serif;
+        }
+        button {
+            background: linear-gradient(135deg, #1e40af 0%, #3b82f6 25%, #8b5cf6 50%, #ec4899 75%, #3b82f6 100%);
+            background-size: 200% 200%;
+            color: white;
+            padding: 18px 32px;
+            border: none;
+            border-radius: 16px;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            width: 100%;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 
+                0 6px 24px -6px rgba(59, 130, 246, 0.4),
+                0 0 0 1px rgba(255, 255, 255, 0.1);
+            letter-spacing: 0.5px;
+        }
+        button:hover {
+            transform: translateY(-4px) scale(1.02);
+            box-shadow: 
+                0 16px 48px -12px rgba(59, 130, 246, 0.6),
+                0 0 0 1px rgba(255, 255, 255, 0.2);
+            background-position: 100% 100%;
+        }
+        
+        button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+            transition: left 0.6s ease;
+        }
+        
+        button:hover::before {
+            left: 100%;
+        }
+        
+        button:active {
+            transform: translateY(-2px) scale(0.98);
+        }
+        button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+        .status {
+            margin-top: 24px;
+            padding: 18px;
+            border-radius: 12px;
+            text-align: center;
+            font-weight: 600;
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            box-shadow: 0 6px 24px -6px rgba(0, 0, 0, 0.1);
+            font-size: 14px;
+            letter-spacing: 0.3px;
+        }
+        .success {
+            background: rgba(34, 197, 94, 0.1);
+            color: #166534;
+            border: 1px solid rgba(34, 197, 94, 0.3);
+        }
+        .error {
+            background: rgba(239, 68, 68, 0.1);
+            color: #dc2626;
+            border: 1px solid rgba(239, 68, 68, 0.3);
+        }
+        .loading {
+            background: rgba(59, 130, 246, 0.1);
+            color: #1d4ed8;
+            border: 1px solid rgba(59, 130, 246, 0.3);
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+        .file-info {
+            margin-top: 10px;
+            font-size: 12px;
+            color: #64748b;
+            font-weight: 500;
+            padding: 8px 12px;
+            background: rgba(59, 130, 246, 0.05);
+            border-radius: 8px;
+            border-left: 3px solid #3b82f6;
+        }
+        .required {
+            color: #dc2626;
+        }
+        
+        /* 로고 스타일 */
+        .logo {
+            text-align: center;
+            margin-bottom: 24px;
+        }
+        
+        .logo h1 {
+            font-size: 28px;
+            font-weight: 800;
+            background: linear-gradient(135deg, #1e40af, #3b82f6, #8b5cf6, #ec4899);
+            background-size: 200% 200%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin: 0;
+            animation: gradient-shift 4s ease infinite;
+            letter-spacing: -0.5px;
+        }
+        
+        .logo .subtitle {
+            font-size: 16px;
+            color: #64748b;
+            margin-top: 8px;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+        }
+    </style>
+</head>
+<body>
+    <div class="form-container">
+        <div class="logo">
+            <h1>🔧 동수 기술개발 요청 접수</h1>
+        </div>
+        
+        <!-- ===== 폼 구조 ===== -->
+        <form id="dataForm">
+            <div class="form-group">
+                <label for="requester">요청자 <span class="required">*</span></label>
+                <input type="text" id="requester" name="requester" placeholder="요청자 이름을 입력하세요" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="menuLocation">메뉴위치 <span class="required">*</span></label>
+                <input type="text" id="menuLocation" name="menuLocation" placeholder="메뉴 위치를 입력하세요 (예: 관리자 > 사용자관리)" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="requestContent">요청내용 <span class="required">*</span></label>
+                <textarea id="requestContent" name="requestContent" rows="6" placeholder="기술개발 요청 내용을 상세히 입력하세요..." required></textarea>
+            </div>
+            
+            <div class="form-group">
+                <label for="photoUpload">사진 업로드</label>
+                <input type="file" id="photoUpload" name="photoUpload" accept="image/*" multiple>
+                <div class="file-info">📷 여러 장의 사진을 선택할 수 있습니다 (JPG, PNG, GIF)</div>
+            </div>
+            
+            <div class="form-group">
+                <label for="excelUpload">엑셀 업로드</label>
+                <input type="file" id="excelUpload" name="excelUpload" accept=".xlsx,.xls">
+                <div class="file-info">📊 엑셀 파일만 업로드 가능합니다 (XLSX, XLS)</div>
+            </div>
+            
+            <button type="submit" id="submitBtn">
+                🚀 요청 접수하기
+            </button>
+        </form>
+        
+        <div id="status" class="status" style="display: none;"></div>
+    </div>
+
+    <script>
+        // ===== 필수 설정 (절대 지우지 마세요!) =====
+        // Google Apps Script URL - 배포 후 여기에 붙여넣기
+        const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzMdAoHWBWJmrZBfik64eU-ZmqLwpern0wGXVxN6_mU2tRjRwc7VeLQ93UvCajWb-Qa/exec';
+        
+        // ===== 폼 제출 처리 (핵심 로직) =====
+        document.getElementById('dataForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const submitBtn = document.getElementById('submitBtn');
+            const statusDiv = document.getElementById('status');
+            
+            // 버튼 비활성화 및 로딩 표시
+            submitBtn.disabled = true;
+            submitBtn.textContent = '⏳ 접수 중...';
+            showStatus('요청을 접수하고 있습니다...', 'loading');
+            
+            try {
+                // ===== 데이터 수집 =====
+                const formData = new FormData(e.target);
+                const payload = {
+                    requester: formData.get('requester'),
+                    menuLocation: formData.get('menuLocation'),
+                    requestContent: formData.get('requestContent'),
+                    timestamp: new Date().toISOString()
+                };
+                
+                // ===== 파일 처리 =====
+                const photoFiles = document.getElementById('photoUpload').files;
+                const excelFile = document.getElementById('excelUpload').files[0];
+                
+                // 사진 파일들을 Base64로 변환
+                if (photoFiles.length > 0) {
+                    showStatus('📷 사진 파일을 처리하고 있습니다...', 'loading');
+                    payload.photos = [];
+                    for (let i = 0; i < photoFiles.length; i++) {
+                        const file = photoFiles[i];
+                        const base64 = await fileToBase64(file);
+                        payload.photos.push({
+                            name: file.name,
+                            type: file.type,
+                            size: file.size,
+                            data: base64
+                        });
+                    }
+                }
+                
+                // 엑셀 파일을 Base64로 변환
+                if (excelFile) {
+                    showStatus('📊 엑셀 파일을 처리하고 있습니다...', 'loading');
+                    const base64 = await fileToBase64(excelFile);
+                    payload.excel = {
+                        name: excelFile.name,
+                        type: excelFile.type,
+                        size: excelFile.size,
+                        data: base64
+                    };
+                }
+                
+                showStatus('📤 서버로 데이터를 전송하고 있습니다...', 'loading');
+                console.log('전송할 데이터:', payload);
+                
+                // ===== 핵심: Google Apps Script 호출 =====
+                const response = await fetch(SCRIPT_URL, {
+                    method: 'POST',
+                    mode: 'no-cors',
+                    headers: {
+                        'Content-Type': 'text/plain',
+                    },
+                    body: JSON.stringify(payload)
+                });
+                
+                // ===== 성공 처리 (no-cors에서는 응답을 읽을 수 없으므로 바로 성공) =====
+                showStatus('✅ 요청이 성공적으로 접수되었습니다!', 'success');
+                e.target.reset(); // 폼 초기화
+                
+            } catch (error) {
+                console.error('접수 오류:', error);
+                showStatus(`❌ 오류: ${error.message}`, 'error');
+            } finally {
+                // 버튼 상태 복구
+                submitBtn.disabled = false;
+                submitBtn.textContent = '🚀 요청 접수하기';
+            }
+        });
+        
+        // ===== 파일을 Base64로 변환하는 함수 =====
+        function fileToBase64(file) {
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.readAsDataURL(file);
+                reader.onload = () => {
+                    // Base64 데이터에서 헤더 제거 (data:image/jpeg;base64, 부분 제거)
+                    const base64 = reader.result.split(',')[1];
+                    resolve(base64);
+                };
+                reader.onerror = error => reject(error);
+            });
+        }
+        
+        // ===== 상태 메시지 표시 함수 =====
+        function showStatus(message, type) {
+            const statusDiv = document.getElementById('status');
+            statusDiv.textContent = message;
+            statusDiv.className = `status ${type}`;
+            statusDiv.style.display = 'block';
+            
+            // 성공/에러 메시지만 자동 숨김 (로딩 중에는 계속 표시)
+            if (type === 'success' || type === 'error') {
+                setTimeout(() => {
+                    statusDiv.style.display = 'none';
+                }, 8000); // 8초로 연장
+            }
+        }
+        
+        // ===== 파일 선택 시 정보 표시 =====
+        document.getElementById('photoUpload').addEventListener('change', function(e) {
+            const files = e.target.files;
+            if (files.length > 0) {
+                let info = `선택된 사진: ${files.length}개`;
+                let totalSize = 0;
+                for (let i = 0; i < files.length; i++) {
+                    const size = files[i].size / 1024 / 1024;
+                    totalSize += size;
+                    info += `\n- ${files[i].name} (${size.toFixed(2)}MB)`;
+                }
+                info += `\n총 크기: ${totalSize.toFixed(2)}MB`;
+                this.nextElementSibling.textContent = info;
+            }
+        });
+        
+        document.getElementById('excelUpload').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                const size = (file.size / 1024 / 1024).toFixed(2);
+                const info = `선택된 엑셀: ${file.name} (${size}MB)`;
+                this.nextElementSibling.textContent = info;
+            }
+        });
+    </script>
+</body>
+</html> 
