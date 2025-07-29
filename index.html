@@ -8,12 +8,12 @@
         /* ===== 필수 스타일 (절대 지우지 마세요!) ===== */
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans KR', Roboto, sans-serif;
-            max-width: 800px;
+            max-width: 900px;
             margin: 0 auto;
-            padding: 30px 20px;
-            background: #0f1419;
+            padding: 40px 20px;
+            background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 25%, #2d2d2d 50%, #1a1a1a 75%, #0a0a0a 100%);
             min-height: 100vh;
-            color: #e2e8f0;
+            color: #ffffff;
             position: relative;
         }
         
@@ -25,21 +25,26 @@
             width: 100%;
             height: 100%;
             background: 
-                linear-gradient(135deg, #1a202c 0%, #2d3748 50%, #1a202c 100%);
+                radial-gradient(circle at 20% 80%, rgba(59, 130, 246, 0.08) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(139, 92, 246, 0.08) 0%, transparent 50%),
+                radial-gradient(circle at 40% 40%, rgba(236, 72, 153, 0.05) 0%, transparent 50%);
             pointer-events: none;
             z-index: -1;
         }
         .form-container {
-            background: #1a202c;
-            padding: 40px;
-            border-radius: 12px;
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(20px);
+            padding: 50px;
+            border-radius: 20px;
             box-shadow: 
-                0 20px 25px -5px rgba(0, 0, 0, 0.3),
-                0 10px 10px -5px rgba(0, 0, 0, 0.2);
-            border: 1px solid #2d3748;
+                0 25px 50px -12px rgba(0, 0, 0, 0.5),
+                0 0 0 1px rgba(255, 255, 255, 0.1),
+                inset 0 1px 0 rgba(255, 255, 255, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.1);
             position: relative;
-            max-width: 600px;
+            max-width: 700px;
             margin: 0 auto;
+            overflow: hidden;
         }
         
         .form-container::before {
@@ -48,8 +53,15 @@
             top: 0;
             left: 0;
             right: 0;
-            height: 4px;
-            background: linear-gradient(90deg, #1e40af, #3b82f6, #1e40af);
+            height: 3px;
+            background: linear-gradient(90deg, #3b82f6, #60a5fa, #93c5fd, #60a5fa, #3b82f6);
+            background-size: 200% 100%;
+            animation: shimmer 3s ease-in-out infinite;
+        }
+        
+        @keyframes shimmer {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
         }
         
         @keyframes gradient-shift {
@@ -68,57 +80,65 @@
             left: 0;
             right: 0;
             height: 1px;
-            background: #f1f5f9;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
         }
         
         label {
             display: block;
-            margin-bottom: 6px;
+            margin-bottom: 8px;
             font-weight: 600;
-            color: #e2e8f0;
-            font-size: 14px;
+            color: #ffffff;
+            font-size: 13px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
             position: relative;
         }
         
         label::before {
             content: '';
             display: inline-block;
-            width: 3px;
-            height: 3px;
-            background: #3b82f6;
+            width: 4px;
+            height: 4px;
+            background: linear-gradient(45deg, #3b82f6, #60a5fa);
             border-radius: 50%;
-            margin-right: 6px;
+            margin-right: 8px;
             vertical-align: middle;
+            box-shadow: 0 0 8px rgba(59, 130, 246, 0.5);
         }
         input[type="text"], input[type="email"], textarea {
             width: 100%;
-            padding: 12px 16px;
-            border: 1px solid #4a5568;
-            border-radius: 8px;
-            font-size: 14px;
-            transition: all 0.2s ease;
+            padding: 16px 20px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 12px;
+            font-size: 15px;
+            transition: all 0.3s ease;
             box-sizing: border-box;
-            background: #2d3748;
+            background: rgba(255, 255, 255, 0.05);
             font-weight: 400;
-            color: #e2e8f0;
+            color: #ffffff;
+            backdrop-filter: blur(10px);
         }
         input[type="file"], select {
             width: 100%;
-            padding: 12px 16px;
-            border: 1px solid #4a5568;
-            border-radius: 8px;
-            font-size: 14px;
-            transition: all 0.2s ease;
+            padding: 16px 20px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 12px;
+            font-size: 15px;
+            transition: all 0.3s ease;
             box-sizing: border-box;
-            background: #2d3748;
+            background: rgba(255, 255, 255, 0.05);
             cursor: pointer;
-            color: #e2e8f0;
+            color: #ffffff;
+            backdrop-filter: blur(10px);
         }
         input:focus, textarea:focus, select:focus {
             outline: none;
             border-color: #3b82f6;
-            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
-            background: #374151;
+            box-shadow: 
+                0 0 0 3px rgba(59, 130, 246, 0.2),
+                0 8px 25px -8px rgba(59, 130, 246, 0.3);
+            background: rgba(255, 255, 255, 0.1);
+            transform: translateY(-1px);
         }
         textarea {
             resize: vertical;
@@ -127,22 +147,23 @@
             font-family: 'Inter', sans-serif;
         }
         button {
-            background: linear-gradient(135deg, #1e40af 0%, #3b82f6 50%, #1e40af 100%);
-            background-size: 200% 200%;
+            background: linear-gradient(135deg, #1e40af 0%, #3b82f6 25%, #60a5fa 50%, #3b82f6 75%, #1e40af 100%);
+            background-size: 300% 300%;
             color: white;
-            padding: 18px 32px;
+            padding: 20px 36px;
             border: none;
-            border-radius: 10px;
+            border-radius: 16px;
             font-size: 16px;
             font-weight: 700;
             cursor: pointer;
-            transition: all 0.3s ease;
+            transition: all 0.4s ease;
             width: 100%;
             position: relative;
             overflow: hidden;
             box-shadow: 
-                0 8px 25px -8px rgba(59, 130, 246, 0.4),
-                0 0 0 1px rgba(59, 130, 246, 0.2);
+                0 10px 30px -10px rgba(59, 130, 246, 0.5),
+                0 0 0 1px rgba(255, 255, 255, 0.1),
+                inset 0 1px 0 rgba(255, 255, 255, 0.2);
             letter-spacing: 0.5px;
         }
         button:hover {
@@ -179,15 +200,16 @@
         }
         .status {
             margin-top: 24px;
-            padding: 18px;
-            border-radius: 12px;
+            padding: 20px;
+            border-radius: 16px;
             text-align: center;
             font-weight: 600;
-            border: 1px solid #2d3748;
-            box-shadow: 0 6px 24px -6px rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 8px 32px -8px rgba(0, 0, 0, 0.4);
             font-size: 14px;
             letter-spacing: 0.3px;
-            background: #2d3748;
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(15px);
         }
         .success {
             background: rgba(34, 197, 94, 0.15);
@@ -211,14 +233,16 @@
             50% { opacity: 0.7; }
         }
         .file-info {
-            margin-top: 10px;
+            margin-top: 12px;
             font-size: 12px;
-            color: #a0aec0;
+            color: rgba(255, 255, 255, 0.7);
             font-weight: 500;
-            padding: 8px 12px;
+            padding: 12px 16px;
             background: rgba(59, 130, 246, 0.1);
-            border-radius: 8px;
+            border-radius: 10px;
             border-left: 3px solid #3b82f6;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
         }
         .required {
             color: #dc2626;
@@ -231,16 +255,17 @@
         }
         
         .logo h1 {
-            font-size: 28px;
-            font-weight: 800;
-            background: linear-gradient(135deg, #3b82f6, #60a5fa, #3b82f6);
-            background-size: 200% 200%;
+            font-size: 32px;
+            font-weight: 900;
+            background: linear-gradient(135deg, #3b82f6, #60a5fa, #93c5fd, #60a5fa, #3b82f6);
+            background-size: 300% 300%;
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
             margin: 0;
-            animation: gradient-shift 4s ease infinite;
-            letter-spacing: -0.5px;
+            animation: gradient-shift 6s ease infinite;
+            letter-spacing: -1px;
+            text-shadow: 0 0 30px rgba(59, 130, 246, 0.3);
         }
         
         .logo .subtitle {
@@ -256,7 +281,7 @@
 <body>
     <div class="form-container">
         <div class="logo">
-            <h1>🔧 동수 기술개발 요청 접수</h1>
+            <h1> EIBE 전산 (동수)기술개발 요청 접수</h1>
         </div>
         
         <!-- ===== 폼 구조 ===== -->
