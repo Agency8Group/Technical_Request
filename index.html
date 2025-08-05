@@ -409,9 +409,168 @@
             pointer-events: none;
             z-index: -1;
         }
+        
+        /* ===== 모달 팝업 스타일 ===== */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(10px);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            animation: fadeIn 0.3s ease-out;
+        }
+        
+        .modal-content {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 20px;
+            padding: 40px;
+            text-align: center;
+            max-width: 400px;
+            width: 90%;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.8);
+            animation: slideIn 0.4s ease-out;
+        }
+        
+        .modal-spinner {
+            width: 60px;
+            height: 60px;
+            border: 4px solid rgba(255, 255, 255, 0.3);
+            border-top: 4px solid #3b82f6;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+        
+        .modal-title {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 16px;
+            color: #ffffff;
+        }
+        
+        .modal-message {
+            font-size: 16px;
+            color: #e5e7eb;
+            margin-bottom: 24px;
+            line-height: 1.6;
+        }
+        
+        .modal-progress {
+            width: 100%;
+            height: 8px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 4px;
+            overflow: hidden;
+            margin-bottom: 20px;
+        }
+        
+        .modal-progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, #3b82f6, #8b5cf6);
+            border-radius: 4px;
+            width: 0%;
+            transition: width 0.3s ease;
+            animation: progressShimmer 2s ease-in-out infinite;
+        }
+        
+        .modal-cancel-btn {
+            background: rgba(239, 68, 68, 0.2);
+            border: 1px solid rgba(239, 68, 68, 0.4);
+            color: #fca5a5;
+            padding: 12px 24px;
+            border-radius: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .modal-cancel-btn:hover {
+            background: rgba(239, 68, 68, 0.3);
+            border-color: rgba(239, 68, 68, 0.6);
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        @keyframes slideIn {
+            from { 
+                opacity: 0;
+                transform: translateY(-30px) scale(0.9);
+            }
+            to { 
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        @keyframes progressShimmer {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+        
+        /* ===== 반응형 디자인 ===== */
+        @media (max-width: 768px) {
+            body {
+                padding: 20px 10px;
+            }
+            
+            .form-container {
+                padding: 40px 20px;
+            }
+            
+            .form-group {
+                margin-bottom: 24px;
+            }
+            
+            .file-upload-container {
+                flex-direction: column;
+                gap: 16px;
+            }
+            
+            .file-upload-box {
+                width: 100%;
+            }
+            
+            .modal-content {
+                padding: 30px 20px;
+                margin: 20px;
+            }
+        }
     </style>
 </head>
 <body>
+    <!-- ===== 모달 팝업 ===== -->
+    <div id="modalOverlay" class="modal-overlay">
+        <div class="modal-content">
+            <div class="modal-spinner"></div>
+            <div class="modal-title">처리 중입니다</div>
+            <div class="modal-message">
+                파일을 서버로 전송하고 있습니다...<br>
+                이 과정은 10-30초 정도 소요됩니다.<br>
+                <strong>페이지를 닫지 마세요!</strong>
+            </div>
+            <div class="modal-progress">
+                <div class="modal-progress-bar" id="progressBar"></div>
+            </div>
+            <button class="modal-cancel-btn" onclick="cancelSubmission()">취소</button>
+        </div>
+    </div>
+
     <div class="form-container">
         <div class="logo">
             <h1>1차 EIBE 전산 (동수)기술개발 요청 접수.</h1>
@@ -611,7 +770,10 @@
                     };
                 }
                 
-                showStatus('📤 서버로 데이터를 전송하고 있습니다...', 'loading');
+                // ===== 모달 팝업 표시 =====
+                showModal();
+                startProgressAnimation();
+                
                 console.log('전송할 데이터:', payload);
                 
                 // ===== 핵심: Google Apps Script 호출 =====
@@ -625,11 +787,13 @@
                 });
                 
                 // ===== 성공 처리 (no-cors에서는 응답을 읽을 수 없으므로 바로 성공) =====
+                hideModal();
                 showStatus('✅ 요청이 성공적으로 접수되었습니다!', 'success');
                 e.target.reset(); // 폼 초기화
                 
             } catch (error) {
                 console.error('접수 오류:', error);
+                hideModal();
                 showStatus(`❌ 오류: ${error.message}`, 'error');
             } finally {
                 // 버튼 상태 복구
@@ -650,6 +814,44 @@
                 };
                 reader.onerror = error => reject(error);
             });
+        }
+        
+        // ===== 모달 팝업 함수들 =====
+        function showModal() {
+            const modal = document.getElementById('modalOverlay');
+            modal.style.display = 'flex';
+        }
+        
+        function hideModal() {
+            const modal = document.getElementById('modalOverlay');
+            modal.style.display = 'none';
+        }
+        
+        function startProgressAnimation() {
+            const progressBar = document.getElementById('progressBar');
+            let progress = 0;
+            
+            const interval = setInterval(() => {
+                progress += Math.random() * 15;
+                if (progress > 90) progress = 90; // 90%까지만 진행
+                progressBar.style.width = progress + '%';
+            }, 500);
+            
+            // 30초 후 자동으로 100%로 설정
+            setTimeout(() => {
+                clearInterval(interval);
+                progressBar.style.width = '100%';
+            }, 30000);
+        }
+        
+        function cancelSubmission() {
+            hideModal();
+            showStatus('❌ 요청이 취소되었습니다.', 'error');
+            
+            // 버튼 상태 복구
+            const submitBtn = document.querySelector('button[type="submit"]');
+            submitBtn.disabled = false;
+            submitBtn.textContent = '🚀 요청 접수하기';
         }
         
         // ===== 상태 메시지 표시 함수 =====
