@@ -5,7 +5,14 @@ const SPREADSHEET_ID = '1ApsByrE5KTdKY9l-oq4eLS3ltCZmx-vHCv7BE3IMKHQ'; // Google
 const SHEET_NAME = '요청접수'; // 1시트 이름
 const SENDER_EMAIL = 'yoonwhan0@gmail.com';
 const SENDER_PASSWORD = 'e w i y x n c t t e l r o k i w'; // Gmail 앱 비밀번호
-const RECEIVER_EMAILS = ['jyh@eibe.co.kr'];
+const RECEIVER_EMAILS = [
+  'jyh@eibe.co.kr',
+  'nzhang@edongshu.com',
+  'zapzachery1996@outlook.com',
+  'lu@edongshu.com',
+  'hwsui@edongshu.com',
+  'kongxiangbing@ytzhiheng.com'
+];
 const TEAMROOM_WEBHOOK_URL = 'https://teamroom.nate.com/api/webhook/7e59317b/IUW0aJ9YE12uElmMRo8byoOA';
 
 // ===== 메인 함수 (웹 앱에서 호출됨) =====
