@@ -16,6 +16,13 @@ const RECEIVER_EMAILS = [
 const TEAMROOM_WEBHOOK_URL = 'https://teamroom.nate.com/api/webhook/7e59317b/IUW0aJ9YE12uElmMRo8byoOA';
 
 // ===== 메인 함수 (웹 앱에서 호출됨) =====
+function doGet(e) {
+  return ContentService.createTextOutput(JSON.stringify({
+    success: true,
+    message: '동수 기술개발 요청 시스템이 정상적으로 작동 중입니다.'
+  })).setMimeType(ContentService.MimeType.JSON);
+}
+
 function doPost(e) {
   try {
     // 요청 데이터 파싱
@@ -115,15 +122,15 @@ function sendEmailWithAttachments(data) {
   const subject = `[동수 기술개발 요청] ${data.requester} - ${data.developmentType || '기타'} - ${data.menuLocation}`;
   
   let body = `
-🔧 동수 기술개발 요청 접수
+[동수 기술개발 요청 접수]
 
-📋 요청 정보:
+[요청 정보]
 • 요청자: ${data.requester}
 • 개발유형: ${data.developmentType || '기타'}
 • 메뉴위치: ${data.menuLocation}
 • 접수일시: ${new Date().toLocaleString('ko-KR')}
 
-📝 요청내용:
+[요청내용]
 ${data.requestContent}
 
 ---
@@ -134,7 +141,7 @@ ${data.requestContent}
   
   // 사진 파일들 첨부
   if (data.photos && data.photos.length > 0) {
-    body += `\n📷 첨부된 사진: ${data.photos.length}개\n`;
+    body += `\n[첨부된 사진]: ${data.photos.length}개\n`;
     
     for (let i = 0; i < data.photos.length; i++) {
       const photo = data.photos[i];
@@ -146,7 +153,7 @@ ${data.requestContent}
   
   // 엑셀 파일 첨부
   if (data.excel) {
-    body += `\n📊 첨부된 엑셀: ${data.excel.name}\n`;
+    body += `\n[첨부된 엑셀]: ${data.excel.name}\n`;
     
     const excelBytes = Utilities.base64Decode(data.excel.data);
     const excelBlob = Utilities.newBlob(excelBytes, data.excel.type, data.excel.name);
@@ -176,15 +183,15 @@ ${data.requestContent}
 function sendTeamroomNotification(data) {
   try {
     const message = {
-      text: `🔧 동수 기술개발 요청 접수 완료!\n\n` +
-            `📋 요청자: ${data.requester}\n` +
-            `🔧 개발유형: ${data.developmentType || '기타'}\n` +
-            `📍 메뉴위치: ${data.menuLocation}\n` +
-            `📝 요청내용: ${data.requestContent.substring(0, 100)}${data.requestContent.length > 100 ? '...' : ''}\n\n` +
-            `📎 첨부파일:\n` +
+      text: `[동수 기술개발 요청 접수 완료!]\n\n` +
+            `[요청자]: ${data.requester}\n` +
+            `[개발유형]: ${data.developmentType || '기타'}\n` +
+            `[메뉴위치]: ${data.menuLocation}\n` +
+            `[요청내용]: ${data.requestContent.substring(0, 100)}${data.requestContent.length > 100 ? '...' : ''}\n\n` +
+            `[첨부파일]:\n` +
             `• 사진: ${data.photos ? data.photos.length + '개' : '없음'}\n` +
             `• 엑셀: ${data.excel ? data.excel.name : '없음'}\n\n` +
-            `⏰ 접수시간: ${new Date().toLocaleString('ko-KR')}`
+            `[접수시간]: ${new Date().toLocaleString('ko-KR')}`
     };
     
     const options = {
