@@ -667,6 +667,12 @@
                 <div class="file-info">📊 엑셀 파일만 업로드 가능합니다 (XLSX, XLS)</div>
             </div>
             
+            <div class="form-group">
+                <label for="zipUpload">알집(ZIP) 업로드</label>
+                <input type="file" id="zipUpload" name="zipUpload" accept=".zip">
+                <div class="file-info">📦 알집 파일만 업로드 가능합니다 (ZIP) - 여러 파일을 한번에 업로드할 때 사용하세요</div>
+            </div>
+            
             <button type="submit" id="submitBtn">
                 🚀 요청 접수하기
             </button>
@@ -678,7 +684,7 @@
     <script>
         // ===== 필수 설정 (절대 지우지 마세요!) =====
         // Google Apps Script URL - 배포 후 여기에 붙여넣기
-        const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxuOWMZlVu71EfTqEudPBbzCmjUw8-A99QOBMtinXJfkhWpRFYiFMZLgX261pBEAXj8/exec';
+        const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxoeiOujg8wYlrkJzq9KzqlAJZrSc0wuJeQy9q0Umv7SREYkSbFr6Hm9ew3Py87FjLD/exec';
         
         // ===== 폼 제출 처리 (핵심 로직) =====
         document.getElementById('dataForm').addEventListener('submit', async function(e) {
@@ -744,6 +750,7 @@
                 // ===== 파일 처리 =====
                 const photoFiles = document.getElementById('photoUpload').files;
                 const excelFile = document.getElementById('excelUpload').files[0];
+                const zipFile = document.getElementById('zipUpload').files[0];
                 
                 // 사진 파일들을 Base64로 변환
                 if (photoFiles.length > 0) {
@@ -769,6 +776,18 @@
                         name: excelFile.name,
                         type: excelFile.type,
                         size: excelFile.size,
+                        data: base64
+                    };
+                }
+                
+                // ZIP 파일을 Base64로 변환
+                if (zipFile) {
+                    showStatus('📦 알집 파일을 처리하고 있습니다...', 'loading');
+                    const base64 = await fileToBase64(zipFile);
+                    payload.zip = {
+                        name: zipFile.name,
+                        type: zipFile.type,
+                        size: zipFile.size,
                         data: base64
                     };
                 }
@@ -929,6 +948,15 @@
             if (file) {
                 const size = (file.size / 1024 / 1024).toFixed(2);
                 const info = `선택된 엑셀: ${file.name} (${size}MB)`;
+                this.nextElementSibling.textContent = info;
+            }
+        });
+        
+        document.getElementById('zipUpload').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                const size = (file.size / 1024 / 1024).toFixed(2);
+                const info = `선택된 알집: ${file.name} (${size}MB)`;
                 this.nextElementSibling.textContent = info;
             }
         });
