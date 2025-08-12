@@ -678,7 +678,7 @@
     <script>
         // ===== 필수 설정 (절대 지우지 마세요!) =====
         // Google Apps Script URL - 배포 후 여기에 붙여넣기
-        const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwHFyw8r_JD1ZztMtkciPaG34JKoeQsWnu8xO8NTvb812IwUiMUlG6DH-rzz33IVONn/exec';
+        const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwOnB-eBQHJPHoe4ZucwmUIxe5GtVnq-D4KSjgBid7oNj8Du7zXD6Zj__YP6928i8Jz/exec';
         
         // ===== 폼 제출 처리 (핵심 로직) =====
         document.getElementById('dataForm').addEventListener('submit', async function(e) {
@@ -784,6 +784,12 @@
                 console.log('전송할 데이터:', payload);
                 
                 // ===== 핵심: Google Apps Script 호출 =====
+                console.log('전송할 데이터 크기:', JSON.stringify(payload).length, 'bytes');
+                console.log('전송할 파일 개수:', {
+                    photos: payload.photos ? payload.photos.length : 0,
+                    excel: payload.excel ? payload.excel.length : 0
+                });
+                
                 const response = await fetch(SCRIPT_URL, {
                     method: 'POST',
                     mode: 'no-cors',
@@ -792,6 +798,8 @@
                     },
                     body: JSON.stringify(payload)
                 });
+                
+                console.log('요청 전송 완료:', response);
                 
                 // ===== 성공 처리 (no-cors에서는 응답을 읽을 수 없으므로 바로 성공) =====
                 hideModal();
