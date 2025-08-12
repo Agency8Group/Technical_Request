@@ -658,13 +658,13 @@
             <div class="form-group">
                 <label for="photoUpload">사진 업로드</label>
                 <input type="file" id="photoUpload" name="photoUpload" accept="image/*" multiple>
-                <div class="file-info">📷 여러 유형의 사진을 선택할 수 있습니다 (JPG, PNG, GIF) - Ctrl+클릭으로 여러 파일 선택 가능</div>
+                <div class="file-info">📷 여러 유형의 사진을 선택할 수 있습니다 (JPG, PNG, GIF)</div>
             </div>
             
             <div class="form-group">
                 <label for="excelUpload">엑셀 업로드</label>
-                <input type="file" id="excelUpload" name="excelUpload" accept=".xlsx,.xls" multiple>
-                <div class="file-info">📊 엑셀 파일만 업로드 가능합니다 (XLSX, XLS) - Ctrl+클릭으로 여러 파일 선택 가능</div>
+                <input type="file" id="excelUpload" name="excelUpload" accept=".xlsx,.xls">
+                <div class="file-info">📊 엑셀 파일만 업로드 가능합니다 (XLSX, XLS)</div>
             </div>
             
             <button type="submit" id="submitBtn">
@@ -678,7 +678,7 @@
     <script>
         // ===== 필수 설정 (절대 지우지 마세요!) =====
         // Google Apps Script URL - 배포 후 여기에 붙여넣기
-        const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwOnB-eBQHJPHoe4ZucwmUIxe5GtVnq-D4KSjgBid7oNj8Du7zXD6Zj__YP6928i8Jz/exec';
+        const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxuOWMZlVu71EfTqEudPBbzCmjUw8-A99QOBMtinXJfkhWpRFYiFMZLgX261pBEAXj8/exec';
         
         // ===== 폼 제출 처리 (핵심 로직) =====
         document.getElementById('dataForm').addEventListener('submit', async function(e) {
@@ -743,7 +743,7 @@
                 
                 // ===== 파일 처리 =====
                 const photoFiles = document.getElementById('photoUpload').files;
-                const excelFiles = document.getElementById('excelUpload').files;
+                const excelFile = document.getElementById('excelUpload').files[0];
                 
                 // 사진 파일들을 Base64로 변환
                 if (photoFiles.length > 0) {
@@ -761,20 +761,16 @@
                     }
                 }
                 
-                // 엑셀 파일들을 Base64로 변환
-                if (excelFiles.length > 0) {
-                    showStatus('📊 엑셀 파일들을 처리하고 있습니다...', 'loading');
-                    payload.excel = [];
-                    for (let i = 0; i < excelFiles.length; i++) {
-                        const file = excelFiles[i];
-                        const base64 = await fileToBase64(file);
-                        payload.excel.push({
-                            name: file.name,
-                            type: file.type,
-                            size: file.size,
-                            data: base64
-                        });
-                    }
+                // 엑셀 파일을 Base64로 변환
+                if (excelFile) {
+                    showStatus('📊 엑셀 파일을 처리하고 있습니다...', 'loading');
+                    const base64 = await fileToBase64(excelFile);
+                    payload.excel = {
+                        name: excelFile.name,
+                        type: excelFile.type,
+                        size: excelFile.size,
+                        data: base64
+                    };
                 }
                 
                 // ===== 모달 팝업 표시 =====
@@ -784,12 +780,6 @@
                 console.log('전송할 데이터:', payload);
                 
                 // ===== 핵심: Google Apps Script 호출 =====
-                console.log('전송할 데이터 크기:', JSON.stringify(payload).length, 'bytes');
-                console.log('전송할 파일 개수:', {
-                    photos: payload.photos ? payload.photos.length : 0,
-                    excel: payload.excel ? payload.excel.length : 0
-                });
-                
                 const response = await fetch(SCRIPT_URL, {
                     method: 'POST',
                     mode: 'no-cors',
@@ -798,8 +788,6 @@
                     },
                     body: JSON.stringify(payload)
                 });
-                
-                console.log('요청 전송 완료:', response);
                 
                 // ===== 성공 처리 (no-cors에서는 응답을 읽을 수 없으므로 바로 성공) =====
                 hideModal();
@@ -937,16 +925,10 @@
         });
         
         document.getElementById('excelUpload').addEventListener('change', function(e) {
-            const files = e.target.files;
-            if (files.length > 0) {
-                let info = `선택된 엑셀: ${files.length}개`;
-                let totalSize = 0;
-                for (let i = 0; i < files.length; i++) {
-                    const size = files[i].size / 1024 / 1024;
-                    totalSize += size;
-                    info += `\n- ${files[i].name} (${size.toFixed(2)}MB)`;
-                }
-                info += `\n총 크기: ${totalSize.toFixed(2)}MB`;
+            const file = e.target.files[0];
+            if (file) {
+                const size = (file.size / 1024 / 1024).toFixed(2);
+                const info = `선택된 엑셀: ${file.name} (${size}MB)`;
                 this.nextElementSibling.textContent = info;
             }
         });
