@@ -658,19 +658,13 @@
             <div class="form-group">
                 <label for="photoUpload">사진 업로드</label>
                 <input type="file" id="photoUpload" name="photoUpload" accept="image/*" multiple>
-                <div class="file-info">📷 여러 유형의 사진을 선택할 수 있습니다 (JPG, PNG, GIF)</div>
+                <div class="file-info">📷 여러 유형의 사진을 선택할 수 있습니다 (JPG, PNG, GIF) - Ctrl+클릭으로 여러 파일 선택 가능</div>
             </div>
             
             <div class="form-group">
                 <label for="excelUpload">엑셀 업로드</label>
-                <input type="file" id="excelUpload" name="excelUpload" accept=".xlsx,.xls">
-                <div class="file-info">📊 엑셀 파일만 업로드 가능합니다 (XLSX, XLS)</div>
-            </div>
-            
-            <div class="form-group">
-                <label for="zipUpload">알집(ZIP) 업로드</label>
-                <input type="file" id="zipUpload" name="zipUpload" accept=".zip">
-                <div class="file-info">📦 알집 파일만 업로드 가능합니다 (ZIP) - 여러 파일을 한번에 업로드할 때 사용하세요</div>
+                <input type="file" id="excelUpload" name="excelUpload" accept=".xlsx,.xls" multiple>
+                <div class="file-info">📊 엑셀 파일만 업로드 가능합니다 (XLSX, XLS) - Ctrl+클릭으로 여러 파일 선택 가능</div>
             </div>
             
             <button type="submit" id="submitBtn">
@@ -684,7 +678,7 @@
     <script>
         // ===== 필수 설정 (절대 지우지 마세요!) =====
         // Google Apps Script URL - 배포 후 여기에 붙여넣기
-        const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxoeiOujg8wYlrkJzq9KzqlAJZrSc0wuJeQy9q0Umv7SREYkSbFr6Hm9ew3Py87FjLD/exec';
+        const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwHFyw8r_JD1ZztMtkciPaG34JKoeQsWnu8xO8NTvb812IwUiMUlG6DH-rzz33IVONn/exec';
         
         // ===== 폼 제출 처리 (핵심 로직) =====
         document.getElementById('dataForm').addEventListener('submit', async function(e) {
@@ -749,8 +743,7 @@
                 
                 // ===== 파일 처리 =====
                 const photoFiles = document.getElementById('photoUpload').files;
-                const excelFile = document.getElementById('excelUpload').files[0];
-                const zipFile = document.getElementById('zipUpload').files[0];
+                const excelFiles = document.getElementById('excelUpload').files;
                 
                 // 사진 파일들을 Base64로 변환
                 if (photoFiles.length > 0) {
@@ -768,28 +761,20 @@
                     }
                 }
                 
-                // 엑셀 파일을 Base64로 변환
-                if (excelFile) {
-                    showStatus('📊 엑셀 파일을 처리하고 있습니다...', 'loading');
-                    const base64 = await fileToBase64(excelFile);
-                    payload.excel = {
-                        name: excelFile.name,
-                        type: excelFile.type,
-                        size: excelFile.size,
-                        data: base64
-                    };
-                }
-                
-                // ZIP 파일을 Base64로 변환
-                if (zipFile) {
-                    showStatus('📦 알집 파일을 처리하고 있습니다...', 'loading');
-                    const base64 = await fileToBase64(zipFile);
-                    payload.zip = {
-                        name: zipFile.name,
-                        type: zipFile.type,
-                        size: zipFile.size,
-                        data: base64
-                    };
+                // 엑셀 파일들을 Base64로 변환
+                if (excelFiles.length > 0) {
+                    showStatus('📊 엑셀 파일들을 처리하고 있습니다...', 'loading');
+                    payload.excel = [];
+                    for (let i = 0; i < excelFiles.length; i++) {
+                        const file = excelFiles[i];
+                        const base64 = await fileToBase64(file);
+                        payload.excel.push({
+                            name: file.name,
+                            type: file.type,
+                            size: file.size,
+                            data: base64
+                        });
+                    }
                 }
                 
                 // ===== 모달 팝업 표시 =====
@@ -944,19 +929,16 @@
         });
         
         document.getElementById('excelUpload').addEventListener('change', function(e) {
-            const file = e.target.files[0];
-            if (file) {
-                const size = (file.size / 1024 / 1024).toFixed(2);
-                const info = `선택된 엑셀: ${file.name} (${size}MB)`;
-                this.nextElementSibling.textContent = info;
-            }
-        });
-        
-        document.getElementById('zipUpload').addEventListener('change', function(e) {
-            const file = e.target.files[0];
-            if (file) {
-                const size = (file.size / 1024 / 1024).toFixed(2);
-                const info = `선택된 알집: ${file.name} (${size}MB)`;
+            const files = e.target.files;
+            if (files.length > 0) {
+                let info = `선택된 엑셀: ${files.length}개`;
+                let totalSize = 0;
+                for (let i = 0; i < files.length; i++) {
+                    const size = files[i].size / 1024 / 1024;
+                    totalSize += size;
+                    info += `\n- ${files[i].name} (${size.toFixed(2)}MB)`;
+                }
+                info += `\n총 크기: ${totalSize.toFixed(2)}MB`;
                 this.nextElementSibling.textContent = info;
             }
         });
