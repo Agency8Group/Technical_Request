@@ -6,12 +6,7 @@ const SHEET_NAME = '요청접수'; // 1시트 이름
 const SENDER_EMAIL = 'yoonwhan0@gmail.com';
 const SENDER_PASSWORD = 'e w i y x n c t t e l r o k i w'; // Gmail 앱 비밀번호
 const RECEIVER_EMAILS = [
-  'jyh@eibe.co.kr',
-  'nzhang@edongshu.com',
-  'zapzachery1996@outlook.com',
-  'lu@edongshu.com',
-  'hwsui@edongshu.com',
-  'kongxiangbing@ytzhiheng.com'
+  'jyh@eibe.co.kr'
 ];
 const TEAMROOM_WEBHOOK_URL = 'https://teamroom.nate.com/api/webhook/7e59317b/IUW0aJ9YE12uElmMRo8byoOA';
 
@@ -119,9 +114,10 @@ function saveExcelToSheet(data) {
 
 // ===== 이메일 전송 (사진과 엑셀 파일 첨부) =====
 function sendEmailWithAttachments(data) {
-  const subject = `[동수 기술개발 요청] ${data.requester} - ${data.developmentType || '기타'} - ${data.menuLocation}`;
-  
-  let body = `
+  try {
+    const subject = `[동수 기술개발 요청] ${data.requester} - ${data.developmentType || '기타'} - ${data.menuLocation}`;
+    
+    let body = `
 [동수 기술개발 요청 접수]
 
 [요청 정보]
@@ -135,46 +131,98 @@ ${data.requestContent}
 
 ---
 이 메일은 자동으로 생성되었습니다.
-  `;
-  
-  const attachments = [];
-  
-  // 사진 파일들 첨부
-  if (data.photos && data.photos.length > 0) {
-    body += `\n[첨부된 사진]: ${data.photos.length}개\n`;
+    `;
     
-    for (let i = 0; i < data.photos.length; i++) {
-      const photo = data.photos[i];
-      const photoBytes = Utilities.base64Decode(photo.data);
-      const photoBlob = Utilities.newBlob(photoBytes, photo.type, photo.name);
-      attachments.push(photoBlob);
-    }
-  }
-  
-  // 엑셀 파일 첨부
-  if (data.excel) {
-    body += `\n[첨부된 엑셀]: ${data.excel.name}\n`;
+    const attachments = [];
     
-    const excelBytes = Utilities.base64Decode(data.excel.data);
-    const excelBlob = Utilities.newBlob(excelBytes, data.excel.type, data.excel.name);
-    attachments.push(excelBlob);
-  }
-  
-  // 이메일 전송
-  for (let i = 0; i < RECEIVER_EMAILS.length; i++) {
-    try {
-      GmailApp.sendEmail(
-        RECEIVER_EMAILS[i],
-        subject,
-        body,
-        {
-          attachments: attachments,
-          name: '기술개발 요청 시스템'
+    // 사진 파일들 첨부
+    if (data.photos && data.photos.length > 0) {
+      body += `\n[첨부된 사진]: ${data.photos.length}개\n`;
+      console.log(`사진 파일 ${data.photos.length}개 처리 시작...`);
+      
+      for (let i = 0; i < data.photos.length; i++) {
+        try {
+          const photo = data.photos[i];
+          console.log(`사진 ${i+1} 처리 중: ${photo.name} (${photo.size} bytes)`);
+          
+          const photoBytes = Utilities.base64Decode(photo.data);
+          const photoBlob = Utilities.newBlob(photoBytes, photo.type, photo.name);
+          attachments.push(photoBlob);
+          console.log(`사진 ${i+1} 첨부 완료: ${photo.name}`);
+        } catch (photoError) {
+          console.error(`사진 ${i+1} 처리 실패:`, photoError);
         }
-      );
-      console.log(`이메일 전송 완료: ${RECEIVER_EMAILS[i]}`);
-    } catch (error) {
-      console.error(`이메일 전송 실패 (${RECEIVER_EMAILS[i]}):`, error);
+      }
+    }
+    
+    // 엑셀 파일 첨부
+    if (data.excel) {
+      body += `\n[첨부된 엑셀]: ${data.excel.name}\n`;
+      console.log(`엑셀 파일 처리 시작: ${data.excel.name}`);
+      
+      try {
+        const excelBytes = Utilities.base64Decode(data.excel.data);
+        const excelBlob = Utilities.newBlob(excelBytes, data.excel.type, data.excel.name);
+        attachments.push(excelBlob);
+        console.log(`엑셀 파일 첨부 완료: ${data.excel.name}`);
+      } catch (excelError) {
+        console.error(`엑셀 파일 처리 실패:`, excelError);
+      }
+    }
+    
+    console.log(`총 첨부파일 수: ${attachments.length}개`);
+    
+    // 이메일 전송
+    for (let i = 0; i < RECEIVER_EMAILS.length; i++) {
+      try {
+        console.log(`이메일 전송 시작: ${RECEIVER_EMAILS[i]}`);
+        
+        GmailApp.sendEmail(
+          RECEIVER_EMAILS[i],
+          subject,
+          body,
+          {
+            attachments: attachments,
+            name: '기술개발 요청 시스템'
+          }
+        );
+        console.log(`이메일 전송 완료: ${RECEIVER_EMAILS[i]}`);
+      } catch (emailError) {
+        console.error(`이메일 전송 실패 (${RECEIVER_EMAILS[i]}):`, emailError);
+        
+        // 이메일 전송 실패 시 로그에 기록
+        const logSheet = SpreadsheetApp.openById(SPREADSHEET_ID).getSheetByName('로그') || 
+                        SpreadsheetApp.openById(SPREADSHEET_ID).insertSheet('로그');
+        
+        logSheet.appendRow([
+          new Date().toLocaleString('ko-KR'),
+          '이메일 전송 실패',
+          RECEIVER_EMAILS[i],
+          emailError.toString(),
+          data.requester
+        ]);
+      }
+    }
+    
+    console.log('이메일 전송 프로세스 완료');
+    
+  } catch (error) {
+    console.error('이메일 전송 전체 프로세스 실패:', error);
+    
+    // 전체 실패 시 로그에 기록
+    try {
+      const logSheet = SpreadsheetApp.openById(SPREADSHEET_ID).getSheetByName('로그') || 
+                      SpreadsheetApp.openById(SPREADSHEET_ID).insertSheet('로그');
+      
+      logSheet.appendRow([
+        new Date().toLocaleString('ko-KR'),
+        '이메일 전송 전체 실패',
+        'ALL',
+        error.toString(),
+        data.requester
+      ]);
+    } catch (logError) {
+      console.error('로그 기록 실패:', logError);
     }
   }
 }
@@ -230,8 +278,25 @@ function testFunction() {
 1. Google Apps Script에서 새 프로젝트 생성
 2. 이 코드를 붙여넣기
 3. SPREADSHEET_ID를 실제 Google Sheets ID로 변경
-4. 배포 > 새 배포
-5. 웹 앱으로 설정
-6. 액세스 권한: 모든 사용자
-7. 배포 후 URL을 HTML 파일의 SCRIPT_URL에 붙여넣기
+4. Gmail 앱 비밀번호 설정 (중요!)
+   - Gmail 설정 > 보안 > 2단계 인증 활성화
+   - 앱 비밀번호 생성 (16자리)
+   - SENDER_PASSWORD에 앱 비밀번호 입력
+5. 배포 > 새 배포
+6. 웹 앱으로 설정
+7. 액세스 권한: 모든 사용자
+8. 배포 후 URL을 HTML 파일의 SCRIPT_URL에 붙여넣기
+
+=== Gmail 앱 비밀번호 설정 방법 ===
+1. Gmail 계정으로 로그인
+2. Google 계정 설정 (https://myaccount.google.com/)
+3. 보안 > 2단계 인증 > 앱 비밀번호
+4. "앱 선택" > "기타(맞춤 이름)" > "Google Apps Script" 입력
+5. 생성된 16자리 비밀번호를 SENDER_PASSWORD에 입력
+6. 기존 비밀번호는 삭제하고 앱 비밀번호만 사용
+
+=== 문제 해결 ===
+- 이메일이 전송되지 않으면 Google Apps Script 실행 로그 확인
+- 첨부파일이 너무 크면 파일 크기 제한 확인 (25MB)
+- 권한 오류 시 Gmail API 권한 확인
 */ 
