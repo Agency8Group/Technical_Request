@@ -674,13 +674,23 @@
             <div class="form-group">
                 <label for="photoUpload">사진 업로드</label>
                 <input type="file" id="photoUpload" name="photoUpload" accept="image/*" multiple>
-                <div class="file-info">📷 여러 유형의 사진을 선택할 수 있습니다 (JPG, PNG, GIF)</div>
+                <div class="file-info">📷 여러 유형의 사진을 선택할 수 있습니다 (JPG, PNG, GIF)<br>
+                <strong>⚠️ 파일 크기 제한:</strong> 10MB 이하 파일만 업로드 가능합니다.<br>
+                <strong>💡 대용량 파일 처리 방법:</strong><br>
+                • 사진: 이미지 압축 도구 사용 (온라인 이미지 압축기)<br>
+                • 엑셀: 불필요한 시트 삭제, 데이터 정리 후 저장<br>
+                • 총 첨부파일 크기: 25MB 이하 (Gmail 제한)</div>
             </div>
             
             <div class="form-group">
                 <label for="excelUpload">엑셀 업로드</label>
                 <input type="file" id="excelUpload" name="excelUpload" accept=".xlsx,.xls">
-                <div class="file-info">📊 엑셀 파일만 업로드 가능합니다 (XLSX, XLS)</div>
+                <div class="file-info">📊 엑셀 파일만 업로드 가능합니다 (XLSX, XLS)<br>
+                <strong>⚠️ 파일 크기 제한:</strong> 10MB 이하 파일만 업로드 가능합니다.<br>
+                <strong>💡 대용량 파일 처리 방법:</strong><br>
+                • 사진: 이미지 압축 도구 사용 (온라인 이미지 압축기)<br>
+                • 엑셀: 불필요한 시트 삭제, 데이터 정리 후 저장<br>
+                • 총 첨부파일 크기: 25MB 이하 (Gmail 제한)</div>
             </div>
             
             <button type="submit" id="submitBtn">
@@ -694,7 +704,7 @@
     <script>
         // ===== 필수 설정 (절대 지우지 마세요!) =====
         // Google Apps Script URL - 배포 후 여기에 붙여넣기
-        const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyiWzhi8ND7KrYvhXZjwsQxgDTAiYqoLSSJx2B8DUazhYwqyA4pXyvCIM2wGi7rnmX3/exec';
+        const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyaDLZD7o1xNLOxmUfFCkT8mVWxnVhMXirck6QIbYmYcPtAcVZC6bUKjuWY8O3PYw4/exec';
         
         // ===== 폼 제출 처리 (핵심 로직) =====
         document.getElementById('dataForm').addEventListener('submit', async function(e) {
@@ -757,36 +767,92 @@
                     timestamp: new Date().toISOString()
                 };
                 
-                // ===== 파일 처리 =====
+                // ===== 파일 처리 (안정적인 검증 및 처리) =====
                 const photoFiles = document.getElementById('photoUpload').files;
                 const excelFile = document.getElementById('excelUpload').files[0];
                 
-                // 사진 파일들을 Base64로 변환
-                if (photoFiles.length > 0) {
-                    showStatus('📷 사진 파일을 처리하고 있습니다...', 'loading');
-                    payload.photos = [];
-                    for (let i = 0; i < photoFiles.length; i++) {
-                        const file = photoFiles[i];
-                        const base64 = await fileToBase64(file);
-                        payload.photos.push({
-                            name: file.name,
-                            type: file.type,
-                            size: file.size,
-                            data: base64
-                        });
+                // 파일 크기 검증 (10MB 제한)
+                const MAX_FILE_SIZE = 10 * 1024 * 1024;
+                let hasLargeFile = false;
+                let largeFiles = [];
+                
+                // 사진 파일 크기 검증
+                for (let i = 0; i < photoFiles.length; i++) {
+                    if (photoFiles[i].size > MAX_FILE_SIZE) {
+                        hasLargeFile = true;
+                        largeFiles.push(photoFiles[i].name);
                     }
                 }
                 
-                // 엑셀 파일을 Base64로 변환
+                // 엑셀 파일 크기 검증
+                if (excelFile && excelFile.size > MAX_FILE_SIZE) {
+                    hasLargeFile = true;
+                    largeFiles.push(excelFile.name);
+                }
+                
+                        if (hasLargeFile) {
+            alert(`⚠️ 대용량 파일이 감지됩니다!\n\n다음 파일들이 10MB를 초과합니다:\n${largeFiles.join('\n')}\n\n📝 텍스트로 접수만 해주시고\n📎 파일은 jyh@eibe.co.kr 이메일로\n별도로 보내주시길 부탁드립니다.\n\n감사합니다.`);
+            
+            // 파일 입력 필드 초기화
+            document.getElementById('photoUpload').value = '';
+            document.getElementById('excelUpload').value = '';
+            
+            showStatus('✅ 텍스트 정보만 접수 가능합니다. 파일은 별도 이메일로 보내주세요.', 'success');
+            submitBtn.disabled = false;
+            submitBtn.textContent = '📤 요청 접수';
+            return;
+        }
+                
+                // 사진 파일들을 Base64로 변환 (안정적인 처리)
+                if (photoFiles.length > 0) {
+                    showStatus(`📷 사진 파일 ${photoFiles.length}개를 처리하고 있습니다...`, 'loading');
+                    payload.photos = [];
+                    
+                    for (let i = 0; i < photoFiles.length; i++) {
+                        try {
+                            const file = photoFiles[i];
+                            showStatus(`📷 사진 ${i+1}/${photoFiles.length} 처리 중: ${file.name}`, 'loading');
+                            
+                            const base64 = await fileToBase64(file);
+                            payload.photos.push({
+                                name: file.name,
+                                type: file.type,
+                                size: file.size,
+                                data: base64
+                            });
+                            
+                            console.log(`사진 ${i+1} 처리 완료: ${file.name} (${Math.round(file.size/1024)}KB)`);
+                        } catch (error) {
+                            console.error(`사진 ${i+1} 처리 실패:`, error);
+                            showStatus(`❌ 사진 파일 처리 실패: ${photoFiles[i].name}`, 'error');
+                            submitBtn.disabled = false;
+                            submitBtn.textContent = '📤 요청 접수';
+                            return;
+                        }
+                    }
+                }
+                
+                // 엑셀 파일을 Base64로 변환 (안정적인 처리)
                 if (excelFile) {
-                    showStatus('📊 엑셀 파일을 처리하고 있습니다...', 'loading');
-                    const base64 = await fileToBase64(excelFile);
-                    payload.excel = {
-                        name: excelFile.name,
-                        type: excelFile.type,
-                        size: excelFile.size,
-                        data: base64
-                    };
+                    try {
+                        showStatus(`📊 엑셀 파일을 처리하고 있습니다: ${excelFile.name}`, 'loading');
+                        
+                        const base64 = await fileToBase64(excelFile);
+                        payload.excel = {
+                            name: excelFile.name,
+                            type: excelFile.type,
+                            size: excelFile.size,
+                            data: base64
+                        };
+                        
+                        console.log(`엑셀 파일 처리 완료: ${excelFile.name} (${Math.round(excelFile.size/1024)}KB)`);
+                    } catch (error) {
+                        console.error('엑셀 파일 처리 실패:', error);
+                        showStatus(`❌ 엑셀 파일 처리 실패: ${excelFile.name}`, 'error');
+                        submitBtn.disabled = false;
+                        submitBtn.textContent = '📤 요청 접수';
+                        return;
+                    }
                 }
                 
                 // ===== 모달 팝업 표시 =====

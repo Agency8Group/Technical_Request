@@ -112,9 +112,14 @@ function saveExcelToSheet(data) {
   }
 }
 
-// ===== 이메일 전송 (사진과 엑셀 파일 첨부) =====
+// ===== 이메일 전송 (안정적인 대용량 첨부파일 지원) =====
 function sendEmailWithAttachments(data) {
   try {
+    console.log('=== 이메일 전송 프로세스 시작 ===');
+    console.log(`요청자: ${data.requester}`);
+    console.log(`사진 파일 수: ${data.photos ? data.photos.length : 0}개`);
+    console.log(`엑셀 파일: ${data.excel ? data.excel.name : '없음'}`);
+    
     const subject = `[동수 기술개발 요청] ${data.requester} - ${data.developmentType || '기타'} - ${data.menuLocation}`;
     
     let body = `
@@ -134,8 +139,10 @@ ${data.requestContent}
     `;
     
     const attachments = [];
+    let totalSize = 0;
+    const MAX_EMAIL_SIZE = 25 * 1024 * 1024; // 25MB 제한
     
-    // 사진 파일들 첨부
+    // 사진 파일들 안전하게 첨부
     if (data.photos && data.photos.length > 0) {
       body += `\n[첨부된 사진]: ${data.photos.length}개\n`;
       console.log(`사진 파일 ${data.photos.length}개 처리 시작...`);
@@ -143,68 +150,144 @@ ${data.requestContent}
       for (let i = 0; i < data.photos.length; i++) {
         try {
           const photo = data.photos[i];
-          console.log(`사진 ${i+1} 처리 중: ${photo.name} (${photo.size} bytes)`);
+          console.log(`사진 ${i+1}/${data.photos.length} 처리 중: ${photo.name}`);
+          
+          // 파일 크기 체크
+          if (photo.size > 10 * 1024 * 1024) { // 10MB 이상
+            console.warn(`사진 ${photo.name}이 너무 큽니다 (${Math.round(photo.size/1024/1024)}MB). 건너뜁니다.`);
+            body += `• ${photo.name} (파일이 너무 커서 제외됨)\n`;
+            continue;
+          }
+          
+          // Base64 데이터 검증
+          if (!photo.data || photo.data.length === 0) {
+            console.warn(`사진 ${photo.name}의 데이터가 비어있습니다. 건너뜁니다.`);
+            body += `• ${photo.name} (데이터 오류로 제외됨)\n`;
+            continue;
+          }
+          
+          // 메모리 부족 방지를 위한 지연
+          Utilities.sleep(100);
           
           const photoBytes = Utilities.base64Decode(photo.data);
-          const photoBlob = Utilities.newBlob(photoBytes, photo.type, photo.name);
+          const photoBlob = Utilities.newBlob(photoBytes, photo.type || 'image/jpeg', photo.name);
+          
+          // 총 크기 체크
+          if (totalSize + photoBlob.getBytes().length > MAX_EMAIL_SIZE) {
+            console.warn(`이메일 크기 제한 초과. ${photo.name} 이후 파일들은 제외됩니다.`);
+            body += `• ${photo.name} (이메일 크기 제한으로 제외됨)\n`;
+            break;
+          }
+          
           attachments.push(photoBlob);
-          console.log(`사진 ${i+1} 첨부 완료: ${photo.name}`);
+          totalSize += photoBlob.getBytes().length;
+          console.log(`사진 ${i+1} 첨부 완료: ${photo.name} (${Math.round(photoBlob.getBytes().length/1024)}KB)`);
+          body += `• ${photo.name}\n`;
+          
         } catch (photoError) {
           console.error(`사진 ${i+1} 처리 실패:`, photoError);
+          body += `• ${data.photos[i].name} (처리 오류로 제외됨)\n`;
         }
       }
     }
     
-    // 엑셀 파일 첨부
+    // 엑셀 파일 안전하게 첨부
     if (data.excel) {
-      body += `\n[첨부된 엑셀]: ${data.excel.name}\n`;
       console.log(`엑셀 파일 처리 시작: ${data.excel.name}`);
       
       try {
-        const excelBytes = Utilities.base64Decode(data.excel.data);
-        const excelBlob = Utilities.newBlob(excelBytes, data.excel.type, data.excel.name);
-        attachments.push(excelBlob);
-        console.log(`엑셀 파일 첨부 완료: ${data.excel.name}`);
+        // 파일 크기 체크
+        if (data.excel.size > 10 * 1024 * 1024) { // 10MB 이상
+          console.warn(`엑셀 파일 ${data.excel.name}이 너무 큽니다 (${Math.round(data.excel.size/1024/1024)}MB). 건너뜁니다.`);
+          body += `\n[첨부된 엑셀]: ${data.excel.name} (파일이 너무 커서 제외됨)\n`;
+        } else {
+          // Base64 데이터 검증
+          if (!data.excel.data || data.excel.data.length === 0) {
+            console.warn(`엑셀 파일 ${data.excel.name}의 데이터가 비어있습니다. 건너뜁니다.`);
+            body += `\n[첨부된 엑셀]: ${data.excel.name} (데이터 오류로 제외됨)\n`;
+          } else {
+            // 메모리 부족 방지를 위한 지연
+            Utilities.sleep(200);
+            
+            const excelBytes = Utilities.base64Decode(data.excel.data);
+            const excelBlob = Utilities.newBlob(excelBytes, data.excel.type || 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', data.excel.name);
+            
+            // 총 크기 체크
+            if (totalSize + excelBlob.getBytes().length > MAX_EMAIL_SIZE) {
+              console.warn(`이메일 크기 제한 초과. 엑셀 파일은 제외됩니다.`);
+              body += `\n[첨부된 엑셀]: ${data.excel.name} (이메일 크기 제한으로 제외됨)\n`;
+            } else {
+              attachments.push(excelBlob);
+              totalSize += excelBlob.getBytes().length;
+              console.log(`엑셀 파일 첨부 완료: ${data.excel.name} (${Math.round(excelBlob.getBytes().length/1024)}KB)`);
+              body += `\n[첨부된 엑셀]: ${data.excel.name}\n`;
+            }
+          }
+        }
       } catch (excelError) {
         console.error(`엑셀 파일 처리 실패:`, excelError);
+        body += `\n[첨부된 엑셀]: ${data.excel.name} (처리 오류로 제외됨)\n`;
       }
     }
     
     console.log(`총 첨부파일 수: ${attachments.length}개`);
+    console.log(`총 크기: ${Math.round(totalSize/1024/1024*100)/100}MB`);
     
-    // 이메일 전송
+    // 이메일 전송 (안정적인 재시도 로직)
     for (let i = 0; i < RECEIVER_EMAILS.length; i++) {
-      try {
-        console.log(`이메일 전송 시작: ${RECEIVER_EMAILS[i]}`);
-        
-        GmailApp.sendEmail(
-          RECEIVER_EMAILS[i],
-          subject,
-          body,
-          {
-            attachments: attachments,
-            name: '기술개발 요청 시스템'
+      let retryCount = 0;
+      const maxRetries = 3;
+      
+      while (retryCount < maxRetries) {
+        try {
+          console.log(`이메일 전송 시작 (시도 ${retryCount + 1}/${maxRetries}): ${RECEIVER_EMAILS[i]}`);
+          
+          // 전송 전 메모리 정리
+          Utilities.sleep(500);
+          
+          GmailApp.sendEmail(
+            RECEIVER_EMAILS[i],
+            subject,
+            body,
+            {
+              attachments: attachments,
+              name: '기술개발 요청 시스템'
+            }
+          );
+          
+          console.log(`이메일 전송 완료: ${RECEIVER_EMAILS[i]}`);
+          break; // 성공하면 재시도 중단
+          
+        } catch (emailError) {
+          retryCount++;
+          console.error(`이메일 전송 실패 (시도 ${retryCount}/${maxRetries}): ${emailError}`);
+          
+          if (retryCount >= maxRetries) {
+            // 최종 실패 시 로그에 기록
+            try {
+              const logSheet = SpreadsheetApp.openById(SPREADSHEET_ID).getSheetByName('로그') || 
+                              SpreadsheetApp.openById(SPREADSHEET_ID).insertSheet('로그');
+              
+              logSheet.appendRow([
+                new Date().toLocaleString('ko-KR'),
+                '이메일 전송 최종 실패',
+                RECEIVER_EMAILS[i],
+                emailError.toString(),
+                data.requester,
+                `첨부파일: ${attachments.length}개`
+              ]);
+            } catch (logError) {
+              console.error('로그 기록 실패:', logError);
+            }
+          } else {
+            // 재시도 전 대기
+            Utilities.sleep(2000 * retryCount);
           }
-        );
-        console.log(`이메일 전송 완료: ${RECEIVER_EMAILS[i]}`);
-      } catch (emailError) {
-        console.error(`이메일 전송 실패 (${RECEIVER_EMAILS[i]}):`, emailError);
-        
-        // 이메일 전송 실패 시 로그에 기록
-        const logSheet = SpreadsheetApp.openById(SPREADSHEET_ID).getSheetByName('로그') || 
-                        SpreadsheetApp.openById(SPREADSHEET_ID).insertSheet('로그');
-        
-        logSheet.appendRow([
-          new Date().toLocaleString('ko-KR'),
-          '이메일 전송 실패',
-          RECEIVER_EMAILS[i],
-          emailError.toString(),
-          data.requester
-        ]);
+        }
       }
     }
     
-    console.log('이메일 전송 프로세스 완료');
+    console.log('=== 이메일 전송 프로세스 완료 ===');
     
   } catch (error) {
     console.error('이메일 전송 전체 프로세스 실패:', error);
@@ -219,7 +302,8 @@ ${data.requestContent}
         '이메일 전송 전체 실패',
         'ALL',
         error.toString(),
-        data.requester
+        data.requester,
+        '시스템 오류'
       ]);
     } catch (logError) {
       console.error('로그 기록 실패:', logError);
