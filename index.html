@@ -588,12 +588,16 @@
             </div>
             <div class="notice-content">
                 <div class="notice-item">
-                    <span class="notice-icon">📅</span>
-                    <span class="notice-text"><strong>접수 마감일:</strong> 2025년 7월 28일까지 접수하시면 다음 개발시점에 적용됩니다.</span>
+                    <span class="notice-icon">🚀</span>
+                    <span class="notice-text"><strong>1차 개발 착수:</strong> 1차 개발이 착수 시작되었습니다.</span>
                 </div>
                 <div class="notice-item">
-                    <span class="notice-icon">🎨</span>
-                    <span class="notice-text"><strong>Mock-up 수령:</strong> 8월말경 mock-up 수령 예정입니다.</span>
+                    <span class="notice-icon">📅</span>
+                    <span class="notice-text"><strong>v.1 수령 예정:</strong> 11월 말경에 v.1을 수령할 예정입니다.</span>
+                </div>
+                <div class="notice-item">
+                    <span class="notice-icon">⛔</span>
+                    <span class="notice-text"><strong>2차 개발 요청 접수 마감:</strong> 2차 개발 요청 접수가 마감되었습니다.</span>
                 </div>
             </div>
         </div>
@@ -617,7 +621,24 @@
         </div>
         
         <!-- ===== 폼 구조 ===== -->
-        <form id="dataForm">
+        <!-- 일시적 제한: 2차 개발 요청 접수 마감으로 폼 비활성화 -->
+        
+        <!-- 접수 마감 안내 -->
+        <div class="notice-section" style="background: rgba(239, 68, 68, 0.2); border: 2px solid rgba(239, 68, 68, 0.4);">
+            <div class="notice-header">
+                <h3 style="color: #f87171;">⛔ 접수 마감 안내</h3>
+            </div>
+            <div class="notice-content">
+                <div class="notice-item" style="background: rgba(239, 68, 68, 0.1);">
+                    <span class="notice-icon">📢</span>
+                    <span class="notice-text" style="color: #fca5a5;"><strong>2차 개발 요청 접수가 마감되었습니다.</strong><br>
+                    현재 1차 개발이 진행 중이며, 11월 말경 v.1 수령 예정입니다.<br>
+                    추가 요청사항이 있으시면 별도로 문의해 주시기 바랍니다.</span>
+                </div>
+            </div>
+        </div>
+        
+        <form id="dataForm" style="opacity: 0.5; pointer-events: none;">
             <div class="form-group">
                 <label for="requester">요청자 <span class="required">*</span></label>
                 <input type="text" id="requester" name="requester" placeholder="요청자 이름을 입력하세요" required>
