@@ -2397,21 +2397,14 @@ function hideWorkGuideModal() {
 
 // 요청 필터링 기능 초기화
 function initializeRequestFilters() {
-  const filterButtons = document.querySelectorAll('.filter-btn');
+  const statusFilter = document.getElementById('statusFilter');
   
-  filterButtons.forEach(button => {
-    button.addEventListener('click', () => {
-      // 모든 버튼에서 active 클래스 제거
-      filterButtons.forEach(btn => btn.classList.remove('active'));
-      
-      // 클릭된 버튼에 active 클래스 추가
-      button.classList.add('active');
-      
-      // 필터링 실행
-      const filterValue = button.dataset.filter;
+  if (statusFilter) {
+    statusFilter.addEventListener('change', (e) => {
+      const filterValue = e.target.value;
       filterRequests(filterValue);
     });
-  });
+  }
 }
 
 // 요청 필터링 함수
