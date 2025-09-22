@@ -1730,20 +1730,23 @@ function getCurrentMenuRows() {
     const id = row.dataset.rowId;
     
     // 편집 모드인지 확인 (input/textarea가 보이는지 확인)
-    const isEditing = row.querySelector('.menu-cell-input[style*="block"]') || row.querySelector('.menu-cell-textarea[style*="block"]');
+    const inputElement = row.querySelector('.menu-cell-input');
+    const textareaElement = row.querySelector('.menu-cell-textarea');
+    const isEditing = (inputElement && inputElement.style.display === 'block') || 
+                     (textareaElement && textareaElement.style.display === 'block');
     
     let menuName, subMenuName, description;
     
     if (isEditing) {
       // 편집 모드: input/textarea의 값 사용
-      menuName = row.querySelector('[data-field="menuName"] .menu-cell-input')?.value || '';
-      subMenuName = row.querySelector('[data-field="subMenuName"] .menu-cell-input')?.value || '';
-      description = row.querySelector('[data-field="description"] .menu-cell-textarea')?.value || '';
+      menuName = row.querySelector('.menu-cell-input[data-field="menuName"]')?.value || '';
+      subMenuName = row.querySelector('.menu-cell-input[data-field="subMenuName"]')?.value || '';
+      description = row.querySelector('.menu-cell-textarea[data-field="description"]')?.value || '';
     } else {
       // 표시 모드: display 요소의 textContent 사용
-      menuName = row.querySelector('[data-field="menuName"] .menu-cell-display')?.textContent?.trim() || '';
-      subMenuName = row.querySelector('[data-field="subMenuName"] .menu-cell-display')?.textContent?.trim() || '';
-      description = row.querySelector('[data-field="description"] .menu-cell-display')?.textContent?.trim() || '';
+      menuName = row.querySelector('.menu-cell-display[data-field="menuName"]')?.textContent?.trim() || '';
+      subMenuName = row.querySelector('.menu-cell-display[data-field="subMenuName"]')?.textContent?.trim() || '';
+      description = row.querySelector('.menu-cell-display[data-field="description"]')?.textContent?.trim() || '';
     }
     
     menuRows.push({
@@ -1760,18 +1763,35 @@ function getCurrentMenuRows() {
 
 // 행 편집
 window.editRow = function(rowId) {
+  console.log('✏️ editRow 시작:', rowId);
+  
   const tableRow = document.querySelector(`[data-row-id="${rowId}"]`);
-  if (!tableRow) return;
+  if (!tableRow) {
+    console.error('❌ 편집할 행을 찾을 수 없습니다:', rowId);
+    return;
+  }
+  
+  console.log('✅ 편집할 행 찾음:', tableRow);
   
   // 모든 셀을 편집 모드로 전환
   const displayCells = tableRow.querySelectorAll('.menu-cell-display');
   const inputCells = tableRow.querySelectorAll('.menu-cell-input, .menu-cell-textarea');
   
+  console.log('📝 편집 모드 전환:', { displayCells: displayCells.length, inputCells: inputCells.length });
+  
   displayCells.forEach(cell => cell.style.display = 'none');
   inputCells.forEach(cell => cell.style.display = 'block');
   
+  console.log('✅ 편집 모드 전환 완료');
+  
   // 버튼을 저장/취소로 변경
   const actionsCell = tableRow.querySelector('.menu-row-actions');
+  if (!actionsCell) {
+    console.error('❌ 액션 셀을 찾을 수 없습니다');
+    return;
+  }
+  
+  console.log('🔄 버튼을 저장/취소로 변경');
   actionsCell.innerHTML = `
     <button class="btn btn-success" onclick="saveRowEdit('${rowId}')">
       <svg class="btn-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="width: 12px; height: 12px;">
@@ -1786,26 +1806,120 @@ window.editRow = function(rowId) {
       취소
     </button>
   `;
+  
+  console.log('✅ 버튼 변경 완료');
 };
 
 // 행 편집 저장
 window.saveRowEdit = async function(rowId) {
-  const tableRow = document.querySelector(`[data-row-id="${rowId}"]`);
-  if (!tableRow) return;
+  console.log('🔧 saveRowEdit 시작:', rowId);
   
-  const menuName = tableRow.querySelector('[data-field="menuName"] .menu-cell-input').value.trim();
-  const subMenuName = tableRow.querySelector('[data-field="subMenuName"] .menu-cell-input').value.trim();
-  const description = tableRow.querySelector('[data-field="description"] .menu-cell-textarea').value.trim();
+  const tableRow = document.querySelector(`[data-row-id="${rowId}"]`);
+  if (!tableRow) {
+    console.error('❌ 편집할 행을 찾을 수 없습니다:', rowId);
+    showError('편집할 행을 찾을 수 없습니다.');
+    return;
+  }
+  
+  console.log('✅ 편집할 행 찾음:', tableRow);
+  
+  const menuNameInput = tableRow.querySelector('.menu-cell-input[data-field="menuName"]');
+  const subMenuNameInput = tableRow.querySelector('.menu-cell-input[data-field="subMenuName"]');
+  const descriptionInput = tableRow.querySelector('.menu-cell-textarea[data-field="description"]');
+  
+  if (!menuNameInput || !subMenuNameInput || !descriptionInput) {
+    console.error('❌ 편집 필드를 찾을 수 없습니다:', { menuNameInput, subMenuNameInput, descriptionInput });
+    
+    // 디버깅을 위해 실제 HTML 구조 확인
+    console.log('🔍 테이블 행의 전체 HTML:', tableRow.innerHTML);
+    console.log('🔍 메뉴명 셀:', tableRow.querySelector('[data-field="menuName"]'));
+    console.log('🔍 하위메뉴명 셀:', tableRow.querySelector('[data-field="subMenuName"]'));
+    console.log('🔍 상세설명 셀:', tableRow.querySelector('[data-field="description"]'));
+    
+    showError('편집 필드를 찾을 수 없습니다.');
+    return;
+  }
+  
+  console.log('✅ 편집 필드들 찾음');
+  
+  const menuName = menuNameInput.value.trim();
+  const subMenuName = subMenuNameInput.value.trim();
+  const description = descriptionInput.value.trim();
+  
+  console.log('📝 입력된 값들:', { menuName, subMenuName, description });
   
   if (!menuName || !subMenuName || !description) {
+    console.error('❌ 필수 필드가 비어있음');
     showError('메뉴명, 하위메뉴명, 상세설명을 모두 입력해주세요.');
     return;
   }
   
+  console.log('🔄 표시 셀 업데이트 시작');
+  
   // 표시 셀 업데이트
-  tableRow.querySelector('[data-field="menuName"] .menu-cell-display').textContent = menuName;
-  tableRow.querySelector('[data-field="subMenuName"] .menu-cell-display').textContent = subMenuName;
-  tableRow.querySelector('[data-field="description"] .menu-cell-display').textContent = description;
+  tableRow.querySelector('.menu-cell-display[data-field="menuName"]').textContent = menuName;
+  tableRow.querySelector('.menu-cell-display[data-field="subMenuName"]').textContent = subMenuName;
+  tableRow.querySelector('.menu-cell-display[data-field="description"]').textContent = description;
+  
+  console.log('✅ 표시 셀 업데이트 완료');
+  
+  // 편집 모드 해제
+  const displayCells = tableRow.querySelectorAll('.menu-cell-display');
+  const inputCells = tableRow.querySelectorAll('.menu-cell-input, .menu-cell-textarea');
+  
+  displayCells.forEach(cell => cell.style.display = 'block');
+  inputCells.forEach(cell => cell.style.display = 'none');
+  
+  console.log('✅ 편집 모드 해제 완료');
+  
+  // 버튼을 편집/삭제로 변경
+  const actionsCell = tableRow.querySelector('.menu-row-actions');
+  actionsCell.innerHTML = `
+    <button class="btn btn-warning" onclick="editRow('${rowId}')">
+      <svg class="btn-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="width: 12px; height: 12px;">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
+      </svg>
+      편집
+    </button>
+    <button class="btn btn-danger" onclick="deleteRow('${rowId}')">
+      <svg class="btn-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="width: 12px; height: 12px;">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+      </svg>
+      삭제
+    </button>
+  `;
+  
+  console.log('✅ 버튼 상태 복원 완료');
+  
+  // 표시 영역 업데이트
+  console.log('🔄 표시 영역 업데이트 시작');
+  const currentMenuRows = getCurrentMenuRows();
+  console.log('📊 현재 메뉴 행들:', currentMenuRows);
+  
+  updateGuideDisplay(currentMenuRows);
+  updateGuideStats(currentMenuRows);
+  
+  console.log('✅ 표시 영역 업데이트 완료');
+  
+  // 자동으로 데이터베이스에 저장
+  console.log('💾 데이터베이스 저장 시작');
+  try {
+    await autoSaveMenuGuide(currentMenuRows);
+    console.log('✅ 데이터베이스 저장 완료');
+  } catch (error) {
+    console.error('❌ 데이터베이스 저장 실패:', error);
+    showError('저장 중 오류가 발생했습니다: ' + error.message);
+    return;
+  }
+  
+  console.log('🎉 모든 작업 완료');
+  showSuccess('행이 수정되었습니다.');
+};
+
+// 행 편집 취소
+window.cancelRowEdit = function(rowId) {
+  const tableRow = document.querySelector(`[data-row-id="${rowId}"]`);
+  if (!tableRow) return;
   
   // 편집 모드 해제
   const displayCells = tableRow.querySelectorAll('.menu-cell-display');
@@ -1830,21 +1944,6 @@ window.saveRowEdit = async function(rowId) {
       삭제
     </button>
   `;
-  
-  // 표시 영역 업데이트
-  const currentMenuRows = getCurrentMenuRows();
-  updateGuideDisplay(currentMenuRows);
-  updateGuideStats(currentMenuRows);
-  
-  // 자동으로 데이터베이스에 저장
-  autoSaveMenuGuide(currentMenuRows);
-  
-  showSuccess('행이 수정되었습니다.');
-};
-
-// 행 편집 취소
-window.cancelRowEdit = function(rowId) {
-  loadMenuGuide();
 };
 
 // 행 삭제
@@ -2215,6 +2314,31 @@ function initializeNoticePopup() {
   document.addEventListener('keydown', (e) => {
     if (e.key === 'Escape' && noticePopup.classList.contains('show')) {
       handleNoticeClose();
+    }
+  });
+  
+  // 메뉴 편집 키보드 단축키
+  document.addEventListener('keydown', (e) => {
+    // Ctrl+Enter: 편집 모드에서 저장
+    if (e.ctrlKey && e.key === 'Enter') {
+      const editingRow = document.querySelector('.menu-cell-input[style*="block"], .menu-cell-textarea[style*="block"]')?.closest('tr');
+      if (editingRow) {
+        const rowId = editingRow.dataset.rowId;
+        if (rowId) {
+          saveRowEdit(rowId);
+        }
+      }
+    }
+    
+    // ESC: 편집 모드에서 취소
+    if (e.key === 'Escape') {
+      const editingRow = document.querySelector('.menu-cell-input[style*="block"], .menu-cell-textarea[style*="block"]')?.closest('tr');
+      if (editingRow) {
+        const rowId = editingRow.dataset.rowId;
+        if (rowId) {
+          cancelRowEdit(rowId);
+        }
+      }
     }
   });
 }
