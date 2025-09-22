@@ -8,6 +8,9 @@ import {
   getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged 
 } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-auth.js";
 
+// OAuth 도메인 경고 무시 (GitHub Pages 배포용)
+console.log('Firebase 초기화 중...');
+
 const firebaseConfig = {
   apiKey: "AIzaSyCymSYdvXJ9dsKURunMLFBakduRLUUEQiA",
   authDomain: "eibedevv2request-68d1e.firebaseapp.com",
@@ -101,9 +104,12 @@ export function subscribeConnection(callback) {
 // 인증 관련 함수들
 export async function loginUser(email, password) {
   try {
+    // OAuth 경고 무시하고 이메일/비밀번호 로그인만 사용
     const userCredential = await signInWithEmailAndPassword(auth, email, password);
+    console.log('로그인 성공:', userCredential.user.email);
     return { success: true, user: userCredential.user };
   } catch (error) {
+    console.error('로그인 오류:', error.message);
     return { success: false, error: error.message };
   }
 }

@@ -1,5 +1,19 @@
 /* 로그인 페이지 전용 스타일 */
 
+/* 기본 텍스트 스타일 강화 */
+* {
+  font-family: 'Noto Sans KR', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif !important;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: 'Noto Sans KR', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif !important;
+  font-weight: 600 !important;
+}
+
+p, span, div, button, input, textarea, select {
+  font-family: 'Noto Sans KR', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif !important;
+}
+
 .login-container {
   min-height: 100vh;
   display: flex;
