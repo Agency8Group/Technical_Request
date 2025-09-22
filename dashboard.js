@@ -723,7 +723,7 @@ function updateStats() {
   // 부서 확인 완료율 계산
   const allDepartments = [
     '전략기획', '경영관리', '압타밀', '드리미', 
-    '레이레이', 'CS', '마케팅', 'SCM'
+    '레이레이', '고객센터', '마케팅', 'SCM'
   ];
   const completedDepartments = currentDepartments.filter(dept => dept.noMoreRequests).length;
   const departmentProgress = Math.round((completedDepartments / allDepartments.length) * 100);
@@ -808,7 +808,7 @@ function updateDepartmentProgress() {
   // 모든 부서 목록
   const allDepartments = [
     '전략기획', '경영관리', '압타밀', '드리미', 
-    '레이레이', 'CS', '마케팅', 'SCM'
+    '레이레이', '고객센터', '마케팅', 'SCM'
   ];
   
   progressGrid.innerHTML = '';
