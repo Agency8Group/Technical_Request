@@ -550,6 +550,74 @@
         </div>
     </div>
 
+    <!-- 공지사항 팝업 -->
+    <div id="noticePopup" class="notice-popup">
+        <div class="notice-popup-backdrop"></div>
+        <div class="notice-popup-content">
+            <div class="notice-popup-header">
+                <div class="notice-header-left">
+                    <div class="notice-icon-wrapper">
+                        <div class="notice-icon">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M12 2L13.09 8.26L22 9L13.09 9.74L12 16L10.91 9.74L2 9L10.91 8.26L12 2Z" fill="currentColor"/>
+                            </svg>
+                        </div>
+                        <div class="notice-icon-glow"></div>
+                    </div>
+                    <div class="notice-header-text">
+                        <h2>공지사항</h2>
+                        <p>시스템 업데이트</p>
+                    </div>
+                </div>
+                <button class="notice-popup-close" id="closeNoticePopup">
+                    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M12 4L4 12M4 4L12 12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                </button>
+            </div>
+            <div class="notice-popup-body">
+                <div class="notice-content">
+                    <div class="notice-status-indicator">
+                        <div class="status-dot"></div>
+                        <span>진행중</span>
+                    </div>
+                    <h3>1차 개발 진행 상황</h3>
+                    <div class="notice-description">
+                        <p>수요가 체크된 개발은 현재 진행중이며,</p>
+                        <p>해당 내용은 <strong>기술개발 메뉴</strong>에 <span class="status-text">접수</span> 또는 <span class="status-text">개발중</span>으로 표시되어 있습니다.</p>
+                        <div class="notice-highlight">
+                            <div class="highlight-icon">
+                                <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M8 1L10.5 5.5L15.5 6.5L12 10L12.5 15L8 12.5L3.5 15L4 10L0.5 6.5L5.5 5.5L8 1Z" fill="currentColor"/>
+                                </svg>
+                            </div>
+                            <span>빠르면 <strong>11월 말경</strong> 1차 개발이 완료될 예정입니다</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="notice-popup-footer">
+                <div class="notice-checkbox-container">
+                    <label class="notice-checkbox-label">
+                        <input type="checkbox" id="dontShowToday" class="notice-checkbox">
+                        <span class="notice-checkbox-custom">
+                            <svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M10 3L4.5 8.5L2 6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        </span>
+                        <span class="notice-checkbox-text">하루종일 보지 않기</span>
+                    </label>
+                </div>
+                <button class="notice-btn notice-btn-primary" id="confirmNotice">
+                    <span>확인</span>
+                    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M6 8L8 10L10 8M8 10V4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                </button>
+            </div>
+        </div>
+    </div>
+
     <script type="module" src="dashboard.js"></script>
 </body>
 </html>

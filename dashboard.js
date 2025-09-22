@@ -47,6 +47,7 @@ document.addEventListener('DOMContentLoaded', function() {
     initializeConnectionStatus();
     initializeRefreshButton();
     initializeMenuGuide();
+    initializeNoticePopup();
     setNow();
     
     // 인증 초기화 (마지막에)
@@ -2168,6 +2169,93 @@ function initializeRefreshButton() {
       loadData();
       setStatus('데이터를 새로고침했습니다.', 'success');
     });
+  }
+}
+
+// 공지사항 팝업 초기화
+function initializeNoticePopup() {
+  const noticePopup = document.getElementById('noticePopup');
+  const closeNoticePopup = document.getElementById('closeNoticePopup');
+  const confirmNotice = document.getElementById('confirmNotice');
+  const dontShowToday = document.getElementById('dontShowToday');
+  
+  if (!noticePopup) return;
+  
+  // 하루종일 보지 않기 체크 여부 확인
+  if (shouldShowNotice()) {
+    // 팝업 표시 (페이지 로드 시)
+    setTimeout(() => {
+      showNoticePopup();
+    }, 1000); // 1초 후 표시
+  }
+  
+  // 닫기 버튼 이벤트
+  if (closeNoticePopup) {
+    closeNoticePopup.addEventListener('click', () => {
+      handleNoticeClose();
+    });
+  }
+  
+  // 확인 버튼 이벤트
+  if (confirmNotice) {
+    confirmNotice.addEventListener('click', () => {
+      handleNoticeClose();
+    });
+  }
+  
+  // 백드롭 클릭 시 닫기
+  const backdrop = noticePopup.querySelector('.notice-popup-backdrop');
+  if (backdrop) {
+    backdrop.addEventListener('click', () => {
+      handleNoticeClose();
+    });
+  }
+  
+  // ESC 키로 닫기
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && noticePopup.classList.contains('show')) {
+      handleNoticeClose();
+    }
+  });
+}
+
+// 공지사항 표시 여부 확인
+function shouldShowNotice() {
+  const today = new Date().toDateString();
+  const lastHiddenDate = localStorage.getItem('noticeHiddenDate');
+  
+  // 오늘 날짜와 마지막으로 숨긴 날짜가 다르면 표시
+  return lastHiddenDate !== today;
+}
+
+// 공지사항 닫기 처리
+function handleNoticeClose() {
+  const dontShowToday = document.getElementById('dontShowToday');
+  
+  // 하루종일 보지 않기 체크박스가 체크되어 있으면
+  if (dontShowToday && dontShowToday.checked) {
+    const today = new Date().toDateString();
+    localStorage.setItem('noticeHiddenDate', today);
+  }
+  
+  hideNoticePopup();
+}
+
+// 공지사항 팝업 표시
+function showNoticePopup() {
+  const noticePopup = document.getElementById('noticePopup');
+  if (noticePopup) {
+    noticePopup.classList.add('show');
+    document.body.style.overflow = 'hidden'; // 스크롤 방지
+  }
+}
+
+// 공지사항 팝업 숨기기
+function hideNoticePopup() {
+  const noticePopup = document.getElementById('noticePopup');
+  if (noticePopup) {
+    noticePopup.classList.remove('show');
+    document.body.style.overflow = ''; // 스크롤 복원
   }
 }
 
