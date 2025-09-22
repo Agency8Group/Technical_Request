@@ -1872,64 +1872,7 @@ select:focus {
     }
 }
 
-/* 펄스 효과가 있는 버튼들 */
-#newRequestBtn,
-#submitQuestionBtn,
-#addRowBtn,
-#saveDeptBtn {
-    position: relative;
-    overflow: hidden;
-}
 
-#newRequestBtn::before,
-#submitQuestionBtn::before,
-#addRowBtn::before,
-#saveDeptBtn::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    border: 2px solid transparent;
-    border-radius: inherit;
-    background: linear-gradient(45deg, #667eea, #764ba2, #667eea) border-box;
-    mask: linear-gradient(#fff 0 0) padding-box, linear-gradient(#fff 0 0);
-    mask-composite: exclude;
-    -webkit-mask: linear-gradient(#fff 0 0) padding-box, linear-gradient(#fff 0 0);
-    -webkit-mask-composite: xor;
-    animation: pulse-border 2s ease-in-out infinite;
-    pointer-events: none;
-}
-
-@keyframes pulse-border {
-    0%, 100% {
-        opacity: 0.6;
-        transform: scale(1);
-    }
-    50% {
-        opacity: 1;
-        transform: scale(1.02);
-    }
-}
-
-/* 호버 시 펄스 효과 강화 */
-#newRequestBtn:hover::before,
-#submitQuestionBtn:hover::before,
-#addRowBtn:hover::before,
-#saveDeptBtn:hover::before {
-    animation-duration: 1s;
-    opacity: 0.8;
-}
-
-/* 포커스 시 펄스 효과 */
-#newRequestBtn:focus::before,
-#submitQuestionBtn:focus::before,
-#addRowBtn:focus::before,
-#saveDeptBtn:focus::before {
-    animation-duration: 0.8s;
-    opacity: 1;
-}
 
 /* 필터링 드롭다운 스타일 */
 .filter-group {
