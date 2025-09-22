@@ -1,0 +1,533 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="EIBE_DEV_V2_request - 기술개발 요청 및 질의응답 관리 시스템">
+    <meta name="keywords" content="EIBE, 개발요청, 질의응답, 대시보드, 관리시스템">
+    <meta name="author" content="EIBE Development Team">
+    <title>EIBE_DEV_V2_request - 요청 관리 시스템</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="dashboard.css">
+    <!-- Tailwind Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/heroicons@2.0.18/24/outline/index.css">
+    <script src="https://unpkg.com/heroicons@2.0.18/24/outline/index.js"></script>
+    
+    <!-- Excel 파일 처리 라이브러리 -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+</head>
+<body>
+    <div class="dashboard-container">
+        <!-- 사이드바 -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <h2>EIBE 요청 시스템</h2>
+                <div class="conn-indicator">
+                    <span class="dot" id="connDot"></span>
+                    <span class="help" id="connText">연결 확인 중...</span>
+                </div>
+                <div class="user-info">
+                    <div class="user-email" id="userEmail">사용자 정보 로딩 중...</div>
+                    <button class="logout-btn" id="logoutBtn">
+                        <svg class="logout-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path>
+                        </svg>
+                        <span>로그아웃</span>
+                    </button>
+                </div>
+            </div>
+            
+            <nav class="sidebar-nav">
+                <button class="nav-item active" data-section="overview">
+                    <svg class="nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+                    </svg>
+                    <span>대시보드</span>
+                </button>
+                <button class="nav-item" data-section="requests">
+                    <svg class="nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path>
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                    </svg>
+                    <span>기술개발 요청</span>
+                </button>
+                <button class="nav-item" data-section="qna">
+                    <svg class="nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path>
+                    </svg>
+                    <span>질의응답</span>
+                </button>
+                <button class="nav-item" data-section="menu-guide">
+                    <svg class="nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                    </svg>
+                    <span>메뉴별 상세 설명</span>
+                </button>
+                <button class="nav-item" data-section="departments">
+                    <svg class="nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
+                    </svg>
+                    <span>부서 최종 확인</span>
+                </button>
+            </nav>
+        </aside>
+
+        <!-- 메인 콘텐츠 -->
+        <main class="main-content">
+            <!-- 대시보드 개요 -->
+            <section id="overview" class="content-section active">
+                <div class="section-header">
+                    <h1>대시보드 개요</h1>
+                    <div class="header-actions">
+                        <a href="사용자_설명서.md" target="_blank" class="btn btn-info">
+                            <svg class="btn-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
+                            </svg>
+                            사용자 설명서
+                        </a>
+                        <a href="개발자_코멘트_설명서.md" target="_blank" class="btn btn-warning">
+                            <svg class="btn-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path>
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                            </svg>
+                            개발자 가이드
+                        </a>
+                        <button class="btn btn-secondary" id="refreshBtn">새로고침</button>
+                    </div>
+                </div>
+                
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path>
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                            </svg>
+                        </div>
+                        <div class="stat-content">
+                            <h3 id="totalRequests">0</h3>
+                            <p>총 요청 건수</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                            </svg>
+                        </div>
+                        <div class="stat-content">
+                            <h3 id="pendingRequests">0</h3>
+                            <p>진행중 요청</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                            </svg>
+                        </div>
+                        <div class="stat-content">
+                            <h3 id="completedRequests">0</h3>
+                            <p>완료된 요청</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path>
+                            </svg>
+                        </div>
+                        <div class="stat-content">
+                            <h3 id="totalQnA">0</h3>
+                            <p>누적된 질의응답 건수</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
+                            </svg>
+                        </div>
+                        <div class="stat-content">
+                            <h3 id="departmentProgress">0%</h3>
+                            <p>부서 확인 완료율 </p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 부서 확인 진행률 -->
+                <div class="department-progress">
+                    <h2>부서 최종 확인 현황</h2>
+                    <div class="progress-grid" id="departmentProgressGrid">
+                        <!-- 부서별 진행률이 여기에 표시됩니다 -->
+                    </div>
+                </div>
+
+                <div class="recent-activity">
+                    <h2>최근 활동</h2>
+                    <div id="recentActivityList" class="activity-list">
+                        <!-- 최근 활동 목록이 여기에 표시됩니다 -->
+                    </div>
+                </div>
+            </section>
+
+            <!-- 기술개발 요청 -->
+            <section id="requests" class="content-section">
+                <div class="section-header">
+                    <h1>기술개발 요청</h1>
+                    <div class="header-actions">
+                        <button class="btn btn-primary" id="newRequestBtn">새 요청 등록</button>
+                    </div>
+                </div>
+
+                <!-- 요청 등록 폼 (토글) -->
+                <div id="requestForm" class="form-section" style="display: none;">
+                    <form id="requestFormElement" class="form-grid">
+                        <div>
+                            <label for="title">요청제목 <span class="required">*</span></label>
+                            <input id="title" name="title" type="text" placeholder="예) 재고 조정 일괄 업로드 기능" required>
+                            <div class="help">요청사항을 간단명료하게 입력하세요</div>
+                        </div>
+
+                        <div class="form-grid three">
+                            <div>
+                                <label for="developmentType">개발유형 <span class="required">*</span></label>
+                                <select id="developmentType" name="developmentType" required>
+                                    <option value="">개발 유형을 선택하세요</option>
+                                    <option value="UX/UI 개선">UX/UI 개선</option>
+                                    <option value="기능 추가">기능 추가</option>
+                                    <option value="메뉴 추가">메뉴 추가</option>
+                                    <option value="계정 관리">계정 관리</option>
+                                    <option value="권한 관리">권한 관리</option>
+                                    <option value="사용자 관리">사용자 관리</option>
+                                    <option value="데이터 관리">데이터 관리</option>
+                                    <option value="보고서 개발">보고서 개발</option>
+                                    <option value="대시보드 개발">대시보드 개발</option>
+                                    <option value="검색 기능">검색 기능</option>
+                                    <option value="필터링 기능">필터링 기능</option>
+                                    <option value="정렬 기능">정렬 기능</option>
+                                    <option value="엑셀 업로드/다운로드">엑셀 업로드/다운로드</option>
+                                    <option value="PDF 생성">PDF 생성</option>
+                                    <option value="이메일 발송">이메일 발송</option>
+                                    <option value="알림 기능">알림 기능</option>
+                                    <option value="로그 관리">로그 관리</option>
+                                    <option value="백업/복원">백업/복원</option>
+                                    <option value="버그 수정">버그 수정</option>
+                                    <option value="성능 최적화">성능 최적화</option>
+                                    <option value="보안 강화">보안 강화</option>
+                                    <option value="데이터베이스 개선">데이터베이스 개선</option>
+                                    <option value="API 개발">API 개발</option>
+                                    <option value="모바일 대응">모바일 대응</option>
+                                    <option value="반응형 웹">반응형 웹</option>
+                                    <option value="다국어 지원">다국어 지원</option>
+                                    <option value="접근성 개선">접근성 개선</option>
+                                    <option value="테스트 자동화">테스트 자동화</option>
+                                    <option value="배포 자동화">배포 자동화</option>
+                                    <option value="모니터링 시스템">모니터링 시스템</option>
+                                    <option value="기타">기타</option>
+                                </select>
+                                <div class="help">개발 유형을 선택하세요</div>
+                            </div>
+                            <div>
+                                <label for="requesterName">요청자 이름 <span class="required">*</span></label>
+                                <input id="requesterName" name="requesterName" type="text" placeholder="요청자 이름을 입력하세요" required>
+                                <div class="help">요청자 이름을 입력하세요</div>
+                            </div>
+                            <div>
+                                <label for="createdAt">등록일시</label>
+                                <input id="createdAt" name="createdAt" type="text" readonly>
+                                <div class="help">자동으로 현재 시간이 설정됩니다</div>
+                            </div>
+                        </div>
+
+                        <div>
+                            <label for="detail">상세내용 <span class="required">*</span></label>
+                            <textarea id="detail" name="detail" placeholder="요청 내용을 자세히 입력하세요. 예상 결과물, 참고 자료, 특별한 요구사항 등을 포함해주세요." required></textarea>
+                            <div class="help">요청사항의 구체적인 내용과 기대 결과를 상세히 작성해주세요</div>
+                        </div>
+
+
+                        <div class="form-grid two">
+                            <div>
+                                <label for="photo">첨부파일(이미지)</label>
+                                <input id="photo" name="photo" type="file" accept="image/*" multiple>
+                                <div class="help">이미지 업로드</div>
+                            </div>
+                            <div>
+                                <label for="excel">첨부파일(엑셀)</label>
+                                <input id="excel" name="excel" type="file" accept=".xls,.xlsx">
+                                <div class="help">엑셀 업로드</div>
+                            </div>
+                        </div>
+
+                        <div class="form-actions">
+                            <button class="btn btn-primary" type="submit" id="submitBtn">요청 등록</button>
+                            <button class="btn btn-secondary" type="button" id="cancelBtn">취소</button>
+                        </div>
+                        <div id="statusMsg" class="status" style="display:none"></div>
+                    </form>
+                </div>
+
+                <!-- 요청 목록 테이블 -->
+                <div class="data-table-container">
+                    <div class="table-header">
+                        <h3>요청 목록</h3>
+                        <div class="table-actions">
+                            <button class="btn btn-secondary" id="exportRequestsBtn">요청 데이터 다운로드 (CSV)</button>
+                        </div>
+                    </div>
+                    <div class="table-wrapper">
+                        <table id="requestsTable" class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>제목</th>
+                                    <th>개발유형</th>
+                                    <th>우선순위</th>
+                                    <th>상태</th>
+                                    <th>작성자</th>
+                                    <th>등록일</th>
+                                    <th>액션</th>
+                                </tr>
+                            </thead>
+                            <tbody id="requestsTableBody">
+                                <!-- 요청 목록이 여기에 표시됩니다 -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 질의응답 -->
+            <section id="qna" class="content-section">
+                <div class="section-header">
+                    <h1>질의응답</h1>
+                    <div class="header-actions">
+                        <button class="btn btn-secondary" id="refreshQnABtn">새로고침</button>
+                    </div>
+                </div>
+
+                <!-- 질문 등록 카드 -->
+                <div class="qna-form-card">
+                    <div class="card-header">
+                        <div class="card-icon">
+                            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+                            </svg>
+                        </div>
+                        <h3>새 질문 등록</h3>
+                    </div>
+                    <div class="card-body">
+                        <div class="form-group">
+                            <label for="qnaRequesterName">요청자 이름</label>
+                            <input type="text" id="qnaRequesterName" placeholder="요청자 이름을 입력하세요" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="qnaQuestion">질문 내용</label>
+                            <textarea id="qnaQuestion" placeholder="궁금한 점이나 문의사항을 자유롭게 작성해주세요..." rows="4"></textarea>
+                        </div>
+                        <div class="form-actions">
+                            <button class="btn btn-primary" id="submitQuestionBtn">
+                                <svg class="btn-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path>
+                                </svg>
+                                질문 등록
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 질의응답 목록 -->
+                <div class="qna-list-container">
+                    <div class="list-header">
+                        <h3>질의응답 목록</h3>
+                        <div class="list-stats">
+                            <span class="stat-badge" id="qnaStats">총 0건</span>
+                        </div>
+                    </div>
+                    <div class="qna-list" id="qnaList">
+                        <!-- 질의응답 목록이 여기에 표시됩니다 -->
+                    </div>
+                </div>
+            </section>
+
+            <!-- 메뉴별 상세 설명 -->
+            <section id="menu-guide" class="content-section">
+                <div class="section-header">
+                    <h1>메뉴별 상세 설명</h1>
+                    <div class="header-actions">
+                        <button class="btn btn-secondary" id="refreshGuideBtn">새로고침</button>
+                    </div>
+                </div>
+
+                <!-- 메뉴 가이드 카드 -->
+                <div class="guide-form-card">
+                    <div class="card-header">
+                        <div class="card-icon">
+                            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                            </svg>
+                        </div>
+                        <h3>개발자 안내 가이드</h3>
+                    </div>
+                    <div class="card-body">
+                        <!-- 새 행 추가 -->
+                        <div class="form-group">
+                            <div class="add-row-form">
+                                <input type="text" id="newMenuName" placeholder="메뉴명" class="menu-input">
+                                <input type="text" id="newSubMenuName" placeholder="하위메뉴명" class="menu-input">
+                                <textarea id="newMenuDescription" placeholder="상세설명" class="menu-desc-input" rows="2"></textarea>
+                                <button class="btn btn-success" id="addRowBtn">
+                                    <svg class="btn-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+                                    </svg>
+                                    행 추가
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <!-- 메뉴 테이블 -->
+                        <div class="form-group">
+                            <label>메뉴별 상세 설명</label>
+                            <div class="menu-table-container">
+                                <table class="menu-table" id="menuTable">
+                                    <thead>
+                                        <tr>
+                                            <th style="width: 80px;">NO.</th>
+                                            <th style="width: 150px;">메뉴</th>
+                                            <th style="width: 150px;">하위메뉴</th>
+                                            <th>상세설명</th>
+                                            <th style="width: 100px;">작업</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="menuTableBody">
+                                        <!-- 메뉴 행들이 여기에 동적으로 추가됩니다 -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        
+                        <div class="form-actions">
+                            <button class="btn btn-success" id="exportGuideBtn">
+                                <svg class="btn-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                                </svg>
+                                CSV 다운로드
+                            </button>
+                            <button class="btn btn-primary" id="importGuideBtn">
+                                <svg class="btn-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M9 19l3 3m0 0l3-3m-3 3V10"></path>
+                                </svg>
+                                Excel 업로드
+                            </button>
+                            <input type="file" id="excelFileInput" accept=".xlsx,.xls" style="display: none;">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 가이드 표시 영역 -->
+                <div class="guide-display-container">
+                    <div class="display-header">
+                        <h3>현재 가이드 내용</h3>
+                        <div class="display-stats">
+                            <span class="stat-badge" id="guideStats">문자 수: 0</span>
+                        </div>
+                    </div>
+                    <div class="guide-display" id="guideDisplay">
+                        <!-- 가이드 내용이 여기에 표시됩니다 -->
+                    </div>
+                </div>
+            </section>
+
+            <!-- 부서 확인 -->
+            <section id="departments" class="content-section">
+                <div class="section-header">
+                    <h1>부서 최종 확인</h1>
+                </div>
+
+                <div class="form-section">
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="departmentSelect">부서 선택</label>
+                            <select id="departmentSelect" name="department">
+                                <option value="">부서를 선택하세요</option>
+                                <option value="전략기획">전략기획</option>
+                                <option value="경영관리">경영관리</option>
+                                <option value="압타밀">압타밀</option>
+                                <option value="드리미">드리미</option>
+                                <option value="레이레이">레이레이</option>
+                                <option value="CS">CS</option>
+                                <option value="마케팅">마케팅</option>
+                                <option value="오프라인">오프라인</option>
+                            </select>
+                            <div class="help">해당 부서를 선택하세요</div>
+                        </div>
+
+                        <!-- 부서 확인 완료 카드 (부서 선택 후에만 표시) -->
+                        <div class="form-group" id="completionCardContainer" style="display: none;">
+                            <div class="completion-card" id="completionCard">
+                                <div class="completion-header">
+                                    <div class="completion-icon">
+                                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                        </svg>
+                                    </div>
+                                    <div class="completion-title">부서 확인 완료</div>
+                                </div>
+                                <div class="completion-content">
+                                    <div class="completion-description">
+                                        <span id="selectedDeptName"></span> 부서의 모든 요청사항이 완료되었습니다.<br>
+                                        <strong>개발사에 전달할 준비가 완료</strong>되었습니다.
+                                    </div>
+                                    <div class="completion-toggle">
+                                        <input type="checkbox" id="noMoreRequests" class="completion-checkbox">
+                                        <label for="noMoreRequests" class="completion-label">
+                                            <span class="completion-text">확인 완료</span>
+                                            <span class="completion-indicator"></span>
+                                        </label>
+                                    </div>
+                                </div>
+                                <div id="autoComment" class="completion-message"></div>
+                            </div>
+                        </div>
+
+                        <button class="btn btn-primary" id="saveDeptBtn">부서 확인 저장</button>
+                        <div id="deptStatus" class="status" style="display:none"></div>
+                    </div>
+                </div>
+            </section>
+
+        </main>
+    </div>
+
+    <!-- 요청 상세보기 모달 -->
+    <div id="requestModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>요청 상세보기</h2>
+                <span class="close" id="closeModal">&times;</span>
+            </div>
+            <div class="modal-body" id="modalBody">
+                <!-- 동적으로 내용이 채워집니다 -->
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" id="closeModalBtn">닫기</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 파일 다운로드 모달 -->
+    <div id="fileModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>첨부파일</h2>
+                <span class="close" id="closeFileModal">&times;</span>
+            </div>
+            <div class="modal-body" id="fileModalBody">
+                <!-- 파일 목록이 표시됩니다 -->
+            </div>
+        </div>
+    </div>
+
+    <script type="module" src="dashboard.js"></script>
+</body>
+</html>

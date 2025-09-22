@@ -3,1038 +3,153 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>동수 기술개발 요청 접수</title>
-    <style>
-        /* ===== 필수 스타일 (절대 지우지 마세요!) ===== */
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans KR', Roboto, sans-serif;
-            max-width: 900px;
-            margin: 0 auto;
-            padding: 40px 20px;
-            background: linear-gradient(135deg, #0f0f23 0%, #1a1a2e 25%, #16213e 50%, #1a1a2e 75%, #0f0f23 100%);
-            min-height: 100vh;
-            color: #ffffff;
-            position: relative;
-        }
-        
-        body::before {
-            content: '';
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: 
-                radial-gradient(circle at 20% 80%, rgba(99, 102, 241, 0.12) 0%, transparent 50%),
-                radial-gradient(circle at 80% 20%, rgba(168, 85, 247, 0.12) 0%, transparent 50%),
-                radial-gradient(circle at 40% 40%, rgba(236, 72, 153, 0.08) 0%, transparent 50%),
-                radial-gradient(circle at 60% 60%, rgba(34, 197, 94, 0.06) 0%, transparent 50%);
-            pointer-events: none;
-            z-index: -1;
-        }
-        
-        .form-container {
-            background: rgba(255, 255, 255, 0.04);
-            backdrop-filter: blur(25px);
-            padding: 60px;
-            border-radius: 24px;
-            box-shadow: 
-                0 32px 64px -12px rgba(0, 0, 0, 0.6),
-                0 0 0 1px rgba(255, 255, 255, 0.12),
-                inset 0 1px 0 rgba(255, 255, 255, 0.25);
-            border: 1px solid rgba(255, 255, 255, 0.15);
-            position: relative;
-            max-width: 700px;
-            margin: 0 auto;
-            overflow: hidden;
-        }
-        
-        .form-container::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 4px;
-            background: linear-gradient(90deg, #6366f1, #8b5cf6, #ec4899, #22c55e, #6366f1);
-            background-size: 300% 100%;
-            animation: shimmer 4s ease-in-out infinite;
-        }
-        
-        @keyframes shimmer {
-            0%, 100% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-        }
-        
-        @keyframes gradient-shift {
-            0%, 100% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-        }
-        
-        .form-group {
-            margin-bottom: 32px;
-            position: relative;
-        }
-        
-        .form-group::after {
-            content: '';
-            position: absolute;
-            bottom: -16px;
-            left: 0;
-            right: 0;
-            height: 1px;
-            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.15), transparent);
-        }
-        
-        label {
-            display: block;
-            margin-bottom: 12px;
-            font-weight: 700;
-            color: #ffffff;
-            font-size: 14px;
-            text-transform: uppercase;
-            letter-spacing: 1.2px;
-            position: relative;
-        }
-        
-        label::before {
-            content: '';
-            display: inline-block;
-            width: 6px;
-            height: 6px;
-            background: linear-gradient(45deg, #6366f1, #8b5cf6);
-            border-radius: 50%;
-            margin-right: 10px;
-            vertical-align: middle;
-            box-shadow: 0 0 12px rgba(99, 102, 241, 0.6);
-        }
-        
-        input[type="text"], input[type="email"], textarea {
-            width: 100%;
-            padding: 18px 24px;
-            border: 2px solid rgba(255, 255, 255, 0.15);
-            border-radius: 16px;
-            font-size: 16px;
-            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-            box-sizing: border-box;
-            background: rgba(255, 255, 255, 0.06);
-            font-weight: 500;
-            color: #ffffff;
-            backdrop-filter: blur(15px);
-        }
-        
-        input[type="file"], select {
-            width: 100%;
-            padding: 18px 24px;
-            border: 2px solid rgba(255, 255, 255, 0.15);
-            border-radius: 16px;
-            font-size: 16px;
-            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-            box-sizing: border-box;
-            background: rgba(255, 255, 255, 0.06);
-            cursor: pointer;
-            color: #ffffff;
-            backdrop-filter: blur(15px);
-            appearance: none;
-            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%23ffffff' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='m6 8 4 4 4-4'/%3e%3c/svg%3e");
-            background-position: right 16px center;
-            background-repeat: no-repeat;
-            background-size: 16px;
-            padding-right: 48px;
-        }
-        
-        input:focus, textarea:focus, select:focus {
-            outline: none;
-            border-color: #6366f1;
-            box-shadow: 
-                0 0 0 4px rgba(99, 102, 241, 0.25),
-                0 12px 32px -8px rgba(99, 102, 241, 0.4);
-            background: rgba(255, 255, 255, 0.12);
-            transform: translateY(-2px);
-        }
-        
-        select option {
-            background: #1a1a2e;
-            color: #ffffff;
-            padding: 12px;
-            border: none;
-        }
-        
-        textarea {
-            resize: vertical;
-            min-height: 140px;
-            line-height: 1.7;
-            font-family: 'Inter', sans-serif;
-        }
-        
-        button {
-            background: linear-gradient(135deg, #4f46e5 0%, #6366f1 25%, #8b5cf6 50%, #6366f1 75%, #4f46e5 100%);
-            background-size: 300% 300%;
-            color: white;
-            padding: 24px 40px;
-            border: none;
-            border-radius: 20px;
-            font-size: 18px;
-            font-weight: 800;
-            cursor: pointer;
-            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
-            width: 100%;
-            position: relative;
-            overflow: hidden;
-            box-shadow: 
-                0 16px 40px -12px rgba(99, 102, 241, 0.6),
-                0 0 0 1px rgba(255, 255, 255, 0.15),
-                inset 0 1px 0 rgba(255, 255, 255, 0.3);
-            letter-spacing: 0.8px;
-            text-transform: uppercase;
-        }
-        
-        button:hover {
-            transform: translateY(-6px) scale(1.02);
-            box-shadow: 
-                0 24px 56px -16px rgba(99, 102, 241, 0.7),
-                0 0 0 1px rgba(255, 255, 255, 0.25);
-            background-position: 100% 100%;
-        }
-        
-        button::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
-            transition: left 0.8s ease;
-        }
-        
-        button:hover::before {
-            left: 100%;
-        }
-        
-        button:active {
-            transform: translateY(-3px) scale(0.98);
-        }
-        
-        button:disabled {
-            opacity: 0.6;
-            cursor: not-allowed;
-            transform: none;
-            box-shadow: none;
-        }
-        
-        .status {
-            margin-top: 32px;
-            padding: 24px;
-            border-radius: 20px;
-            text-align: center;
-            font-weight: 700;
-            border: 2px solid rgba(255, 255, 255, 0.15);
-            box-shadow: 0 12px 40px -12px rgba(0, 0, 0, 0.5);
-            font-size: 15px;
-            letter-spacing: 0.5px;
-            background: rgba(255, 255, 255, 0.08);
-            backdrop-filter: blur(20px);
-        }
-        
-        .success {
-            background: rgba(34, 197, 94, 0.2);
-            color: #4ade80;
-            border: 2px solid rgba(34, 197, 94, 0.4);
-            box-shadow: 0 12px 40px -12px rgba(34, 197, 94, 0.3);
-        }
-        
-        .error {
-            background: rgba(239, 68, 68, 0.2);
-            color: #f87171;
-            border: 2px solid rgba(239, 68, 68, 0.4);
-            box-shadow: 0 12px 40px -12px rgba(239, 68, 68, 0.3);
-        }
-        
-        .loading {
-            background: rgba(99, 102, 241, 0.2);
-            color: #a5b4fc;
-            border: 2px solid rgba(99, 102, 241, 0.4);
-            box-shadow: 0 12px 40px -12px rgba(99, 102, 241, 0.3);
-            animation: pulse 2s infinite;
-        }
-        
-        @keyframes pulse {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.8; }
-        }
-        
-        .file-info {
-            margin-top: 16px;
-            font-size: 13px;
-            color: rgba(255, 255, 255, 0.8);
-            font-weight: 600;
-            padding: 16px 20px;
-            background: rgba(99, 102, 241, 0.15);
-            border-radius: 12px;
-            border-left: 4px solid #6366f1;
-            backdrop-filter: blur(15px);
-            border: 1px solid rgba(255, 255, 255, 0.15);
-        }
-        
-        .required {
-            color: #f87171;
-            font-weight: 800;
-        }
-        
-        /* 로고 스타일 */
-        .logo {
-            text-align: center;
-            margin-bottom: 32px;
-        }
-        
-        .logo h1 {
-            font-size: 36px;
-            font-weight: 900;
-            background: linear-gradient(135deg, #6366f1, #8b5cf6, #ec4899, #22c55e, #6366f1);
-            background-size: 300% 300%;
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            margin: 0;
-            animation: gradient-shift 8s ease infinite;
-            letter-spacing: -1.5px;
-            text-shadow: 0 0 40px rgba(99, 102, 241, 0.4);
-        }
-        
-        .logo .subtitle {
-            font-size: 16px;
-            color: #a0aec0;
-            margin-top: 8px;
-            font-weight: 600;
-            letter-spacing: 0.5px;
-            text-transform: uppercase;
-        }
-        
-        /* 공지사항 스타일 */
-        .notice-section {
-            margin-bottom: 40px;
-            background: rgba(255, 255, 255, 0.08);
-            border-radius: 20px;
-            padding: 24px;
-            border: 1px solid rgba(255, 255, 255, 0.15);
-            backdrop-filter: blur(20px);
-            box-shadow: 0 8px 32px -8px rgba(0, 0, 0, 0.3);
-        }
-        
-        .notice-header h3 {
-            margin: 0 0 20px 0;
-            font-size: 20px;
-            font-weight: 800;
-            color: #ffffff;
-            text-align: center;
-            letter-spacing: 0.5px;
-        }
-        
-        .notice-content {
-            display: flex;
-            flex-direction: column;
-            gap: 16px;
-        }
-        
-        .notice-item {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            padding: 16px 20px;
-            background: rgba(255, 255, 255, 0.06);
-            border-radius: 12px;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            transition: all 0.3s ease;
-        }
-        
-        .notice-item:hover {
-            background: rgba(255, 255, 255, 0.1);
-            transform: translateY(-2px);
-            box-shadow: 0 8px 24px -8px rgba(0, 0, 0, 0.3);
-        }
-        
-        .notice-icon {
-            font-size: 20px;
-            flex-shrink: 0;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            width: 24px;
-            height: 24px;
-        }
-        
-        .notice-text {
-            font-size: 14px;
-            line-height: 1.6;
-            color: #ffffff;
-            font-weight: 500;
-            display: flex;
-            align-items: center;
-        }
-        
-        .notice-text strong {
-            color: #a5b4fc;
-            font-weight: 700;
-        }
-        
-        .mockup-link {
-            color: #ffffff;
-            text-decoration: none;
-            font-weight: 700;
-            padding: 6px 12px;
-            border-radius: 8px;
-            background: rgba(99, 102, 241, 0.3);
-            transition: all 0.3s ease;
-            border: 1px solid rgba(99, 102, 241, 0.5);
-            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
-        }
-        
-        .mockup-link:hover {
-            background: rgba(99, 102, 241, 0.5);
-            color: #ffffff;
-            transform: translateY(-2px);
-            box-shadow: 0 6px 16px -4px rgba(99, 102, 241, 0.6);
-            border-color: rgba(99, 102, 241, 0.7);
-        }
-        
-        /* 추가 고급 효과 */
-        .form-container::after {
-            content: '';
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            width: 200%;
-            height: 200%;
-            background: radial-gradient(circle, rgba(99, 102, 241, 0.03) 0%, transparent 70%);
-            transform: translate(-50%, -50%);
-            pointer-events: none;
-            z-index: -1;
-        }
-        
-
-        
-        /* ===== 모달 팝업 스타일 ===== */
-        .modal-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.8);
-            backdrop-filter: blur(10px);
-            display: none;
-            justify-content: center;
-            align-items: center;
-            z-index: 9999;
-            animation: fadeIn 0.3s ease-out;
-        }
-        
-        .modal-content {
-            background: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(20px);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            border-radius: 20px;
-            padding: 40px;
-            text-align: center;
-            max-width: 400px;
-            width: 90%;
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.8);
-            animation: slideIn 0.4s ease-out;
-        }
-        
-        .modal-spinner {
-            width: 60px;
-            height: 60px;
-            border: 4px solid rgba(255, 255, 255, 0.3);
-            border-top: 4px solid #3b82f6;
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-            margin: 0 auto 20px;
-        }
-        
-        .modal-title {
-            font-size: 24px;
-            font-weight: 700;
-            margin-bottom: 16px;
-            color: #ffffff;
-        }
-        
-        .modal-message {
-            font-size: 16px;
-            color: #e5e7eb;
-            margin-bottom: 24px;
-            line-height: 1.6;
-        }
-        
-        .modal-progress {
-            width: 100%;
-            height: 8px;
-            background: rgba(255, 255, 255, 0.2);
-            border-radius: 4px;
-            overflow: hidden;
-            margin-bottom: 20px;
-        }
-        
-        .modal-progress-bar {
-            height: 100%;
-            background: linear-gradient(90deg, #3b82f6, #8b5cf6);
-            border-radius: 4px;
-            width: 0%;
-            transition: width 0.3s ease;
-            animation: progressShimmer 2s ease-in-out infinite;
-        }
-        
-        .modal-cancel-btn {
-            background: rgba(239, 68, 68, 0.2);
-            border: 1px solid rgba(239, 68, 68, 0.4);
-            color: #fca5a5;
-            padding: 12px 24px;
-            border-radius: 12px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-        
-        .modal-cancel-btn:hover {
-            background: rgba(239, 68, 68, 0.3);
-            border-color: rgba(239, 68, 68, 0.6);
-        }
-        
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
-        }
-        
-        @keyframes slideIn {
-            from { 
-                opacity: 0;
-                transform: translateY(-30px) scale(0.9);
-            }
-            to { 
-                opacity: 1;
-                transform: translateY(0) scale(1);
-            }
-        }
-        
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-        
-        @keyframes progressShimmer {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.7; }
-        }
-        
-        /* ===== 반응형 디자인 ===== */
-        @media (max-width: 768px) {
-            body {
-                padding: 20px 10px;
-            }
-            
-            .form-container {
-                padding: 40px 20px;
-            }
-            
-            .form-group {
-                margin-bottom: 24px;
-            }
-            
-            .file-upload-container {
-                flex-direction: column;
-                gap: 16px;
-            }
-            
-            .file-upload-box {
-                width: 100%;
-            }
-            
-            .modal-content {
-                padding: 30px 20px;
-                margin: 20px;
-            }
-        }
-    </style>
+    <meta name="description" content="EIBE_DEV_V2_request - 로그인 페이지">
+    <meta name="keywords" content="EIBE, 로그인, 인증, 요청시스템">
+    <meta name="author" content="EIBE Development Team">
+    <title>EIBE_DEV_V2_request - 로그인</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="login.css">
 </head>
 <body>
-    <!-- ===== 모달 팝업 ===== -->
-    <div id="modalOverlay" class="modal-overlay">
-        <div class="modal-content">
-            <div class="modal-spinner"></div>
-            <div class="modal-title">처리 중입니다</div>
-            <div class="modal-message">
-                파일을 서버로 전송하고 있습니다...<br>
-                이 과정은 10-30초 정도 소요됩니다.<br>
-                <strong>페이지를 닫지 마세요!</strong>
+    <div class="login-container">
+        <div class="login-card">
+            <div class="login-header">
+                <h1>EIBE 요청 시스템</h1>
+                <p class="subtitle">로그인이 필요합니다</p>
             </div>
-            <div class="modal-progress">
-                <div class="modal-progress-bar" id="progressBar"></div>
+
+            <form id="loginForm" class="login-form">
+                <div class="form-group">
+                    <label for="email">이메일</label>
+                    <input 
+                        type="email" 
+                        id="email" 
+                        name="email" 
+                        placeholder="이메일을 입력하세요"
+                        required
+                        autocomplete="email"
+                    >
+                </div>
+
+                <div class="form-group">
+                    <label for="password">비밀번호</label>
+                    <input 
+                        type="password" 
+                        id="password" 
+                        name="password" 
+                        placeholder="비밀번호를 입력하세요"
+                        required
+                        autocomplete="current-password"
+                    >
+                </div>
+
+                <button type="submit" class="btn btn-primary login-btn" id="loginBtn">
+                    로그인
+                </button>
+
+                <div id="loginStatus" class="status" style="display:none"></div>
+            </form>
+
+            <div class="login-info">
+                <h3>시스템 접속</h3>
+                <div class="account-info">
+                    <div class="account-item">
+                        <strong>통합 사용자 계정</strong>
+                        <p>모든 사용자가 동일한 권한으로 접속 가능</p>
+                        <p>• 기술개발 요청 등록</p>
+                        <p>• 질의응답 등록 및 답변</p>
+                        <p>• 부서 확인 및 데이터 관리</p>
+                    </div>
+                </div>
             </div>
-            <button class="modal-cancel-btn" onclick="cancelSubmission()">취소</button>
+
+            <div class="login-footer">
+                <p> Authentication을 사용하여 안전하게 로그인됩니다.</p>
+            </div>
         </div>
     </div>
 
-    <div class="form-container">
-        <div class="logo">
-            <h1>2차 EIBE 전산 (동수)기술개발 요청 접수</h1>
-        </div>
+    <script type="module">
+        import { loginUser, auth } from './firebase-init.js';
+        import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-auth.js";
 
-        
-        <!-- ===== 공지사항 섹션 ===== -->
-        <div class="notice-section">
-            <div class="notice-header">
-                <h3>📢 공지사항</h3>
-            </div>
-            <div class="notice-content">
-                <div class="notice-item">
-                    <span class="notice-icon">🚀</span>
-                    <span class="notice-text"><strong>1차 개발 착수:</strong> 1차 개발이 착수 시작되었습니다.</span>
-                </div>
-                <div class="notice-item">
-                    <span class="notice-icon">📅</span>
-                    <span class="notice-text"><strong>v.1 수령 예정:</strong> 11월 말경에 v.1을 수령할 예정입니다.</span>
-                </div>
-                <div class="notice-item">
-                    <span class="notice-icon">⛔</span>
-                    <span class="notice-text"><strong>2차 개발 요청 접수 마감:</strong> 2차 개발 요청 접수가 마감되었습니다.</span>
-                </div>
-            </div>
-        </div>
-        
-        <!-- ===== 동수전산사이트 섹션 ===== -->
-        <div class="notice-section" style="margin-top: 20px;">
-            <div class="notice-header">
-                <h3>🔗 전산 플랫폼</h3>
-            </div>
-            <div class="notice-content">
-                <div class="notice-item">
-                    <span class="notice-icon">🌐</span>
-                    <span class="notice-text"><strong>Mock-up 사이트:</strong> <a href="http://platform.ytzhiheng.com/#/login" target="_blank" class="mockup-link">동수 전산 플랫폼 바로가기(click)</a></span>
-                </div>
-                <div>아이디 : EIBEF-02 비밀번호 : 000000</div>
-                <div class="notice-item">
-                    <span class="notice-icon">🤖</span>
-                    <span class="notice-text"><strong>AI 어시스턴트:</strong> <a href="https://chatgpt.com/g/g-68a3d48e15d0819195906b06fb1ab594-dongsu-mulryu-wms-gaideu" target="_blank" class="mockup-link">동수 물류 WMS 가이드 GPT(click)</a></span>
-                </div>
-            </div>
-        </div>
-        
-        <!-- ===== 폼 구조 ===== -->
-        <!-- 일시적 제한: 2차 개발 요청 접수 마감으로 폼 비활성화 -->
-        
-        <!-- 접수 마감 안내 -->
-        <div class="notice-section" style="background: rgba(239, 68, 68, 0.2); border: 2px solid rgba(239, 68, 68, 0.4);">
-            <div class="notice-header">
-                <h3 style="color: #f87171;">⛔ 접수 마감 안내</h3>
-            </div>
-            <div class="notice-content">
-                <div class="notice-item" style="background: rgba(239, 68, 68, 0.1);">
-                    <span class="notice-icon">📢</span>
-                    <span class="notice-text" style="color: #fca5a5;"><strong>2차 개발 요청 접수가 마감되었습니다.</strong><br>
-                    현재 1차 개발이 진행 중이며, 11월 말경 v.1 수령 예정입니다.<br>
-                    추가 요청사항이 있으시면 별도로 문의해 주시기 바랍니다.</span>
-                </div>
-            </div>
-        </div>
-        
-        <form id="dataForm" style="opacity: 0.5; pointer-events: none;">
-            <div class="form-group">
-                <label for="requester">요청자 <span class="required">*</span></label>
-                <input type="text" id="requester" name="requester" placeholder="요청자 이름을 입력하세요" required>
-            </div>
-            
-            <div class="form-group">
-                <label for="developmentType">개발유형 <span class="required">*</span></label>
-                <select id="developmentType" name="developmentType" required>
-                    <option value="">개발 유형을 선택하세요</option>
-                    <option value="UX/UI 개선">UX/UI 개선</option>
-                    <option value="기능 추가">기능 추가</option>
-                    <option value="메뉴 추가">메뉴 추가</option>
-                    <option value="계정 관리">계정 관리</option>
-                    <option value="권한 관리">권한 관리</option>
-                    <option value="사용자 관리">사용자 관리</option>
-                    <option value="데이터 관리">데이터 관리</option>
-                    <option value="보고서 개발">보고서 개발</option>
-                    <option value="대시보드 개발">대시보드 개발</option>
-                    <option value="검색 기능">검색 기능</option>
-                    <option value="필터링 기능">필터링 기능</option>
-                    <option value="정렬 기능">정렬 기능</option>
-                    <option value="엑셀 업로드/다운로드">엑셀 업로드/다운로드</option>
-                    <option value="PDF 생성">PDF 생성</option>
-                    <option value="이메일 발송">이메일 발송</option>
-                    <option value="알림 기능">알림 기능</option>
-                    <option value="로그 관리">로그 관리</option>
-                    <option value="백업/복원">백업/복원</option>
-                    <option value="버그 수정">버그 수정</option>
-                    <option value="성능 최적화">성능 최적화</option>
-                    <option value="보안 강화">보안 강화</option>
-                    <option value="데이터베이스 개선">데이터베이스 개선</option>
-                    <option value="API 개발">API 개발</option>
-                    <option value="모바일 대응">모바일 대응</option>
-                    <option value="반응형 웹">반응형 웹</option>
-                    <option value="다국어 지원">다국어 지원</option>
-                    <option value="접근성 개선">접근성 개선</option>
-                    <option value="테스트 자동화">테스트 자동화</option>
-                    <option value="배포 자동화">배포 자동화</option>
-                    <option value="모니터링 시스템">모니터링 시스템</option>
-                    <option value="기타">기타</option>
-                </select>
-            </div>
-            
-            <div class="form-group">
-                <label for="menuLocation">메뉴위치 <span class="required">*</span></label>
-                <input type="text" id="menuLocation" name="menuLocation" placeholder="메뉴 위치를 정확하게 입력하세요 (예: 관리자 > 사용자관리)" required>
-            </div>
-            
-            <div class="form-group">
-                <label for="requestContent">요청내용 <span class="required">*</span></label>
-                <textarea id="requestContent" name="requestContent" rows="6" placeholder="기술개발 요청 내용을 상세히 입력하세요..." required></textarea>
-            </div>
-            
-            <div class="form-group">
-                <label for="photoUpload">사진 업로드</label>
-                <input type="file" id="photoUpload" name="photoUpload" accept="image/*" multiple>
-                <div class="file-info">📷 여러 유형의 사진을 선택할 수 있습니다 (JPG, PNG, GIF)<br>
-                <strong>⚠️ 파일 크기 제한:</strong> 10MB 이하 파일만 업로드 가능합니다.<br>
-                <strong>💡 대용량 파일 처리 방법:</strong><br>
-                • 사진: 이미지 압축 도구 사용 (온라인 이미지 압축기)<br>
-                • 엑셀: 불필요한 시트 삭제, 데이터 정리 후 저장<br>
-                • 총 첨부파일 크기: 25MB 이하 (Gmail 제한)</div>
-            </div>
-            
-            <div class="form-group">
-                <label for="excelUpload">엑셀 업로드</label>
-                <input type="file" id="excelUpload" name="excelUpload" accept=".xlsx,.xls">
-                <div class="file-info">📊 엑셀 파일만 업로드 가능합니다 (XLSX, XLS)<br>
-                <strong>⚠️ 파일 크기 제한:</strong> 10MB 이하 파일만 업로드 가능합니다.<br>
-                <strong>💡 대용량 파일 처리 방법:</strong><br>
-                • 사진: 이미지 압축 도구 사용 (온라인 이미지 압축기)<br>
-                • 엑셀: 불필요한 시트 삭제, 데이터 정리 후 저장<br>
-                • 총 첨부파일 크기: 25MB 이하 (Gmail 제한)</div>
-            </div>
-            
-            <button type="submit" id="submitBtn">
-                🚀 요청 접수하기
-            </button>
-        </form>
-        
-        <div id="status" class="status" style="display: none;"></div>
-    </div>
+        // 로그인 폼 처리
+        const loginForm = document.getElementById('loginForm');
+        const loginBtn = document.getElementById('loginBtn');
+        const loginStatus = document.getElementById('loginStatus');
 
-    <script>
-        // ===== 필수 설정 (절대 지우지 마세요!) =====
-        // Google Apps Script URL - 배포 후 여기에 붙여넣기
-        const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyaDLZD7o1xNLOxmUfFCkT8mVWxnVhMXirck6QIbYmYcPtAcVZC6bUKjuWY8O3PYw4/exec';
-        
-        // ===== 폼 제출 처리 (핵심 로직) =====
-        document.getElementById('dataForm').addEventListener('submit', async function(e) {
+        function setStatus(message, type) {
+            loginStatus.textContent = message;
+            loginStatus.className = 'status ' + type;
+            loginStatus.style.display = 'block';
+            
+            if (type !== 'loading') {
+                setTimeout(() => {
+                    loginStatus.style.display = 'none';
+                }, 5000);
+            }
+        }
+
+        loginForm.addEventListener('submit', async (e) => {
             e.preventDefault();
             
-            const submitBtn = document.getElementById('submitBtn');
-            const statusDiv = document.getElementById('status');
-            
-            // ===== 필수 필드 검증 =====
-            const requester = document.getElementById('requester').value.trim();
-            const developmentType = document.getElementById('developmentType').value;
-            const menuLocation = document.getElementById('menuLocation').value.trim();
-            const requestContent = document.getElementById('requestContent').value.trim();
-            
-            // 필수 필드 검증
-            if (!requester) {
-                showStatus('❌ 요청자 이름을 입력해주세요.', 'error');
-                document.getElementById('requester').focus();
+            const email = document.getElementById('email').value.trim();
+            const password = document.getElementById('password').value;
+
+            if (!email || !password) {
+                setStatus('이메일과 비밀번호를 모두 입력해주세요.', 'error');
                 return;
             }
-            
-            if (!developmentType) {
-                showStatus('❌ 개발유형을 선택해주세요.', 'error');
-                document.getElementById('developmentType').focus();
+
+            // 이메일 형식 검증만 수행 (역할 구분 제거)
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailRegex.test(email)) {
+                setStatus('올바른 이메일 형식을 입력해주세요.', 'error');
                 return;
             }
-            
-            if (!menuLocation) {
-                showStatus('❌ 메뉴위치를 입력해주세요.', 'error');
-                document.getElementById('menuLocation').focus();
-                return;
-            }
-            
-            if (!requestContent) {
-                showStatus('❌ 요청내용을 입력해주세요.', 'error');
-                document.getElementById('requestContent').focus();
-                return;
-            }
-            
-            // 요청내용 최소 길이 검증 (최소 10자)
-            if (requestContent.length < 10) {
-                showStatus('❌ 요청내용은 최소 10자 이상 입력해주세요.', 'error');
-                document.getElementById('requestContent').focus();
-                return;
-            }
-            
-            // 버튼 비활성화 및 로딩 표시
-            submitBtn.disabled = true;
-            submitBtn.textContent = '⏳ 접수 중...';
-            showStatus('요청을 접수하고 있습니다...', 'loading');
-            
+
+            loginBtn.disabled = true;
+            loginBtn.textContent = '로그인 중...';
+            setStatus('로그인 중입니다...', 'loading');
+
             try {
-                // ===== 데이터 수집 =====
-                const formData = new FormData(e.target);
-                const payload = {
-                    requester: requester,
-                    developmentType: developmentType,
-                    menuLocation: menuLocation,
-                    requestContent: requestContent,
-                    timestamp: new Date().toISOString()
-                };
+                console.log('로그인 시도:', email);
+                const result = await loginUser(email, password);
                 
-                // ===== 파일 처리 (안정적인 검증 및 처리) =====
-                const photoFiles = document.getElementById('photoUpload').files;
-                const excelFile = document.getElementById('excelUpload').files[0];
-                
-                // 파일 크기 검증 (10MB 제한)
-                const MAX_FILE_SIZE = 10 * 1024 * 1024;
-                let hasLargeFile = false;
-                let largeFiles = [];
-                
-                // 사진 파일 크기 검증
-                for (let i = 0; i < photoFiles.length; i++) {
-                    if (photoFiles[i].size > MAX_FILE_SIZE) {
-                        hasLargeFile = true;
-                        largeFiles.push(photoFiles[i].name);
-                    }
-                }
-                
-                // 엑셀 파일 크기 검증
-                if (excelFile && excelFile.size > MAX_FILE_SIZE) {
-                    hasLargeFile = true;
-                    largeFiles.push(excelFile.name);
-                }
-                
-                        if (hasLargeFile) {
-            alert(`⚠️ 대용량 파일이 감지됩니다!\n\n다음 파일들이 10MB를 초과합니다:\n${largeFiles.join('\n')}\n\n📝 텍스트로 접수만 해주시고\n📎 파일은 jyh@eibe.co.kr 이메일로\n별도로 보내주시길 부탁드립니다.\n\n감사합니다.`);
-            
-            // 파일 입력 필드 초기화
-            document.getElementById('photoUpload').value = '';
-            document.getElementById('excelUpload').value = '';
-            
-            showStatus('✅ 텍스트 정보만 접수 가능합니다. 파일은 별도 이메일로 보내주세요.', 'success');
-            submitBtn.disabled = false;
-            submitBtn.textContent = '📤 요청 접수';
-            return;
-        }
-                
-                // 사진 파일들을 Base64로 변환 (안정적인 처리)
-                if (photoFiles.length > 0) {
-                    showStatus(`📷 사진 파일 ${photoFiles.length}개를 처리하고 있습니다...`, 'loading');
-                    payload.photos = [];
+                if (result.success) {
+                    console.log('로그인 성공:', result.user.email);
+                    setStatus('로그인 성공! 대시보드로 이동합니다...', 'success');
                     
-                    for (let i = 0; i < photoFiles.length; i++) {
-                        try {
-                            const file = photoFiles[i];
-                            showStatus(`📷 사진 ${i+1}/${photoFiles.length} 처리 중: ${file.name}`, 'loading');
-                            
-                            const base64 = await fileToBase64(file);
-                            payload.photos.push({
-                                name: file.name,
-                                type: file.type,
-                                size: file.size,
-                                data: base64
-                            });
-                            
-                            console.log(`사진 ${i+1} 처리 완료: ${file.name} (${Math.round(file.size/1024)}KB)`);
-                        } catch (error) {
-                            console.error(`사진 ${i+1} 처리 실패:`, error);
-                            showStatus(`❌ 사진 파일 처리 실패: ${photoFiles[i].name}`, 'error');
-                            submitBtn.disabled = false;
-                            submitBtn.textContent = '📤 요청 접수';
-                            return;
-                        }
-                    }
+                    // 잠시 후 대시보드로 리다이렉트
+                    setTimeout(() => {
+                        window.location.href = 'dashboard.html';
+                    }, 1500);
+                } else {
+                    console.error('로그인 실패:', result.error);
+                    setStatus('로그인 실패: ' + result.error, 'error');
                 }
-                
-                // 엑셀 파일을 Base64로 변환 (안정적인 처리)
-                if (excelFile) {
-                    try {
-                        showStatus(`📊 엑셀 파일을 처리하고 있습니다: ${excelFile.name}`, 'loading');
-                        
-                        const base64 = await fileToBase64(excelFile);
-                        payload.excel = {
-                            name: excelFile.name,
-                            type: excelFile.type,
-                            size: excelFile.size,
-                            data: base64
-                        };
-                        
-                        console.log(`엑셀 파일 처리 완료: ${excelFile.name} (${Math.round(excelFile.size/1024)}KB)`);
-                    } catch (error) {
-                        console.error('엑셀 파일 처리 실패:', error);
-                        showStatus(`❌ 엑셀 파일 처리 실패: ${excelFile.name}`, 'error');
-                        submitBtn.disabled = false;
-                        submitBtn.textContent = '📤 요청 접수';
-                        return;
-                    }
-                }
-                
-                // ===== 모달 팝업 표시 =====
-                showModal();
-                startProgressAnimation();
-                
-                console.log('전송할 데이터:', payload);
-                
-                // ===== 핵심: Google Apps Script 호출 =====
-                const response = await fetch(SCRIPT_URL, {
-                    method: 'POST',
-                    mode: 'no-cors',
-                    headers: {
-                        'Content-Type': 'text/plain',
-                    },
-                    body: JSON.stringify(payload)
-                });
-                
-                // ===== 성공 처리 (no-cors에서는 응답을 읽을 수 없으므로 바로 성공) =====
-                hideModal();
-                showStatus('✅ 요청이 성공적으로 접수되었습니다!', 'success');
-                e.target.reset(); // 폼 초기화
-                
             } catch (error) {
-                console.error('접수 오류:', error);
-                hideModal();
-                showStatus(`❌ 오류: ${error.message}`, 'error');
+                console.error('로그인 오류:', error);
+                setStatus('로그인 중 오류가 발생했습니다: ' + error.message, 'error');
             } finally {
-                // 버튼 상태 복구
-                submitBtn.disabled = false;
-                submitBtn.textContent = '🚀 요청 접수하기';
+                loginBtn.disabled = false;
+                loginBtn.textContent = '로그인';
             }
         });
-        
-        // ===== 파일을 Base64로 변환하는 함수 =====
-        function fileToBase64(file) {
-            return new Promise((resolve, reject) => {
-                const reader = new FileReader();
-                reader.readAsDataURL(file);
-                reader.onload = () => {
-                    // Base64 데이터에서 헤더 제거 (data:image/jpeg;base64, 부분 제거)
-                    const base64 = reader.result.split(',')[1];
-                    resolve(base64);
-                };
-                reader.onerror = error => reject(error);
-            });
-        }
-        
-        // ===== 모달 팝업 함수들 =====
-        function showModal() {
-            const modal = document.getElementById('modalOverlay');
-            modal.style.display = 'flex';
-        }
-        
-        function hideModal() {
-            const modal = document.getElementById('modalOverlay');
-            modal.style.display = 'none';
-        }
-        
-        function startProgressAnimation() {
-            const progressBar = document.getElementById('progressBar');
-            let progress = 0;
-            
-            const interval = setInterval(() => {
-                progress += Math.random() * 15;
-                if (progress > 90) progress = 90; // 90%까지만 진행
-                progressBar.style.width = progress + '%';
-            }, 500);
-            
-            // 30초 후 자동으로 100%로 설정
-            setTimeout(() => {
-                clearInterval(interval);
-                progressBar.style.width = '100%';
-            }, 30000);
-        }
-        
-        function cancelSubmission() {
-            hideModal();
-            showStatus('❌ 요청이 취소되었습니다.', 'error');
-            
-            // 버튼 상태 복구
-            const submitBtn = document.querySelector('button[type="submit"]');
-            submitBtn.disabled = false;
-            submitBtn.textContent = '🚀 요청 접수하기';
-        }
-        
-        // ===== 상태 메시지 표시 함수 =====
-        function showStatus(message, type) {
-            const statusDiv = document.getElementById('status');
-            statusDiv.textContent = message;
-            statusDiv.className = `status ${type}`;
-            statusDiv.style.display = 'block';
-            
-            // 성공/에러 메시지만 자동 숨김 (로딩 중에는 계속 표시)
-            if (type === 'success' || type === 'error') {
-                setTimeout(() => {
-                    statusDiv.style.display = 'none';
-                }, 8000); // 8초로 연장
-            }
-        }
-        
-        // ===== 실시간 필드 검증 =====
-        function validateField(fieldId, minLength = 0) {
-            const field = document.getElementById(fieldId);
-            const value = field.value.trim();
-            
-            if (!value) {
-                field.style.borderColor = '#ef4444';
-                return false;
-            }
-            
-            if (minLength > 0 && value.length < minLength) {
-                field.style.borderColor = '#f59e0b';
-                return false;
-            }
-            
-            field.style.borderColor = '#3b82f6';
-            return true;
-        }
-        
-        // 실시간 검증 이벤트 리스너
-        document.getElementById('requester').addEventListener('input', function() {
-            validateField('requester');
-        });
-        
-        document.getElementById('developmentType').addEventListener('change', function() {
-            validateField('developmentType');
-        });
-        
-        document.getElementById('menuLocation').addEventListener('input', function() {
-            validateField('menuLocation');
-        });
-        
-        document.getElementById('requestContent').addEventListener('input', function() {
-            validateField('requestContent', 10);
-        });
-        
-        // ===== 파일 선택 시 정보 표시 =====
-        document.getElementById('photoUpload').addEventListener('change', function(e) {
-            const files = e.target.files;
-            if (files.length > 0) {
-                let info = `선택된 사진: ${files.length}개`;
-                let totalSize = 0;
-                for (let i = 0; i < files.length; i++) {
-                    const size = files[i].size / 1024 / 1024;
-                    totalSize += size;
-                    info += `\n- ${files[i].name} (${size.toFixed(2)}MB)`;
-                }
-                info += `\n총 크기: ${totalSize.toFixed(2)}MB`;
-                this.nextElementSibling.textContent = info;
+
+        // 이미 로그인된 사용자는 대시보드로 리다이렉트
+        onAuthStateChanged(auth, (user) => {
+            if (user) {
+                window.location.href = 'dashboard.html';
             }
         });
-        
-        document.getElementById('excelUpload').addEventListener('change', function(e) {
-            const file = e.target.files[0];
-            if (file) {
-                const size = (file.size / 1024 / 1024).toFixed(2);
-                const info = `선택된 엑셀: ${file.name} (${size}MB)`;
-                this.nextElementSibling.textContent = info;
+
+        // 엔터키로 로그인
+        document.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                loginForm.dispatchEvent(new Event('submit'));
             }
         });
     </script>
 </body>
-</html> 
+</html>
