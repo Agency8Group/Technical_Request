@@ -2482,10 +2482,10 @@ select:focus {
   margin: 2% auto;
   padding: 0;
   border: 1px solid var(--border);
-  border-radius: 12px;
-  width: 90%;
-  max-width: 800px;
-  max-height: 90vh;
+  border-radius: 16px;
+  width: 95%;
+  max-width: 1200px;
+  max-height: 92vh;
   overflow: hidden;
   box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
 }
@@ -2497,6 +2497,17 @@ select:focus {
   padding: 20px 24px;
   border-bottom: 1px solid var(--border);
   background: rgba(255, 255, 255, 0.02);
+}
+
+/* 모달 헤더 내 번역 위젯 컨테이너 */
+.modal-header h2 {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.modal-translate {
+  margin-left: auto;
 }
 
 .modal-header h2 {
@@ -2520,8 +2531,18 @@ select:focus {
 
 .modal-body {
   padding: 24px;
-  max-height: 60vh;
+  max-height: 70vh;
   overflow-y: auto;
+}
+
+/* 모달 내부 Google Translate 위젯 스타일 경량화 */
+#google_translate_modal select {
+  background: var(--bg-secondary);
+  color: var(--fg-primary);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 4px 8px;
+  font-size: 12px;
 }
 
 .modal-footer {
@@ -2616,7 +2637,7 @@ select:focus {
 }
 
 .modal-form textarea {
-  min-height: 100px;
+  min-height: 220px;
   resize: vertical;
 }
 

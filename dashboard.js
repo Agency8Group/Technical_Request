@@ -1222,6 +1222,23 @@ function showRequestModal(request) {
   
   // 저장 버튼 이벤트 리스너 추가
   initializeStatusSaveButton(request.id);
+
+  // 모달 내 구글 번역 위젯 초기화 (이미 로드된 스크립트 활용)
+  try {
+    if (window.google && window.google.translate && document.getElementById('google_translate_modal')) {
+      // 기존 위젯이 붙어있다면 초기화 전에 비우기
+      const target = document.getElementById('google_translate_modal');
+      target.innerHTML = '';
+      new google.translate.TranslateElement({
+        pageLanguage: 'ko',
+        includedLanguages: 'ko,zh-CN,zh-TW,en,ja',
+        layout: google.translate.TranslateElement.InlineLayout.SIMPLE,
+        autoDisplay: false
+      }, 'google_translate_modal');
+    }
+  } catch (e) {
+    console.warn('모달 번역 위젯 초기화 실패:', e);
+  }
 }
 
 // 첨부파일 HTML 생성
