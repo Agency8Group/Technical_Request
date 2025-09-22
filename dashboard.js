@@ -144,7 +144,7 @@ function initializeAuth() {
       
     } else {
       console.log('로그인되지 않음 - 로그인 페이지로 리다이렉트');
-      window.location.href = 'login.html';
+      window.location.href = 'index.html';
     }
   });
 }
@@ -175,7 +175,7 @@ function initializeLogoutButton() {
           logoutBtn.innerHTML = '<span class="logout-icon">⏳</span><span>로그아웃 중...</span>';
           
           await logoutUser();
-          window.location.href = 'login.html';
+          window.location.href = 'index.html';
         } catch (error) {
           console.error('로그아웃 오류:', error);
           alert('로그아웃 중 오류가 발생했습니다.');
