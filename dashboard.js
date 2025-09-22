@@ -578,7 +578,8 @@ function initializeDepartments() {
             </div>
             <div style="font-size: 14px; line-height: 1.5; color: var(--fg-secondary);">
               다음 개발 완료 시까지 추가 개발 요청은 지연될 수 있습니다.<br>
-              <strong>정말로 모든 요청사항이 완료되었는지 다시 한번 확인해주세요.</strong>
+              <strong>정말로 모든 요청사항이 완료되었는지 다시 한번 확인후 <br>
+              아래 부서 확인 저장 버튼을 눌러 완료해주세요.</strong>
             </div>
           </div>
         `;
