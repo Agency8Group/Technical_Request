@@ -49,6 +49,9 @@ document.addEventListener('DOMContentLoaded', function() {
     initializeMenuGuide();
     initializeNoticePopup();
     initializeWorkGuideModal();
+    
+    // 필터링 기능 초기화
+    initializeRequestFilters();
     setNow();
     
     // 인증 초기화 (마지막에)
@@ -2390,6 +2393,50 @@ function hideWorkGuideModal() {
     workGuideModal.classList.remove('show');
     document.body.style.overflow = '';
   }
+}
+
+// 요청 필터링 기능 초기화
+function initializeRequestFilters() {
+  const filterButtons = document.querySelectorAll('.filter-btn');
+  
+  filterButtons.forEach(button => {
+    button.addEventListener('click', () => {
+      // 모든 버튼에서 active 클래스 제거
+      filterButtons.forEach(btn => btn.classList.remove('active'));
+      
+      // 클릭된 버튼에 active 클래스 추가
+      button.classList.add('active');
+      
+      // 필터링 실행
+      const filterValue = button.dataset.filter;
+      filterRequests(filterValue);
+    });
+  });
+}
+
+// 요청 필터링 함수
+function filterRequests(status) {
+  const tableBody = document.getElementById('requestsTableBody');
+  if (!tableBody) return;
+  
+  const rows = tableBody.querySelectorAll('tr');
+  
+  rows.forEach(row => {
+    const statusCell = row.querySelector('td:nth-child(4)'); // 상태 컬럼
+    if (!statusCell) return;
+    
+    const rowStatus = statusCell.textContent.trim();
+    
+    if (status === 'all' || rowStatus === status) {
+      row.style.display = '';
+    } else {
+      row.style.display = 'none';
+    }
+  });
+  
+  // 필터링 결과 표시
+  const visibleRows = Array.from(rows).filter(row => row.style.display !== 'none');
+  console.log(`필터링 결과: ${visibleRows.length}개 항목 표시 (${status === 'all' ? '전체' : status})`);
 }
 
 // 공지사항 표시 여부 확인
