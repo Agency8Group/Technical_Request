@@ -48,6 +48,7 @@ document.addEventListener('DOMContentLoaded', function() {
     initializeRefreshButton();
     initializeMenuGuide();
     initializeNoticePopup();
+    initializeWorkGuideModal();
     setNow();
     
     // 인증 초기화 (마지막에)
@@ -2333,6 +2334,62 @@ function initializeNoticePopup() {
       }
     }
   });
+}
+
+// 업무 가이드 모달 초기화
+function initializeWorkGuideModal() {
+  const workGuideModal = document.getElementById('workGuideModal');
+  const workGuideBtn = document.getElementById('workGuideBtn');
+  const closeWorkGuideModal = document.getElementById('closeWorkGuideModal');
+  const backdrop = workGuideModal?.querySelector('.work-guide-backdrop');
+  
+  if (!workGuideModal) return;
+  
+  // 업무 가이드 버튼 이벤트
+  if (workGuideBtn) {
+    workGuideBtn.addEventListener('click', () => {
+      showWorkGuideModal();
+    });
+  }
+  
+  // 확인 버튼 이벤트
+  if (closeWorkGuideModal) {
+    closeWorkGuideModal.addEventListener('click', () => {
+      hideWorkGuideModal();
+    });
+  }
+  
+  // 백드롭 클릭 이벤트
+  if (backdrop) {
+    backdrop.addEventListener('click', () => {
+      hideWorkGuideModal();
+    });
+  }
+  
+  // ESC 키로 닫기
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && workGuideModal.classList.contains('show')) {
+      hideWorkGuideModal();
+    }
+  });
+}
+
+// 업무 가이드 모달 표시
+function showWorkGuideModal() {
+  const workGuideModal = document.getElementById('workGuideModal');
+  if (workGuideModal) {
+    workGuideModal.classList.add('show');
+    document.body.style.overflow = 'hidden';
+  }
+}
+
+// 업무 가이드 모달 숨기기
+function hideWorkGuideModal() {
+  const workGuideModal = document.getElementById('workGuideModal');
+  if (workGuideModal) {
+    workGuideModal.classList.remove('show');
+    document.body.style.overflow = '';
+  }
 }
 
 // 공지사항 표시 여부 확인
