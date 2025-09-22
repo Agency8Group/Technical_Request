@@ -91,6 +91,14 @@ function initializeDOMElements() {
   submitQuestionBtn = document.getElementById('submitQuestionBtn');
   qnaList = document.getElementById('qnaList');
   
+  // QnA 상태 필터
+  const qnaStatusFilter = document.getElementById('qnaStatusFilter');
+  if (qnaStatusFilter) {
+    qnaStatusFilter.addEventListener('change', () => {
+      updateQnAList();
+    });
+  }
+  
   // 새로고침 버튼
   const refreshQnABtn = document.getElementById('refreshQnABtn');
   if (refreshQnABtn) {
@@ -441,6 +449,10 @@ function updateQnAList() {
   
   qnaList.innerHTML = '';
   
+  // 상태 필터 값 읽기
+  const qnaStatusFilter = document.getElementById('qnaStatusFilter');
+  const filterVal = qnaStatusFilter ? qnaStatusFilter.value : 'all';
+
   // 통계 업데이트
   const qnaStats = document.getElementById('qnaStats');
   if (qnaStats) {
@@ -461,12 +473,30 @@ function updateQnAList() {
   }
   
   // 최신 질문이 위로 오도록 정렬 (createdAt 기준 내림차순)
-  const sortedQnA = [...currentQnA].sort((a, b) => {
+  // 필터 적용 후 정렬
+  const filtered = currentQnA.filter(item => {
+    if (filterVal === 'all') return true;
+    return (item.status || '답변대기') === filterVal;
+  });
+
+  const sortedQnA = [...filtered].sort((a, b) => {
     const timeA = a.createdAt ? new Date(a.createdAt).getTime() : 0;
     const timeB = b.createdAt ? new Date(b.createdAt).getTime() : 0;
     return timeB - timeA; // 최신이 위로
   });
   
+  if (sortedQnA.length === 0) {
+    qnaList.innerHTML = `
+      <div style="text-align: center; padding: 40px; color: var(--muted);">
+        <svg width="48" height="48" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="margin-bottom: 16px;">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path>
+        </svg>
+        <p>해당 조건의 항목이 없습니다.</p>
+      </div>
+    `;
+    return;
+  }
+
   sortedQnA.forEach(item => {
     const qnaItem = document.createElement('div');
     qnaItem.className = 'qna-item';
