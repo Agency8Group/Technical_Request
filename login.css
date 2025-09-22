@@ -202,6 +202,35 @@ select option {
   border-color: rgba(99, 102, 241, 0.4);
 }
 
+/* Google Translate Widget 스타일 */
+#google_translate_element {
+    margin: 10px 0;
+    text-align: center;
+}
+
+#google_translate_element select {
+    background: var(--bg-secondary);
+    color: var(--fg-primary);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 6px 8px;
+    font-size: 12px;
+    min-width: 120px;
+}
+
+#google_translate_element .goog-te-gadget {
+    font-family: inherit;
+    font-size: 12px;
+}
+
+#google_translate_element .goog-te-gadget-simple {
+    background: var(--bg-secondary);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 4px 8px;
+    font-size: 12px;
+}
+
 /* 반응형 */
 @media (max-width: 640px) {
   .login-container {

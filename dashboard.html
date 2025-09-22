@@ -7,6 +7,19 @@
     <meta name="keywords" content="EIBE, 개발요청, 질의응답, 대시보드, 관리시스템">
     <meta name="author" content="EIBE Development Team">
     <title>EIBE_DEV_V2_request - 요청 관리 시스템</title>
+    
+    <!-- Google Translate Widget -->
+    <script type="text/javascript">
+    function googleTranslateElementInit() {
+        new google.translate.TranslateElement({
+            pageLanguage: 'ko',
+            includedLanguages: 'ko,zh-CN,zh-TW,en,ja',
+            layout: google.translate.TranslateElement.InlineLayout.SIMPLE,
+            autoDisplay: false
+        }, 'google_translate_element');
+    }
+    </script>
+    <script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -35,6 +48,8 @@
                 </div>
                 <div class="user-info">
                     <div class="user-email" id="userEmail">사용자 정보 로딩 중...</div>
+                    <!-- Google Translate Widget -->
+                    <div id="google_translate_element" style="margin: 10px 0;"></div>
                     <button class="logout-btn" id="logoutBtn">
                         <svg class="logout-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path>
