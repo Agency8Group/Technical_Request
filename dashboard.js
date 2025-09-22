@@ -603,7 +603,7 @@ function initializeDepartments() {
         saveDeptBtn.disabled = true;
         saveDeptBtn.textContent = '저장 중...';
         
-        // Firebase에 부서 확인 데이터 저장
+        // 데이터베이스에 부서 확인 데이터 저장
         const deptData = {
           department: selectedDept,
           comment: comment,
@@ -612,7 +612,7 @@ function initializeDepartments() {
           noMoreRequests: noMoreRequests.checked
         };
         
-        // 부서 확인 데이터를 Firebase에 저장
+        // 부서 확인 데이터를 데이터베이스에 저장
         const deptRef = ref(db, '/requests/부서확인');
         const newDeptRef = push(deptRef);
         await set(newDeptRef, deptData);
@@ -723,7 +723,7 @@ function updateStats() {
   // 부서 확인 완료율 계산
   const allDepartments = [
     '전략기획', '경영관리', '압타밀', '드리미', 
-    '레이레이', 'CS', '마케팅', '오프라인'
+    '레이레이', 'CS', '마케팅', 'SCM'
   ];
   const completedDepartments = currentDepartments.filter(dept => dept.noMoreRequests).length;
   const departmentProgress = Math.round((completedDepartments / allDepartments.length) * 100);
@@ -808,7 +808,7 @@ function updateDepartmentProgress() {
   // 모든 부서 목록
   const allDepartments = [
     '전략기획', '경영관리', '압타밀', '드리미', 
-    '레이레이', 'CS', '마케팅', '오프라인'
+    '레이레이', 'CS', '마케팅', 'SCM'
   ];
   
   progressGrid.innerHTML = '';
@@ -1390,7 +1390,7 @@ async function saveRequestUpdates(requestId, updates) {
     saveBtn.disabled = true;
     saveBtn.innerHTML = '<span class="btn-icon">⏳</span>저장 중...';
     
-    // Firebase에서 요청 데이터 업데이트
+    // 데이터베이스에서 요청 데이터 업데이트
     const requestRef = ref(db, `/requests/기술개발요청/${requestId}`);
     const request = currentRequests.find(r => r.id === requestId);
     
@@ -1576,7 +1576,7 @@ async function addNewRow() {
     createdBy: currentUser.email
   };
   
-  // 현재 메뉴 행들 가져오기 (Firebase에서 직접 가져오기)
+  // 현재 메뉴 행들 가져오기 (데이터베이스에서 직접 가져오기)
   let currentMenuRows = [];
   try {
     const guideRef = ref(db, '/menuGuide');
@@ -1603,7 +1603,7 @@ async function addNewRow() {
   newSubMenuName.value = '';
   newMenuDescription.value = '';
   
-  // 자동으로 Firebase에 저장
+  // 자동으로 데이터베이스에 저장
   autoSaveMenuGuide(currentMenuRows);
   
   showSuccess('새 행이 추가되었습니다.');
@@ -1835,7 +1835,7 @@ window.saveRowEdit = async function(rowId) {
   updateGuideDisplay(currentMenuRows);
   updateGuideStats(currentMenuRows);
   
-  // 자동으로 Firebase에 저장
+  // 자동으로 데이터베이스에 저장
   autoSaveMenuGuide(currentMenuRows);
   
   showSuccess('행이 수정되었습니다.');
@@ -1856,7 +1856,7 @@ window.deleteRow = async function(rowId) {
   if (tableRow) {
     tableRow.remove();
     
-    // Firebase에서 현재 데이터 가져와서 삭제된 행 제외하고 저장
+    // 데이터베이스에서 현재 데이터 가져와서 삭제된 행 제외하고 저장
     let currentMenuRows = [];
     try {
       const guideRef = ref(db, '/menuGuide');
@@ -1876,7 +1876,7 @@ window.deleteRow = async function(rowId) {
     updateGuideDisplay(currentMenuRows);
     updateGuideStats(currentMenuRows);
     
-    // 자동으로 Firebase에 저장
+    // 자동으로 데이터베이스에 저장
     autoSaveMenuGuide(currentMenuRows);
     
     showSuccess('행이 삭제되었습니다.');
@@ -1886,7 +1886,7 @@ window.deleteRow = async function(rowId) {
 // 메뉴 가이드 CSV 다운로드
 async function exportMenuGuideToCSV() {
   try {
-    // Firebase에서 직접 데이터 가져오기
+    // 데이터베이스에서 직접 데이터 가져오기
     let currentMenuRows = [];
     try {
       const guideRef = ref(db, '/menuGuide');
@@ -2086,7 +2086,7 @@ async function importMenuRows(newMenuRows) {
     // 새 데이터와 병합
     const mergedMenuRows = [...existingMenuRows, ...newMenuRows];
     
-    // Firebase에 저장
+    // 데이터베이스에 저장
     const guideRef = ref(db, '/menuGuide');
     await set(guideRef, {
       menuRows: mergedMenuRows,
@@ -2136,7 +2136,7 @@ window.submitAnswer = async function(qnaId) {
       return;
     }
     
-    // Firebase에서 해당 QnA 항목 업데이트
+    // 데이터베이스에서 해당 QnA 항목 업데이트
     const qnaRef = ref(db, `/requests/질의응답요청/${qnaId}`);
     await set(qnaRef, {
       ...qnaItem,

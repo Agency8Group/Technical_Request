@@ -110,7 +110,21 @@ export async function loginUser(email, password) {
     return { success: true, user: userCredential.user };
   } catch (error) {
     console.error('로그인 오류:', error.message);
-    return { success: false, error: error.message };
+    // Firebase 구체적인 오류 메시지 숨기기
+    let genericError = '로그인에 실패했습니다. 이메일과 비밀번호를 확인해주세요.';
+    
+    // 일반적인 오류 메시지로 변환
+    if (error.code === 'auth/user-not-found') {
+      genericError = '등록되지 않은 계정입니다.';
+    } else if (error.code === 'auth/wrong-password') {
+      genericError = '비밀번호가 올바르지 않습니다.';
+    } else if (error.code === 'auth/invalid-email') {
+      genericError = '이메일 형식이 올바르지 않습니다.';
+    } else if (error.code === 'auth/too-many-requests') {
+      genericError = '너무 많은 로그인 시도로 인해 일시적으로 차단되었습니다. 잠시 후 다시 시도해주세요.';
+    }
+    
+    return { success: false, error: genericError };
   }
 }
 

@@ -84,7 +84,7 @@
             </div>
 
             <div class="login-footer">
-                <p> Authentication을 사용하여 안전하게 로그인됩니다.</p>
+                <p>안전한 인증 시스템을 사용하여 로그인됩니다.</p>
                 <!-- Google Translate Widget -->
                 <div id="google_translate_element" style="margin-top: 10px;"></div>
             </div>
@@ -148,11 +148,11 @@
                     }, 1500);
                 } else {
                     console.error('로그인 실패:', result.error);
-                    setStatus('로그인 실패: ' + result.error, 'error');
+                    setStatus('로그인에 실패했습니다. 이메일과 비밀번호를 확인해주세요.', 'error');
                 }
             } catch (error) {
                 console.error('로그인 오류:', error);
-                setStatus('로그인 중 오류가 발생했습니다: ' + error.message, 'error');
+                setStatus('로그인 중 오류가 발생했습니다. 잠시 후 다시 시도해주세요.', 'error');
             } finally {
                 loginBtn.disabled = false;
                 loginBtn.textContent = '로그인';
