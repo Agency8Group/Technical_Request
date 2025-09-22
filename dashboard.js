@@ -2274,7 +2274,6 @@ function initializeRefreshButton() {
 // 공지사항 팝업 초기화
 function initializeNoticePopup() {
   const noticePopup = document.getElementById('noticePopup');
-  const closeNoticePopup = document.getElementById('closeNoticePopup');
   const confirmNotice = document.getElementById('confirmNotice');
   const dontShowToday = document.getElementById('dontShowToday');
   
@@ -2286,13 +2285,6 @@ function initializeNoticePopup() {
     setTimeout(() => {
       showNoticePopup();
     }, 1000); // 1초 후 표시
-  }
-  
-  // 닫기 버튼 이벤트
-  if (closeNoticePopup) {
-    closeNoticePopup.addEventListener('click', () => {
-      handleNoticeClose();
-    });
   }
   
   // 확인 버튼 이벤트

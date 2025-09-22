@@ -1656,24 +1656,6 @@ select:focus {
     letter-spacing: 0.01em;
 }
 
-.notice-popup-close {
-    background: rgba(255, 255, 255, 0.1);
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    color: rgba(255, 255, 255, 0.8);
-    cursor: pointer;
-    padding: 10px;
-    border-radius: 12px;
-    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-    flex-shrink: 0;
-    backdrop-filter: blur(10px);
-}
-
-.notice-popup-close:hover {
-    background: rgba(255, 255, 255, 0.2);
-    color: white;
-    transform: scale(1.05);
-    border-color: rgba(255, 255, 255, 0.3);
-}
 
 .notice-popup-body {
     padding: 28px;
