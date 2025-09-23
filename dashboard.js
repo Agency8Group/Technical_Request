@@ -1203,18 +1203,18 @@ function showRequestModal(request) {
         <div class="form-grid">
           <div class="form-group">
             <label>제목</label>
-            <div class="readonly-field">${request.title || ''}</div>
+            <div class="readonly-field" translate="yes">${request.title || ''}</div>
           </div>
           <div class="form-group">
             <label>개발유형</label>
-            <div class="readonly-field">${request.developmentType || ''}</div>
+            <div class="readonly-field" translate="yes">${request.developmentType || ''}</div>
           </div>
         </div>
         
         <div class="form-grid">
           <div class="form-group">
             <label>요청자 이름</label>
-            <div class="readonly-field">${request.requesterName || request.requester || ''}</div>
+            <div class="readonly-field" translate="yes">${request.requesterName || request.requester || ''}</div>
           </div>
           <div class="form-group">
             <label>등록일시</label>
@@ -1224,7 +1224,7 @@ function showRequestModal(request) {
         
         <div class="form-group">
           <label>상세내용</label>
-          <div class="readonly-multiline">${request.detail || ''}</div>
+          <div class="readonly-multiline" translate="yes">${request.detail || ''}</div>
         </div>
         
         ${getAttachedFilesHTML(request)}
@@ -1276,7 +1276,7 @@ function showRequestModal(request) {
         
         <div class="form-group">
           <label for="developerComment">개발자 코멘트/답변</label>
-          <textarea id="developerComment" class="developer-comment" placeholder="개발 진행 상황, 완료 내용, 추가 설명 등을 입력하세요..." rows="4">${request.developerComment || ''}</textarea>
+          <textarea id="developerComment" class="developer-comment" placeholder="개발 진행 상황, 완료 내용, 추가 설명 등을 입력하세요..." rows="4" translate="yes">${request.developerComment || ''}</textarea>
           <div class="help">요청자에게 전달할 개발 진행 상황이나 완료 내용을 작성하세요</div>
         </div>
       </div>
