@@ -1551,8 +1551,8 @@ select:focus {
 
 .notice-popup-content {
     position: relative;
-    background: #FFFAEF; /* 아이보리 바탕 */
-    border: 2px solid #E8DDC7; /* 아이보리 톤 보더 */
+    background: var(--surface); /* 기본 대시보드와 동일한 배경 */
+    border: 2px solid var(--border); /* 기본 대시보드와 동일한 보더 */
     border-radius: 24px;
     box-shadow: 
         0 32px 64px -12px rgba(0, 0, 0, 0.15),
@@ -1955,8 +1955,8 @@ select:focus {
 
 .notice-popup-header {
     padding: 28px 28px 20px;
-    background: #FFF5DE; /* 아이보리 헤더 */
-    color: #5B4B35; /* 딥 브라운 텍스트 */
+    background: var(--surface-elevated); /* 기본 대시보드와 동일한 헤더 배경 */
+    color: var(--fg); /* 기본 대시보드와 동일한 텍스트 색상 */
     display: flex;
     align-items: flex-start;
     justify-content: space-between;
@@ -1971,7 +1971,7 @@ select:focus {
     left: 0;
     right: 0;
     bottom: 0;
-    background: linear-gradient(135deg, rgba(255, 255, 255, 0.5) 0%, rgba(255, 255, 255, 0.2) 100%);
+    background: linear-gradient(135deg, rgba(59, 130, 246, 0.05) 0%, rgba(59, 130, 246, 0.02) 100%);
     pointer-events: none;
 }
 
@@ -1990,14 +1990,14 @@ select:focus {
 .notice-icon {
     width: 44px;
     height: 44px;
-    background: rgba(255, 255, 255, 0.7);
+    background: var(--primary-light);
     border-radius: 14px;
     display: flex;
     align-items: center;
     justify-content: center;
-    color: #8A6D3B; /* 아이콘 컬러 브라운 */
+    color: var(--primary); /* 기본 대시보드와 동일한 아이콘 색상 */
     backdrop-filter: blur(10px);
-    border: 1px solid rgba(232, 221, 199, 0.9);
+    border: 1px solid var(--border);
 }
 
 .notice-icon-glow {
@@ -2019,7 +2019,7 @@ select:focus {
 
 .notice-header-text h2 {
     margin: 0 0 6px 0;
-    color: #5B4B35; /* notice-btn-primary와 동일한 브라운 색상 */
+    color: var(--fg); /* 기본 대시보드와 동일한 텍스트 색상 */
     font-size: 22px;
     font-weight: 700;
     letter-spacing: -0.02em;
@@ -2028,7 +2028,7 @@ select:focus {
 
 .notice-header-text p {
     margin: 0;
-    color: #2A1F15; /* 매우 진한 브라운 색상 */
+    color: var(--fg-secondary); /* 기본 대시보드와 동일한 보조 텍스트 색상 */
     font-size: 13px;
     font-weight: 500;
     letter-spacing: 0.01em;
@@ -2037,7 +2037,7 @@ select:focus {
 
 .notice-popup-body {
     padding: 28px;
-    background: #FFFAEF; /* 아이보리 바디 */
+    background: var(--surface); /* 기본 대시보드와 동일한 배경 */
 }
 
 .notice-content {
@@ -2048,14 +2048,14 @@ select:focus {
     display: inline-flex;
     align-items: center;
     gap: 8px;
-    background: linear-gradient(135deg, #FFF7E0 0%, #FFF1CC 100%);
-    color: #8A6D3B;
+    background: var(--primary-light);
+    color: var(--primary);
     padding: 8px 16px;
     border-radius: 20px;
     font-size: 13px;
     font-weight: 600;
     margin-bottom: 20px;
-    border: 1px solid rgba(232, 221, 199, 0.8);
+    border: 1px solid var(--border);
 }
 
 .status-dot {
@@ -2138,8 +2138,8 @@ select:focus {
 
 .notice-popup-footer {
     padding: 20px 28px 28px;
-    background: #FFF5DE; /* 아이보리 푸터 */
-    border-top: 2px solid #E8DDC7; /* 아이보리 톤 보더 */
+    background: var(--surface-elevated); /* 기본 대시보드와 동일한 푸터 배경 */
+    border-top: 2px solid var(--border); /* 기본 대시보드와 동일한 보더 */
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -2237,15 +2237,15 @@ select:focus {
 }
 
 .notice-btn-primary {
-    background: linear-gradient(135deg, #F7EEDC 0%, #EDE1C6 100%); /* 아이보리 버튼 */
-    color: #5B4B35; /* 브라운 텍스트 */
-    border: 1px solid #E8DDC7;
-    box-shadow: 0 4px 12px rgba(190, 170, 130, 0.25);
+    background: linear-gradient(135deg, var(--primary) 0%, #1d4ed8 100%); /* 기본 대시보드와 동일한 버튼 배경 */
+    color: white; /* 기본 대시보드와 동일한 버튼 텍스트 색상 */
+    border: 1px solid var(--primary);
+    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.25);
 }
 
 .notice-btn-primary:hover {
     transform: translateY(-2px);
-    box-shadow: 0 8px 22px rgba(190, 170, 130, 0.35);
+    box-shadow: 0 8px 22px rgba(59, 130, 246, 0.35);
 }
 
 .notice-btn-primary:active {
