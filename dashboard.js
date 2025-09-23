@@ -2604,4 +2604,18 @@ function initializeModals() {
       requestModal.style.display = 'none';
     }
   });
+
+  // AI 가이드 팝업
+  const openAIGuideBtn = document.getElementById('openAIGuideBtn');
+
+  if (openAIGuideBtn) {
+    openAIGuideBtn.addEventListener('click', () => {
+      const url = 'https://chatgpt.com/g/g-68a3d48e15d0819195906b06fb1ab594-dongsu-mulryu-wms-gaideu';
+      const w = 980; 
+      const h = 760;
+      const left = window.screenX + (window.outerWidth - w) / 2;
+      const top = window.screenY + (window.outerHeight - h) / 2;
+      window.open(url, 'aiGuidePopup', `width=${w},height=${h},left=${left},top=${top},resizable=yes,scrollbars=yes`);
+    });
+  }
 }
