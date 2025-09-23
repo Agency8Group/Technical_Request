@@ -620,6 +620,7 @@ function initializeDepartments() {
       }
     });
   }
+  
 
   // 저장 버튼 이벤트
   const saveDeptBtn = document.getElementById('saveDeptBtn');
@@ -631,7 +632,14 @@ function initializeDepartments() {
       const comment = noMoreRequests.checked ? '더 이상 요청할 것이 없습니다.' : '';
       
       if (!selectedDept) {
-        showError('부서를 선택해주세요.');
+        setDeptStatus('부서를 선택해주세요.', 'error');
+        return;
+      }
+      
+      // 중복 확인 체크
+      const existingDept = currentDepartments.find(dept => dept.department === selectedDept);
+      if (existingDept) {
+        setDeptStatus(`❌ ${selectedDept} 부서는 이미 확인이 완료되었습니다. (${formatDate(existingDept.createdAt)})`, 'error');
         return;
       }
       
@@ -655,9 +663,9 @@ function initializeDepartments() {
         
         // 완료 상태에 따른 메시지
         if (noMoreRequests.checked) {
-          showSuccess(`✅ ${selectedDept} 부서 확인이 완료되었습니다! (개발사 전달 준비 완료)`);
+          setDeptStatus(`✅ ${selectedDept} 부서 확인이 완료되었습니다! (개발사 전달 준비 완료)`, 'success');
         } else {
-          showSuccess(`부서 확인이 저장되었습니다: ${selectedDept}${comment ? ' - ' + comment : ''}`);
+          setDeptStatus(`부서 확인이 저장되었습니다: ${selectedDept}${comment ? ' - ' + comment : ''}`, 'success');
         }
         
         // 폼 리셋
@@ -672,9 +680,12 @@ function initializeDepartments() {
         // 부서 진행률 즉시 업데이트
         updateDepartmentProgress();
         
+        // 부서 선택 옵션 업데이트
+        updateDepartmentSelectOptions();
+        
       } catch (error) {
         console.error('부서 확인 저장 오류:', error);
-        showError('부서 확인 저장 중 오류가 발생했습니다: ' + error.message);
+        setDeptStatus('부서 확인 저장 중 오류가 발생했습니다: ' + error.message, 'error');
       } finally {
         saveDeptBtn.disabled = false;
         saveDeptBtn.textContent = '부서 확인 저장';
@@ -685,6 +696,29 @@ function initializeDepartments() {
   console.log('부서 초기화 완료');
 }
 
+// 부서 선택 옵션 업데이트 함수 (전역 함수)
+function updateDepartmentSelectOptions() {
+  const departmentSelect = document.getElementById('departmentSelect');
+  if (!departmentSelect) return;
+  
+  // 모든 옵션을 활성화 상태로 초기화
+  const options = departmentSelect.querySelectorAll('option');
+  options.forEach(option => {
+    if (option.value !== '') {
+      option.disabled = false;
+      option.textContent = option.value;
+    }
+  });
+  
+  // 이미 확인된 부서는 비활성화
+  currentDepartments.forEach(dept => {
+    const option = departmentSelect.querySelector(`option[value="${dept.department}"]`);
+    if (option) {
+      option.disabled = true;
+      option.textContent = `${dept.department} (완료됨)`;
+    }
+  });
+}
 
 // 데이터 로드
 async function loadData() {
@@ -731,6 +765,7 @@ async function loadData() {
     updateRecentActivity();
     updateRequestsTable();
     updateDepartmentsTable();
+    updateDepartmentSelectOptions();
     
     showSuccess('데이터 로드 완료');
     
@@ -1102,6 +1137,19 @@ function setStatus(msg, type) {
   }
 }
 
+// 부서 확인 섹션 전용 상태 메시지 함수
+function setDeptStatus(msg, type) {
+  const deptStatusEl = document.getElementById('deptStatus');
+  if (!deptStatusEl) return;
+  
+  deptStatusEl.textContent = msg;
+  deptStatusEl.className = 'status ' + type;
+  deptStatusEl.style.display = 'block';
+  if (type !== 'loading') {
+    setTimeout(() => deptStatusEl.style.display = 'none', 6000);
+  }
+}
+
 // 성공 메시지 표시
 function showSuccess(message) {
   setStatus(message, 'success');
@@ -1155,28 +1203,28 @@ function showRequestModal(request) {
         <div class="form-grid">
           <div class="form-group">
             <label>제목</label>
-            <input type="text" value="${request.title || ''}" readonly>
+            <div class="readonly-field">${request.title || ''}</div>
           </div>
           <div class="form-group">
             <label>개발유형</label>
-            <input type="text" value="${request.developmentType || ''}" readonly>
+            <div class="readonly-field">${request.developmentType || ''}</div>
           </div>
         </div>
         
         <div class="form-grid">
           <div class="form-group">
             <label>요청자 이름</label>
-            <input type="text" value="${request.requesterName || request.requester || ''}" readonly>
+            <div class="readonly-field">${request.requesterName || request.requester || ''}</div>
           </div>
           <div class="form-group">
             <label>등록일시</label>
-            <input type="text" value="${formatDate(request.createdAt)}" readonly>
+            <div class="readonly-field">${formatDate(request.createdAt)}</div>
           </div>
         </div>
         
         <div class="form-group">
           <label>상세내용</label>
-          <textarea readonly>${request.detail || ''}</textarea>
+          <div class="readonly-multiline">${request.detail || ''}</div>
         </div>
         
         ${getAttachedFilesHTML(request)}
