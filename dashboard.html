@@ -303,6 +303,10 @@
                     <div class="table-header">
                         <h3>요청 목록</h3>
                         <div class="table-actions">
+                            <div class="search-container" style="display: flex; gap: 8px; align-items: center; margin-right: 12px;">
+                                <input type="text" id="requestSearchInput" placeholder="제목, 내용, 요청자로 검색..." style="padding: 8px 12px; border: 1px solid var(--border); border-radius: 6px; font-size: 14px; width: 280px;">
+                                <button class="btn btn-secondary" id="clearSearchBtn" style="padding: 8px 12px; font-size: 14px;">초기화</button>
+                            </div>
                             <button class="btn btn-secondary" id="exportRequestsBtn">요청 데이터 다운로드 (CSV)</button>
                         </div>
                     </div>

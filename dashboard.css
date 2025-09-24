@@ -623,6 +623,35 @@ p, span, div, button, input, textarea, select {
 .table-actions {
   display: flex;
   gap: 8px;
+  align-items: center;
+}
+
+/* 검색 컨테이너 */
+.search-container {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.search-container input {
+  padding: 8px 12px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  font-size: 14px;
+  width: 280px;
+  background: var(--surface);
+  color: var(--fg);
+  transition: border-color 0.2s ease;
+}
+
+.search-container input:focus {
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.1);
+}
+
+.search-container input::placeholder {
+  color: var(--fg-secondary);
 }
 
 .table-wrapper {

@@ -2494,6 +2494,8 @@ function hideWorkGuideModal() {
 // 요청 필터링 기능 초기화
 function initializeRequestFilters() {
   const statusFilter = document.getElementById('statusFilter');
+  const searchInput = document.getElementById('requestSearchInput');
+  const clearSearchBtn = document.getElementById('clearSearchBtn');
   
   if (statusFilter) {
     statusFilter.addEventListener('change', (e) => {
@@ -2501,6 +2503,60 @@ function initializeRequestFilters() {
       filterRequests(filterValue);
     });
   }
+  
+  // 검색 기능
+  if (searchInput) {
+    searchInput.addEventListener('input', (e) => {
+      const searchTerm = e.target.value.trim().toLowerCase();
+      searchRequests(searchTerm);
+    });
+  }
+  
+  // 검색 초기화
+  if (clearSearchBtn) {
+    clearSearchBtn.addEventListener('click', () => {
+      if (searchInput) {
+        searchInput.value = '';
+        searchRequests('');
+      }
+    });
+  }
+}
+
+// 요청 검색 함수
+function searchRequests(searchTerm) {
+  const tableBody = document.getElementById('requestsTableBody');
+  if (!tableBody) return;
+  
+  const rows = tableBody.querySelectorAll('tr');
+  
+  if (!searchTerm) {
+    // 검색어가 없으면 모든 행 표시
+    rows.forEach(row => {
+      row.style.display = '';
+    });
+    return;
+  }
+  
+  rows.forEach(row => {
+    const cells = row.querySelectorAll('td');
+    let isMatch = false;
+    
+    // 각 셀의 내용을 검색
+    cells.forEach(cell => {
+      const cellText = cell.textContent.toLowerCase();
+      if (cellText.includes(searchTerm)) {
+        isMatch = true;
+      }
+    });
+    
+    // 매치되는 행만 표시
+    row.style.display = isMatch ? '' : 'none';
+  });
+  
+  // 검색 결과 표시
+  const visibleRows = Array.from(rows).filter(row => row.style.display !== 'none');
+  console.log(`검색 결과: ${visibleRows.length}개 항목 표시 (검색어: "${searchTerm}")`);
 }
 
 // 요청 필터링 함수
