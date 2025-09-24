@@ -398,6 +398,14 @@ p, span, div, button, input, textarea, select {
   font-weight: 500;
 }
 
+.progress-note {
+  display: block;
+  margin-top: 4px;
+  font-size: 11px;
+  color: var(--fg-tertiary);
+  font-style: italic;
+}
+
 /* 부서 확인 진행률 */
 .department-progress {
   background: var(--surface);
