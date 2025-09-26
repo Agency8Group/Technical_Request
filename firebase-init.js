@@ -9,7 +9,7 @@ import {
 } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-auth.js";
 
 // OAuth 도메인 경고 무시 (GitHub Pages 배포용)
-console.log('Firebase 초기화 중...');
+console.log('초기화 중...');
 
 const firebaseConfig = {
   apiKey: "AIzaSyCymSYdvXJ9dsKURunMLFBakduRLUUEQiA",
