@@ -856,6 +856,8 @@ function updateRequestsTable() {
   
   currentRequests.forEach(req => {
     const row = document.createElement('tr');
+    // 상세내용을 숨겨진 데이터 속성으로 저장 (검색용)
+    row.setAttribute('data-detail', req.detail || '');
     row.innerHTML = `
       <td>${req.title}</td>
       <td>${req.developmentType || '-'}</td>
@@ -2531,9 +2533,10 @@ function searchRequests(searchTerm) {
   const rows = tableBody.querySelectorAll('tr');
   
   if (!searchTerm) {
-    // 검색어가 없으면 모든 행 표시
+    // 검색어가 없으면 모든 행 표시하고 하이라이트 제거
     rows.forEach(row => {
       row.style.display = '';
+      removeHighlight(row);
     });
     return;
   }
@@ -2547,8 +2550,17 @@ function searchRequests(searchTerm) {
       const cellText = cell.textContent.toLowerCase();
       if (cellText.includes(searchTerm)) {
         isMatch = true;
+        highlightText(cell, searchTerm);
+      } else {
+        removeHighlight(cell);
       }
     });
+    
+    // 숨겨진 상세내용도 검색
+    const detailData = row.getAttribute('data-detail');
+    if (detailData && detailData.toLowerCase().includes(searchTerm)) {
+      isMatch = true;
+    }
     
     // 매치되는 행만 표시
     row.style.display = isMatch ? '' : 'none';
@@ -2557,6 +2569,22 @@ function searchRequests(searchTerm) {
   // 검색 결과 표시
   const visibleRows = Array.from(rows).filter(row => row.style.display !== 'none');
   console.log(`검색 결과: ${visibleRows.length}개 항목 표시 (검색어: "${searchTerm}")`);
+}
+
+// 텍스트 하이라이트 함수
+function highlightText(element, searchTerm) {
+  const text = element.textContent;
+  const regex = new RegExp(`(${searchTerm})`, 'gi');
+  const highlightedText = text.replace(regex, '<mark class="search-highlight">$1</mark>');
+  element.innerHTML = highlightedText;
+}
+
+// 하이라이트 제거 함수
+function removeHighlight(element) {
+  const marks = element.querySelectorAll('mark.search-highlight');
+  marks.forEach(mark => {
+    mark.outerHTML = mark.textContent;
+  });
 }
 
 // 요청 필터링 함수
