@@ -227,6 +227,15 @@ function initializeNavigation() {
       switchSection(section);
     });
   });
+  
+  // ERP/WMS 도움말 말풍선 이벤트 리스너
+  const erpHelpBubble = document.getElementById('erpHelpBubble');
+  if (erpHelpBubble) {
+    erpHelpBubble.addEventListener('click', (e) => {
+      e.stopPropagation(); // 네비게이션 클릭 이벤트 방지
+      showErpAccessModal();
+    });
+  }
 }
 
 // 섹션 전환
@@ -258,9 +267,6 @@ function switchSection(sectionName) {
   } else if (sectionName === 'menu-guide') {
     loadMenuGuide();
   } else if (sectionName === 'erp-wms') {
-    // ERP/WMS 섹션 진입 시 접속 안내 모달 표시
-    showErpAccessModal();
-    
     // ERP/WMS 섹션 진입 시 전체화면 모드 활성화
     const erpSection = document.getElementById('erp-wms');
     if (erpSection) {

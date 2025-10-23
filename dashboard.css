@@ -4066,3 +4066,70 @@ select option:disabled:hover {
     justify-content: center;
   }
 }
+
+/* ERP/WMS 도움말 말풍선 스타일 */
+.erp-help-bubble {
+  position: absolute;
+  bottom: 16px;
+  right: 16px;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: var(--primary);
+  color: white;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 4px 16px var(--shadow-medium);
+  z-index: 1000;
+  opacity: 0.9;
+}
+
+/* ERP/WMS 컨테이너에 상대 위치 설정 */
+.erp-wms-container {
+  position: relative;
+}
+
+.erp-help-bubble:hover {
+  background: var(--primary-hover);
+  transform: scale(1.1);
+  box-shadow: 0 4px 12px var(--shadow-heavy);
+  opacity: 1;
+}
+
+.erp-help-bubble:active {
+  transform: scale(0.95);
+}
+
+/* 말풍선 애니메이션 */
+@keyframes helpBubblePulse {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+}
+
+.erp-help-bubble.pulse {
+  animation: helpBubblePulse 2s ease-in-out infinite;
+}
+
+/* 네비게이션 아이템에 상대 위치 설정 */
+.nav-item {
+  position: relative;
+}
+
+/* 다크모드에서 도움말 말풍선 스타일 */
+[data-theme="dark"] .erp-help-bubble {
+  background: var(--primary);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+[data-theme="dark"] .erp-help-bubble:hover {
+  background: var(--primary-hover);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+}
