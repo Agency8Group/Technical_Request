@@ -35,6 +35,12 @@
     
     <!-- Excel 파일 처리 라이브러리 -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    
+    <!-- Lottie 애니메이션 -->
+    <script
+        src="https://unpkg.com/@lottiefiles/dotlottie-wc@0.8.5/dist/dotlottie-wc.js"
+        type="module"
+    ></script>
 </head>
 <body>
     <div class="dashboard-container">
@@ -117,8 +123,21 @@
             </nav>
         </aside>
 
-        <!-- 메인 콘텐츠 -->
-        <main class="main-content">
+    <!-- 로딩 오버레이 -->
+    <div id="loadingOverlay" class="loading-overlay">
+        <div class="loading-content">
+            <dotlottie-wc
+                src="https://lottie.host/27ac0a7e-25c5-4426-a3f6-ead0b850c688/YY3PfcDoVn.lottie"
+                class="loading-animation"
+                autoplay
+                loop
+            ></dotlottie-wc>
+            <p class="loading-text">데이터를 불러오는 중...</p>
+        </div>
+    </div>
+
+    <!-- 메인 콘텐츠 -->
+    <main class="main-content">
             <!-- 대시보드 개요 -->
             <section id="overview" class="content-section active">
                 <div class="section-header">

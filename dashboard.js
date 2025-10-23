@@ -28,6 +28,7 @@ let navItems, contentSections, connDot, connText;
 
 // DOM 요소들 (지연 로딩)
 let totalRequestsEl, pendingRequestsEl, completedRequestsEl, totalQnAEl, completionRateEl;
+let loadingOverlay;
 let newRequestBtn, requestForm, requestFormElement, cancelBtn, submitBtn, statusMsg;
 let qnaQuestion, qnaRequesterName, submitQuestionBtn, qnaList;
 let saveDeptBtn, deptStatus;
@@ -48,6 +49,11 @@ document.addEventListener('DOMContentLoaded', function() {
   try {
     // DOM 요소들 초기화
     initializeDOMElements();
+    
+    // 로딩 오버레이 초기 숨김
+    if (loadingOverlay) {
+      loadingOverlay.style.display = 'none';
+    }
     
     // 기본 UI 초기화
     initializeNavigation();
@@ -86,6 +92,9 @@ function initializeDOMElements() {
   completedRequestsEl = document.getElementById('completedRequests');
   totalQnAEl = document.getElementById('totalQnA');
   completionRateEl = document.getElementById('completionRate');
+  
+  // 로딩 오버레이
+  loadingOverlay = document.getElementById('loadingOverlay');
   
   // 폼 관련 요소들
   newRequestBtn = document.getElementById('newRequestBtn');
@@ -1035,6 +1044,18 @@ function updateDepartmentSelectOptions() {
   });
 }
 
+// 로딩 오버레이 숨기기
+function hideLoadingOverlay() {
+  if (loadingOverlay) {
+    loadingOverlay.classList.add('hidden');
+    setTimeout(() => {
+      if (loadingOverlay) {
+        loadingOverlay.style.display = 'none';
+      }
+    }, 300);
+  }
+}
+
 // 데이터 로드
 async function loadData() {
   console.log('데이터 로드 시작');
@@ -1084,8 +1105,16 @@ async function loadData() {
     
     showSuccess('데이터 로드 완료');
     
+    // 로딩 오버레이 숨기기 (새로고침 버튼 클릭 시에만) - 최소 3초 표시
+    if (loadingOverlay && loadingOverlay.style.display !== 'none') {
+      setTimeout(() => {
+        hideLoadingOverlay();
+      }, 3000);
+    }
+    
   } catch (err) {
     console.error('데이터 로드 오류:', err);
+    hideLoadingOverlay();
     showError('데이터 로드 중 오류가 발생했습니다: ' + err.message);
   }
 }
@@ -2747,6 +2776,12 @@ function initializeRefreshButton() {
   const refreshBtn = document.getElementById('refreshBtn');
   if (refreshBtn) {
     refreshBtn.addEventListener('click', () => {
+      // 로딩 오버레이 표시
+      if (loadingOverlay) {
+        loadingOverlay.style.display = 'flex';
+        loadingOverlay.classList.remove('hidden');
+      }
+      
       loadData();
       setStatus('데이터를 새로고침했습니다.', 'success');
     });
