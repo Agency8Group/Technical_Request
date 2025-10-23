@@ -37,6 +37,19 @@ p, span, div, button, input, textarea, select {
   }
 }
 
+/* 순차 애니메이션을 위한 공통 클래스 */
+.animate-fade-in {
+  opacity: 0;
+  transform: translateY(20px);
+  animation: fadeInUp 0.6s ease-out forwards;
+}
+
+.animate-slide-in {
+  opacity: 0;
+  transform: translateX(-20px);
+  animation: slideInLeft 0.6s ease-out forwards;
+}
+
 @keyframes pulse {
   0%, 100% {
     transform: scale(1);
@@ -1519,6 +1532,34 @@ select:focus {
   background: rgba(255, 255, 255, 0.15);
 }
 
+/* 부서 확인 저장 버튼 스타일 */
+#saveDeptBtn {
+  max-width: 140px;
+  padding: 12px 20px;
+  font-size: 14px;
+  font-weight: 600;
+  margin: 20px auto 0;
+  display: block;
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  color: white;
+  border: 2px solid #10b981;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.2);
+  transition: all 0.4s ease-out;
+  opacity: 0;
+  transform: translateY(20px);
+}
+
+#saveDeptBtn:hover {
+  background: linear-gradient(135deg, #059669 0%, #047857 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(16, 185, 129, 0.3);
+}
+
+#saveDeptBtn:active {
+  transform: translateY(0);
+}
+
 .btn-info {
   background: linear-gradient(135deg, rgba(59, 130, 246, 0.8) 0%, rgba(29, 78, 216, 0.6) 100%);
   color: white;
@@ -2240,6 +2281,7 @@ select:focus {
     min-width: 100px;
     display: flex;
     align-items: center;
+    justify-content: center;
     gap: 8px;
     position: relative;
     overflow: hidden;
@@ -2794,7 +2836,13 @@ select:focus {
 #completionCardContainer {
   opacity: 0;
   transform: translateY(20px);
-  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: all 0.4s ease-out;
+}
+
+#completionCardContainer.show {
+  opacity: 1;
+  transform: translateY(0);
+  animation: fadeInUp 0.6s ease-out forwards;
 }
 
 .completion-card {

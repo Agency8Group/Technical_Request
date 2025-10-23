@@ -584,9 +584,28 @@ function initializeDepartments() {
           </div>
         `;
         autoComment.classList.add('show');
+        
+        // 부서 확인 저장 버튼 표시 (순차 애니메이션)
+        const saveDeptBtn = document.getElementById('saveDeptBtn');
+        if (saveDeptBtn) {
+          saveDeptBtn.style.display = 'block';
+          saveDeptBtn.style.opacity = '0';
+          saveDeptBtn.style.transform = 'translateY(20px)';
+          
+          setTimeout(() => {
+            saveDeptBtn.style.opacity = '1';
+            saveDeptBtn.style.transform = 'translateY(0)';
+          }, 200);
+        }
       } else {
         autoComment.textContent = '';
         autoComment.classList.remove('show');
+        
+        // 부서 확인 저장 버튼 숨기기
+        const saveDeptBtn = document.getElementById('saveDeptBtn');
+        if (saveDeptBtn) {
+          saveDeptBtn.style.display = 'none';
+        }
       }
     });
   }
@@ -602,13 +621,19 @@ function initializeDepartments() {
       if (selectedDept) {
         selectedDeptName.textContent = selectedDept;
         completionCardContainer.style.display = 'block';
-        // 카드 애니메이션 효과
+        
+        // 다른 요소들과 일관된 애니메이션 적용
         setTimeout(() => {
-          completionCardContainer.style.opacity = '1';
-          completionCardContainer.style.transform = 'translateY(0)';
+          completionCardContainer.classList.add('show');
         }, 100);
       } else {
-        completionCardContainer.style.display = 'none';
+        // 부드러운 페이드아웃 애니메이션
+        completionCardContainer.classList.remove('show');
+        
+        setTimeout(() => {
+          completionCardContainer.style.display = 'none';
+        }, 400);
+        
         // 체크박스 상태 초기화
         const noMoreRequests = document.getElementById('noMoreRequests');
         const autoComment = document.getElementById('autoComment');
@@ -673,6 +698,17 @@ function initializeDepartments() {
         noMoreRequests.checked = false;
         autoComment.textContent = '';
         autoComment.classList.remove('show');
+        
+        // 부서 확인 저장 버튼 숨기기
+        saveDeptBtn.style.display = 'none';
+        
+        // 완료 카드 숨기기
+        const completionCardContainer = document.getElementById('completionCardContainer');
+        if (completionCardContainer) {
+          completionCardContainer.style.display = 'none';
+          completionCardContainer.style.opacity = '0';
+          completionCardContainer.style.transform = 'translateY(20px)';
+        }
         
         // 데이터 새로고침
         loadData();
