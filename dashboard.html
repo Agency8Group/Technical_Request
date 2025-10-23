@@ -47,14 +47,30 @@
                     <span class="help" id="connText">연결 확인 중...</span>
                 </div>
                 <div class="user-info">
-                    <div class="user-email" id="userEmail">사용자 정보 로딩 중...</div>
+                    <div class="user-email-container">
+                        <div class="user-email" id="userEmail">사용자 정보 로딩 중...</div>
+                        <span class="logout-link" id="logoutBtn">
+                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style="margin-right: 4px;" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path>
+                            </svg>
+                            로그아웃
+                        </span>
+                    </div>
                     <!-- Google Translate Widget -->
-                    <div id="google_translate_element" style="margin: 10px 0;"></div>
-                    <button class="logout-btn" id="logoutBtn">
-                        <svg class="logout-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path>
-                        </svg>
-                        <span>로그아웃</span>
+                    <div id="google_translate_element" class="translate-container"></div>
+                    
+                    <!-- 다크모드 토글 -->
+                    <button class="theme-toggle-btn" id="themeToggle">
+                        <div class="theme-toggle-icon">
+                            <svg class="sun-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <circle cx="12" cy="12" r="5" stroke="currentColor" stroke-width="2"/>
+                                <path d="M12 1V3M12 21V23M4.22 4.22L5.64 5.64M18.36 18.36L19.78 19.78M1 12H3M21 12H23M4.22 19.78L5.64 18.36M18.36 5.64L19.78 4.22" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                            </svg>
+                            <svg class="moon-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        </div>
+                        <span class="theme-toggle-text">다크모드</span>
                     </button>
                 </div>
             </div>

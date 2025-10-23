@@ -56,6 +56,7 @@ document.addEventListener('DOMContentLoaded', function() {
     initializeNoticePopup();
     initializeWorkGuideModal();
     initializePinModal();
+    initializeThemeToggle();
     
     // 필터링 기능 초기화
     initializeRequestFilters();
@@ -801,6 +802,54 @@ function initializePinModal() {
   });
   
   console.log('PIN 모달 초기화 완료');
+}
+
+// 다크모드 토글 초기화
+function initializeThemeToggle() {
+  console.log('다크모드 토글 초기화 시작');
+  
+  const themeToggle = document.getElementById('themeToggle');
+  const themeToggleText = document.querySelector('.theme-toggle-text');
+  
+  if (!themeToggle) return;
+  
+  // 저장된 테마 설정 불러오기
+  const savedTheme = localStorage.getItem('theme') || 'light';
+  setTheme(savedTheme);
+  
+  // 토글 버튼 이벤트
+  themeToggle.addEventListener('click', () => {
+    const currentTheme = document.documentElement.getAttribute('data-theme');
+    const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+    setTheme(newTheme);
+  });
+  
+  // 시스템 다크모드 감지
+  const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+  mediaQuery.addListener((e) => {
+    if (!localStorage.getItem('theme')) {
+      setTheme(e.matches ? 'dark' : 'light');
+    }
+  });
+  
+  console.log('다크모드 토글 초기화 완료');
+}
+
+// 테마 설정 함수
+function setTheme(theme) {
+  document.documentElement.setAttribute('data-theme', theme);
+  localStorage.setItem('theme', theme);
+  
+  // 토글 버튼 텍스트 업데이트
+  const themeToggleText = document.querySelector('.theme-toggle-text');
+  if (themeToggleText) {
+    themeToggleText.textContent = theme === 'dark' ? '라이트모드' : '다크모드';
+  }
+  
+  // 테마 변경 애니메이션
+  document.body.style.transition = 'background-color 0.3s ease, color 0.3s ease';
+  
+  console.log(`테마 변경: ${theme}`);
 }
 
 // PIN 숫자 추가
