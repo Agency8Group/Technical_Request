@@ -1208,7 +1208,7 @@ function updateDepartmentProgress() {
     progressCard.className = 'progress-card';
     
     let status = 'not-started';
-    let statusText = '요청사항 확인 및 개발 검토 중';
+    let statusText = '요청사항 접수중..';
     let statusIcon = '⏳';
     
     if (deptData) {
