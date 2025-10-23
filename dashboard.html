@@ -359,6 +359,14 @@
             <section id="erp-wms" class="content-section">
                 <div class="section-header">
                     <h1>ERP/WMS 시스템</h1>
+                    <div class="header-actions">
+                        <button class="btn btn-primary" id="erpFullscreenBtn">
+                            <svg class="btn-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4"></path>
+                            </svg>
+                            펼쳐보기
+                        </button>
+                    </div>
                 </div>
                 
                 <div class="erp-wms-container">
@@ -748,6 +756,43 @@
             <div class="pin-footer">
                 <button class="pin-btn pin-btn-cancel" id="pinCancel">취소</button>
                 <button class="pin-btn pin-btn-confirm" id="pinConfirm" disabled>확인</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ERP/WMS 전체화면 모달 -->
+    <div id="erpFullscreenModal" class="erp-fullscreen-modal">
+        <div class="erp-fullscreen-backdrop"></div>
+        <div class="erp-fullscreen-content">
+            <div class="erp-fullscreen-header">
+                <div class="erp-fullscreen-title">
+                  
+                </div>
+                <div class="erp-fullscreen-actions">
+                    <button class="btn btn-secondary" id="erpRefreshBtn">
+                        <svg class="btn-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+                        </svg>
+                        새로고침
+                    </button>
+                    <button class="btn btn-primary" id="erpCloseFullscreenBtn">
+                        <svg class="btn-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                        </svg>
+                        닫기
+                    </button>
+                </div>
+            </div>
+            <div class="erp-fullscreen-body">
+                <iframe 
+                    src="https://platform.ytzhiheng.com/#/login" 
+                    width="100%" 
+                    height="100%" 
+                    frameborder="0"
+                    allowfullscreen
+                    class="erp-fullscreen-iframe"
+                    id="erpFullscreenIframe">
+                </iframe>
             </div>
         </div>
     </div>

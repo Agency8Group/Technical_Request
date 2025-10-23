@@ -3041,4 +3041,67 @@ function initializeModals() {
       window.open(url, 'aiGuidePopup', `width=${w},height=${h},left=${left},top=${top},resizable=yes,scrollbars=yes`);
     });
   }
+
+  // ERP/WMS 전체화면 모달 이벤트
+  initializeERPFullscreenModal();
+}
+
+// ERP/WMS 전체화면 모달 초기화
+function initializeERPFullscreenModal() {
+  const erpFullscreenBtn = document.getElementById('erpFullscreenBtn');
+  const erpFullscreenModal = document.getElementById('erpFullscreenModal');
+  const erpCloseFullscreenBtn = document.getElementById('erpCloseFullscreenBtn');
+  const erpRefreshBtn = document.getElementById('erpRefreshBtn');
+  const erpFullscreenIframe = document.getElementById('erpFullscreenIframe');
+
+  // 전체보기 버튼 클릭
+  if (erpFullscreenBtn) {
+    erpFullscreenBtn.addEventListener('click', () => {
+      if (erpFullscreenModal) {
+        erpFullscreenModal.style.display = 'block';
+        document.body.style.overflow = 'hidden'; // 배경 스크롤 방지
+      }
+    });
+  }
+
+  // 닫기 버튼 클릭
+  if (erpCloseFullscreenBtn) {
+    erpCloseFullscreenBtn.addEventListener('click', () => {
+      if (erpFullscreenModal) {
+        erpFullscreenModal.style.display = 'none';
+        document.body.style.overflow = 'auto'; // 스크롤 복원
+      }
+    });
+  }
+
+  // 새로고침 버튼 클릭
+  if (erpRefreshBtn && erpFullscreenIframe) {
+    erpRefreshBtn.addEventListener('click', () => {
+      const currentSrc = erpFullscreenIframe.src;
+      erpFullscreenIframe.src = '';
+      setTimeout(() => {
+        erpFullscreenIframe.src = currentSrc;
+      }, 100);
+    });
+  }
+
+  // 모달 외부 클릭 시 닫기
+  if (erpFullscreenModal) {
+    erpFullscreenModal.addEventListener('click', (e) => {
+      if (e.target === erpFullscreenModal || e.target.classList.contains('erp-fullscreen-backdrop')) {
+        erpFullscreenModal.style.display = 'none';
+        document.body.style.overflow = 'auto';
+      }
+    });
+  }
+
+  // ESC 키로 모달 닫기
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') {
+      if (erpFullscreenModal && erpFullscreenModal.style.display === 'block') {
+        erpFullscreenModal.style.display = 'none';
+        document.body.style.overflow = 'auto';
+      }
+    }
+  });
 }
