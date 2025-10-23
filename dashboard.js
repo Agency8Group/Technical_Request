@@ -27,7 +27,7 @@ let currentUser = null;
 let navItems, contentSections, connDot, connText;
 
 // DOM 요소들 (지연 로딩)
-let totalRequestsEl, pendingRequestsEl, completedRequestsEl, totalQnAEl;
+let totalRequestsEl, pendingRequestsEl, completedRequestsEl, totalQnAEl, completionRateEl;
 let newRequestBtn, requestForm, requestFormElement, cancelBtn, submitBtn, statusMsg;
 let qnaQuestion, qnaRequesterName, submitQuestionBtn, qnaList;
 let saveDeptBtn, deptStatus;
@@ -85,6 +85,7 @@ function initializeDOMElements() {
   pendingRequestsEl = document.getElementById('pendingRequests');
   completedRequestsEl = document.getElementById('completedRequests');
   totalQnAEl = document.getElementById('totalQnA');
+  completionRateEl = document.getElementById('completionRate');
   
   // 폼 관련 요소들
   newRequestBtn = document.getElementById('newRequestBtn');
@@ -1091,7 +1092,7 @@ async function loadData() {
 
 // 통계 업데이트
 function updateStats() {
-  if (!totalRequestsEl || !pendingRequestsEl || !completedRequestsEl || !totalQnAEl) return;
+  if (!totalRequestsEl || !pendingRequestsEl || !completedRequestsEl || !totalQnAEl || !completionRateEl) return;
   
   totalRequestsEl.textContent = currentRequests.length;
   
@@ -1104,6 +1105,11 @@ function updateStats() {
   completedRequestsEl.textContent = completed;
   
   totalQnAEl.textContent = currentQnA.length;
+  
+  // 요청 완료율 계산
+  const totalRequests = currentRequests.length;
+  const completionRate = totalRequests > 0 ? Math.round((completed / totalRequests) * 100) : 0;
+  completionRateEl.textContent = `${completionRate}%`;
   
   // 부서 확인 완료율 계산
   const allDepartments = [
