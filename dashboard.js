@@ -37,8 +37,9 @@ let newMenuName, newSubMenuName, newMenuDescription, addRowBtn, menuTableBody, e
 // PIN 관련 변수
 const CORRECT_PIN = '000000';
 let currentPin = '';
-let pinAttempts = 0;
-const MAX_ATTEMPTS = 3;
+  let pinAttempts = 0;
+  const MAX_ATTEMPTS = 3;
+  let currentPinAction = null; // 현재 PIN 입력으로 실행할 액션
 
 // 초기화
 document.addEventListener('DOMContentLoaded', function() {
@@ -915,15 +916,26 @@ function updatePinConfirmButton() {
   if (pinConfirm) {
     pinConfirm.disabled = currentPin.length !== 6;
   }
-}
-
-// PIN 검증
-function verifyPin() {
-  if (currentPin === CORRECT_PIN) {
-    // PIN이 맞으면 CSV 다운로드 실행
-    downloadRequestsCSV();
-    closePinModal();
-    resetPinState();
+  }
+  
+  // PIN 모달 표시
+  function showPinModal(action) {
+    currentPinAction = action;
+    const pinModal = document.getElementById('pinModal');
+    if (pinModal) {
+      pinModal.classList.add('show');
+      document.body.style.overflow = 'hidden';
+      resetPinState();
+    }
+  }
+  
+  // PIN 검증
+  function verifyPin() {
+    if (currentPin === CORRECT_PIN) {
+      // PIN이 맞으면 해당 액션 실행
+      executePinAction();
+      closePinModal();
+      resetPinState();
   } else {
     pinAttempts++;
     showPinError();
@@ -935,10 +947,27 @@ function verifyPin() {
     } else {
       clearPin();
     }
+    }
   }
-}
-
-// PIN 에러 표시
+  
+  // PIN 확인 후 실행할 액션
+  function executePinAction() {
+    switch (currentPinAction) {
+      case 'exportRequests':
+        downloadRequestsCSV();
+        break;
+      case 'exportGuide':
+        exportMenuGuideToCSV();
+        break;
+      case 'importGuide':
+        excelFileInput.click();
+        break;
+      default:
+        console.warn('알 수 없는 PIN 액션:', currentPinAction);
+    }
+  }
+  
+  // PIN 에러 표시
 function showPinError() {
   const pinError = document.getElementById('pinError');
   if (pinError) {
@@ -957,19 +986,6 @@ function hidePinError() {
   }
 }
 
-// PIN 모달 열기
-function openPinModal() {
-  const pinModal = document.getElementById('pinModal');
-  if (pinModal) {
-    pinModal.classList.add('show');
-    resetPinState();
-    // 포커스를 숨겨진 입력 필드로 이동
-    const pinInput = document.getElementById('pinInput');
-    if (pinInput) {
-      pinInput.focus();
-    }
-  }
-}
 
 // PIN 모달 닫기
 function closePinModal() {
@@ -1257,11 +1273,11 @@ function updateDepartmentsTable() {
 
 // 엑셀 내보내기 이벤트 리스너 추가
 function initializeExportButtons() {
-  if (exportRequestsBtn) {
-    exportRequestsBtn.addEventListener('click', () => {
-      openPinModal();
-    });
-  }
+    if (exportRequestsBtn) {
+      exportRequestsBtn.addEventListener('click', () => {
+        showPinModal('exportRequests');
+      });
+    }
   
 }
 
@@ -1918,15 +1934,17 @@ function initializeMenuGuide() {
     addRowBtn.addEventListener('click', addNewRow);
   }
   
-  if (exportGuideBtn) {
-    exportGuideBtn.addEventListener('click', exportMenuGuideToCSV);
-  }
-  
-  if (importGuideBtn) {
-    importGuideBtn.addEventListener('click', () => {
-      excelFileInput.click();
-    });
-  }
+    if (exportGuideBtn) {
+      exportGuideBtn.addEventListener('click', () => {
+        showPinModal('exportGuide');
+      });
+    }
+    
+    if (importGuideBtn) {
+      importGuideBtn.addEventListener('click', () => {
+        showPinModal('importGuide');
+      });
+    }
   
   if (excelFileInput) {
     excelFileInput.addEventListener('change', handleExcelUpload);
