@@ -3662,7 +3662,9 @@ select option:disabled:hover {
   background: var(--surface);
   position: relative;
   overflow: hidden;
-  margin: 20px;
+  margin: 20px 20px 20px 20px;
+  margin-top: -17px;
+  margin-left: 1px;
   height: calc(100vh - 40px);
 }
 
