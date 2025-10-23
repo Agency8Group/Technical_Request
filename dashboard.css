@@ -3687,99 +3687,309 @@ select option:disabled:hover {
   }
 }
 
-/* ERP/WMS 전체화면 모달 스타일 */
-.erp-fullscreen-modal {
+
+/* ERP/WMS 접속 안내 모달 스타일 */
+.erp-access-modal {
   position: fixed;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  z-index: 1000;
+  z-index: 10000;
   display: none;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  box-sizing: border-box;
 }
 
-.erp-fullscreen-backdrop {
+.erp-access-modal.show {
+  display: flex;
+}
+
+.erp-access-backdrop {
   position: absolute;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  background: rgba(0, 0, 0, 0.8);
-  backdrop-filter: blur(4px);
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(8px);
+  animation: erpAccessBackdropFadeIn 0.3s ease-out;
 }
 
-.erp-fullscreen-content {
+.erp-access-content {
   position: relative;
-  width: 100%;
-  height: 100%;
   background: var(--surface);
-  display: flex;
-  flex-direction: column;
+  border-radius: 20px;
+  box-shadow: 0 25px 50px var(--shadow-heavy);
+  max-width: 600px;
+  width: 100%;
+  max-height: 85vh;
+  overflow: hidden;
+  animation: erpAccessSlideIn 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
 }
 
-.erp-fullscreen-header {
+.erp-access-header {
+  padding: 24px 28px;
+  background: var(--surface-elevated);
+  color: var(--fg);
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  padding: 16px 24px;
-  background: var(--surface-elevated);
+  gap: 16px;
+  position: relative;
+  overflow: hidden;
   border-bottom: 1px solid var(--border);
+}
+
+.erp-access-header::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: var(--primary-light);
+  pointer-events: none;
+  opacity: 0.3;
+}
+
+.erp-access-icon {
+  width: 48px;
+  height: 48px;
+  background: var(--primary-light);
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--primary);
+  border: 1px solid var(--border);
   flex-shrink: 0;
 }
 
-.erp-fullscreen-title h2 {
+.erp-access-title h2 {
+  margin: 0 0 6px 0;
+  color: var(--fg);
+  font-size: 22px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+}
+
+.erp-access-title p {
   margin: 0;
-  font-size: 20px;
+  color: var(--muted);
+  font-size: 14px;
+  font-weight: 500;
+  letter-spacing: 0.01em;
+}
+
+.erp-access-body {
+  padding: 28px;
+  background: var(--surface);
+  max-height: 60vh;
+  overflow-y: auto;
+}
+
+.access-info-card {
+  background: var(--surface-elevated);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 24px;
+  margin-bottom: 20px;
+}
+
+.info-section {
+  margin-bottom: 24px;
+}
+
+.info-section:last-child {
+  margin-bottom: 0;
+}
+
+.info-section h3 {
+  margin: 0 0 16px 0;
+  font-size: 16px;
   font-weight: 600;
   color: var(--fg);
-}
-
-.erp-fullscreen-title p {
-  margin: 4px 0 0 0;
-  color: var(--fg-secondary);
-  font-size: 14px;
-}
-
-.erp-fullscreen-actions {
   display: flex;
   align-items: center;
+  gap: 8px;
+}
+
+.link-container {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
+.access-link-input {
+  flex: 1;
+  padding: 12px 16px;
+  border: 2px solid var(--border);
+  border-radius: 8px;
+  background: var(--bg);
+  color: var(--fg);
+  font-size: 14px;
+  font-family: 'Courier New', monospace;
+  transition: all 0.2s ease;
+}
+
+.access-link-input:focus {
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px var(--primary-light);
+}
+
+.copy-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 12px 16px;
+  background: var(--primary);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+
+.copy-btn:hover {
+  background: var(--primary-hover);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+}
+
+.copy-btn.small {
+  padding: 8px 12px;
+  font-size: 12px;
+}
+
+.account-info {
+  display: flex;
+  flex-direction: column;
   gap: 12px;
 }
 
-.erp-fullscreen-body {
+.account-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 16px;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  transition: all 0.2s ease;
+}
+
+.account-item:hover {
+  background: var(--surface-elevated);
+  border-color: var(--border-light);
+}
+
+.account-label {
+  font-weight: 600;
+  color: var(--fg);
+  min-width: 80px;
+}
+
+.account-value {
   flex: 1;
+  font-family: 'Courier New', monospace;
+  font-weight: 600;
+  color: var(--primary);
+  background: var(--primary-light);
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 14px;
+}
+
+.access-note {
+  background: linear-gradient(135deg, rgba(16, 185, 129, 0.08) 0%, rgba(5, 150, 105, 0.05) 100%);
+  border: 1px solid rgba(16, 185, 129, 0.2);
+  border-radius: 12px;
+  padding: 16px;
+  margin-top: 20px;
+}
+
+.access-note p {
+  margin: 0;
+  font-size: 14px;
+  color: var(--fg);
+  line-height: 1.5;
+}
+
+.erp-access-footer {
+  padding: 20px 28px;
+  background: var(--surface-elevated);
+  border-top: 1px solid var(--border);
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+}
+
+.erp-access-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 24px;
+  border: none;
+  border-radius: 12px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  text-decoration: none;
   position: relative;
   overflow: hidden;
 }
 
-.erp-fullscreen-iframe {
-  width: 100%;
-  height: 100%;
-  border: none;
-  background: white;
+.erp-access-btn-secondary {
+  background: var(--surface);
+  color: var(--fg);
+  border: 2px solid var(--border);
 }
 
-/* 반응형 처리 */
-@media (max-width: 768px) {
-  .erp-fullscreen-header {
-    padding: 12px 16px;
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 12px;
+.erp-access-btn-secondary:hover {
+  background: var(--surface-elevated);
+  border-color: var(--border-light);
+  transform: translateY(-1px);
+}
+
+.erp-access-btn-primary {
+  background: var(--primary);
+  color: white;
+  box-shadow: 0 2px 4px var(--shadow-light);
+}
+
+.erp-access-btn-primary:hover {
+  background: var(--primary-hover);
+  box-shadow: 0 4px 8px var(--shadow-medium);
+  transform: translateY(-1px);
+}
+
+.erp-access-btn-primary:active {
+  transform: translateY(0);
+}
+
+/* 애니메이션 */
+@keyframes erpAccessBackdropFadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes erpAccessSlideIn {
+  from {
+    opacity: 0;
+    transform: scale(0.9) translateY(20px);
   }
-  
-  .erp-fullscreen-actions {
-    width: 100%;
-    justify-content: space-between;
-  }
-  
-  .erp-fullscreen-title h2 {
-    font-size: 18px;
-  }
-  
-  .btn {
-    padding: 8px 16px;
-    font-size: 14px;
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
   }
 }
 

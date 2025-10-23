@@ -247,6 +247,9 @@ function switchSection(sectionName) {
   } else if (sectionName === 'menu-guide') {
     loadMenuGuide();
   } else if (sectionName === 'erp-wms') {
+    // ERP/WMS 섹션 진입 시 접속 안내 모달 표시
+    showErpAccessModal();
+    
     // ERP/WMS 섹션 진입 시 전체화면 모드 활성화
     const erpSection = document.getElementById('erp-wms');
     if (erpSection) {
@@ -3056,55 +3059,54 @@ function initializeModals() {
     });
   }
 
-  // ERP/WMS 전체화면 모달 이벤트
-  initializeERPFullscreenModal();
+  // ERP/WMS 접속 안내 모달 이벤트
+  initializeErpAccessModal();
 }
 
-// ERP/WMS 전체화면 모달 초기화
-function initializeERPFullscreenModal() {
-  const erpFullscreenBtn = document.getElementById('erpFullscreenBtn');
-  const erpFullscreenModal = document.getElementById('erpFullscreenModal');
-  const erpCloseFullscreenBtn = document.getElementById('erpCloseFullscreenBtn');
-  const erpRefreshBtn = document.getElementById('erpRefreshBtn');
-  const erpFullscreenIframe = document.getElementById('erpFullscreenIframe');
 
-  // 전체보기 버튼 클릭
-  if (erpFullscreenBtn) {
-    erpFullscreenBtn.addEventListener('click', () => {
-      if (erpFullscreenModal) {
-        erpFullscreenModal.style.display = 'block';
-        document.body.style.overflow = 'hidden'; // 배경 스크롤 방지
-      }
-    });
-  }
+// ERP/WMS 접속 안내 모달 초기화
+function initializeErpAccessModal() {
+  const erpAccessModal = document.getElementById('erpAccessModal');
+  const closeErpAccessModal = document.getElementById('closeErpAccessModal');
+  const openErpDirectLink = document.getElementById('openErpDirectLink');
+  const copyErpLink = document.getElementById('copyErpLink');
+  const copyButtons = document.querySelectorAll('[data-copy]');
 
   // 닫기 버튼 클릭
-  if (erpCloseFullscreenBtn) {
-    erpCloseFullscreenBtn.addEventListener('click', () => {
-      if (erpFullscreenModal) {
-        erpFullscreenModal.style.display = 'none';
-        document.body.style.overflow = 'auto'; // 스크롤 복원
-      }
+  if (closeErpAccessModal) {
+    closeErpAccessModal.addEventListener('click', () => {
+      hideErpAccessModal();
     });
   }
 
-  // 새로고침 버튼 클릭
-  if (erpRefreshBtn && erpFullscreenIframe) {
-    erpRefreshBtn.addEventListener('click', () => {
-      const currentSrc = erpFullscreenIframe.src;
-      erpFullscreenIframe.src = '';
-      setTimeout(() => {
-        erpFullscreenIframe.src = currentSrc;
-      }, 100);
+  // 직접 접속하기 버튼 클릭
+  if (openErpDirectLink) {
+    openErpDirectLink.addEventListener('click', () => {
+      window.open('http://platform.ytzhiheng.com/#/', '_blank');
+      hideErpAccessModal();
     });
   }
+
+  // 링크 복사 버튼 클릭
+  if (copyErpLink) {
+    copyErpLink.addEventListener('click', () => {
+      copyToClipboard('http://platform.ytzhiheng.com/#/');
+    });
+  }
+
+  // 계정 정보 복사 버튼들
+  copyButtons.forEach(button => {
+    button.addEventListener('click', () => {
+      const textToCopy = button.getAttribute('data-copy');
+      copyToClipboard(textToCopy);
+    });
+  });
 
   // 모달 외부 클릭 시 닫기
-  if (erpFullscreenModal) {
-    erpFullscreenModal.addEventListener('click', (e) => {
-      if (e.target === erpFullscreenModal || e.target.classList.contains('erp-fullscreen-backdrop')) {
-        erpFullscreenModal.style.display = 'none';
-        document.body.style.overflow = 'auto';
+  if (erpAccessModal) {
+    erpAccessModal.addEventListener('click', (e) => {
+      if (e.target === erpAccessModal || e.target.classList.contains('erp-access-backdrop')) {
+        hideErpAccessModal();
       }
     });
   }
@@ -3112,10 +3114,91 @@ function initializeERPFullscreenModal() {
   // ESC 키로 모달 닫기
   document.addEventListener('keydown', (e) => {
     if (e.key === 'Escape') {
-      if (erpFullscreenModal && erpFullscreenModal.style.display === 'block') {
-        erpFullscreenModal.style.display = 'none';
-        document.body.style.overflow = 'auto';
+      if (erpAccessModal && erpAccessModal.classList.contains('show')) {
+        hideErpAccessModal();
       }
     }
   });
+}
+
+// ERP 접속 모달 표시
+function showErpAccessModal() {
+  const erpAccessModal = document.getElementById('erpAccessModal');
+  if (erpAccessModal) {
+    erpAccessModal.classList.add('show');
+    document.body.style.overflow = 'hidden';
+  }
+}
+
+// ERP 접속 모달 숨기기
+function hideErpAccessModal() {
+  const erpAccessModal = document.getElementById('erpAccessModal');
+  if (erpAccessModal) {
+    erpAccessModal.classList.remove('show');
+    document.body.style.overflow = 'auto';
+  }
+}
+
+// 클립보드에 복사
+function copyToClipboard(text) {
+  if (navigator.clipboard && window.isSecureContext) {
+    navigator.clipboard.writeText(text).then(() => {
+      showCopySuccess();
+    }).catch(() => {
+      fallbackCopyToClipboard(text);
+    });
+  } else {
+    fallbackCopyToClipboard(text);
+  }
+}
+
+// 폴백 복사 방법
+function fallbackCopyToClipboard(text) {
+  const textArea = document.createElement('textarea');
+  textArea.value = text;
+  textArea.style.position = 'fixed';
+  textArea.style.left = '-999999px';
+  textArea.style.top = '-999999px';
+  document.body.appendChild(textArea);
+  textArea.focus();
+  textArea.select();
+  
+  try {
+    document.execCommand('copy');
+    showCopySuccess();
+  } catch (err) {
+    console.error('복사 실패:', err);
+  }
+  
+  document.body.removeChild(textArea);
+}
+
+// 복사 성공 알림
+function showCopySuccess() {
+  // 간단한 토스트 알림
+  const toast = document.createElement('div');
+  toast.style.cssText = `
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background: var(--success);
+    color: white;
+    padding: 12px 20px;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    z-index: 10001;
+    box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+    animation: slideInRight 0.3s ease-out;
+  `;
+  toast.textContent = '클립보드에 복사되었습니다!';
+  
+  document.body.appendChild(toast);
+  
+  setTimeout(() => {
+    toast.style.animation = 'slideOutRight 0.3s ease-out';
+    setTimeout(() => {
+      document.body.removeChild(toast);
+    }, 300);
+  }, 2000);
 }
