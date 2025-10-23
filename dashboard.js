@@ -34,6 +34,12 @@ let saveDeptBtn, deptStatus;
 let requestsTableBody, exportRequestsBtn;
 let newMenuName, newSubMenuName, newMenuDescription, addRowBtn, menuTableBody, exportGuideBtn, importGuideBtn, excelFileInput, refreshGuideBtn, guideDisplay, guideStats;
 
+// PIN 관련 변수
+const CORRECT_PIN = '000000';
+let currentPin = '';
+let pinAttempts = 0;
+const MAX_ATTEMPTS = 3;
+
 // 초기화
 document.addEventListener('DOMContentLoaded', function() {
   console.log('대시보드 초기화 시작');
@@ -49,6 +55,7 @@ document.addEventListener('DOMContentLoaded', function() {
     initializeMenuGuide();
     initializeNoticePopup();
     initializeWorkGuideModal();
+    initializePinModal();
     
     // 필터링 기능 초기화
     initializeRequestFilters();
@@ -732,6 +739,195 @@ function initializeDepartments() {
   console.log('부서 초기화 완료');
 }
 
+// PIN 모달 초기화
+function initializePinModal() {
+  console.log('PIN 모달 초기화 시작');
+  
+  const pinModal = document.getElementById('pinModal');
+  const pinInput = document.getElementById('pinInput');
+  const pinKeys = document.querySelectorAll('.pin-key[data-key]');
+  const pinClear = document.getElementById('pinClear');
+  const pinBackspace = document.getElementById('pinBackspace');
+  const pinCancel = document.getElementById('pinCancel');
+  const pinConfirm = document.getElementById('pinConfirm');
+  const pinError = document.getElementById('pinError');
+  
+  if (!pinModal) return;
+  
+  // PIN 키패드 이벤트
+  pinKeys.forEach(key => {
+    key.addEventListener('click', () => {
+      const digit = key.getAttribute('data-key');
+      addPinDigit(digit);
+    });
+  });
+  
+  // 지우기 버튼
+  if (pinClear) {
+    pinClear.addEventListener('click', clearPin);
+  }
+  
+  // 백스페이스 버튼
+  if (pinBackspace) {
+    pinBackspace.addEventListener('click', removeLastPinDigit);
+  }
+  
+  // 취소 버튼
+  if (pinCancel) {
+    pinCancel.addEventListener('click', closePinModal);
+  }
+  
+  // 확인 버튼
+  if (pinConfirm) {
+    pinConfirm.addEventListener('click', verifyPin);
+  }
+  
+  // 키보드 입력 지원
+  if (pinInput) {
+    pinInput.addEventListener('input', (e) => {
+      const value = e.target.value.replace(/\D/g, '').slice(0, 6);
+      e.target.value = value;
+      currentPin = value;
+      updatePinDisplay();
+      updatePinConfirmButton();
+    });
+  }
+  
+  // 모달 외부 클릭 시 닫기
+  pinModal.addEventListener('click', (e) => {
+    if (e.target === pinModal) {
+      closePinModal();
+    }
+  });
+  
+  console.log('PIN 모달 초기화 완료');
+}
+
+// PIN 숫자 추가
+function addPinDigit(digit) {
+  if (currentPin.length < 6) {
+    currentPin += digit;
+    updatePinDisplay();
+    updatePinConfirmButton();
+  }
+}
+
+// PIN 마지막 숫자 제거
+function removeLastPinDigit() {
+  if (currentPin.length > 0) {
+    currentPin = currentPin.slice(0, -1);
+    updatePinDisplay();
+    updatePinConfirmButton();
+  }
+}
+
+// PIN 전체 지우기
+function clearPin() {
+  currentPin = '';
+  updatePinDisplay();
+  updatePinConfirmButton();
+  hidePinError();
+}
+
+// PIN 표시 업데이트
+function updatePinDisplay() {
+  for (let i = 1; i <= 6; i++) {
+    const dot = document.getElementById(`pinDot${i}`);
+    if (dot) {
+      if (i <= currentPin.length) {
+        dot.classList.add('filled');
+      } else {
+        dot.classList.remove('filled');
+      }
+    }
+  }
+}
+
+// PIN 확인 버튼 상태 업데이트
+function updatePinConfirmButton() {
+  const pinConfirm = document.getElementById('pinConfirm');
+  if (pinConfirm) {
+    pinConfirm.disabled = currentPin.length !== 6;
+  }
+}
+
+// PIN 검증
+function verifyPin() {
+  if (currentPin === CORRECT_PIN) {
+    // PIN이 맞으면 CSV 다운로드 실행
+    downloadRequestsCSV();
+    closePinModal();
+    resetPinState();
+  } else {
+    pinAttempts++;
+    showPinError();
+    
+    if (pinAttempts >= MAX_ATTEMPTS) {
+      alert('PIN 입력 시도 횟수를 초과했습니다. 잠시 후 다시 시도해주세요.');
+      closePinModal();
+      resetPinState();
+    } else {
+      clearPin();
+    }
+  }
+}
+
+// PIN 에러 표시
+function showPinError() {
+  const pinError = document.getElementById('pinError');
+  if (pinError) {
+    pinError.style.display = 'flex';
+    setTimeout(() => {
+      pinError.style.display = 'none';
+    }, 3000);
+  }
+}
+
+// PIN 에러 숨기기
+function hidePinError() {
+  const pinError = document.getElementById('pinError');
+  if (pinError) {
+    pinError.style.display = 'none';
+  }
+}
+
+// PIN 모달 열기
+function openPinModal() {
+  const pinModal = document.getElementById('pinModal');
+  if (pinModal) {
+    pinModal.classList.add('show');
+    resetPinState();
+    // 포커스를 숨겨진 입력 필드로 이동
+    const pinInput = document.getElementById('pinInput');
+    if (pinInput) {
+      pinInput.focus();
+    }
+  }
+}
+
+// PIN 모달 닫기
+function closePinModal() {
+  const pinModal = document.getElementById('pinModal');
+  if (pinModal) {
+    pinModal.classList.remove('show');
+    resetPinState();
+  }
+}
+
+// PIN 상태 초기화
+function resetPinState() {
+  currentPin = '';
+  pinAttempts = 0;
+  updatePinDisplay();
+  updatePinConfirmButton();
+  hidePinError();
+  
+  const pinInput = document.getElementById('pinInput');
+  if (pinInput) {
+    pinInput.value = '';
+  }
+}
+
 // 부서 선택 옵션 업데이트 함수 (전역 함수)
 function updateDepartmentSelectOptions() {
   const departmentSelect = document.getElementById('departmentSelect');
@@ -997,10 +1193,68 @@ function updateDepartmentsTable() {
 function initializeExportButtons() {
   if (exportRequestsBtn) {
     exportRequestsBtn.addEventListener('click', () => {
-      exportToExcel(currentRequests, '기술개발요청');
+      openPinModal();
     });
   }
   
+}
+
+// CSV 다운로드 함수
+function downloadRequestsCSV() {
+  if (!currentRequests || currentRequests.length === 0) {
+    alert('다운로드할 데이터가 없습니다.');
+    return;
+  }
+  
+  // CSV 헤더
+  const headers = [
+    '번호',
+    '제목', 
+    '개발유형',
+    '상세내용',
+    '요청자',
+    '상태',
+    '우선순위',
+    '등록일시',
+    '수정일시'
+  ];
+  
+  // CSV 데이터 생성
+  const csvData = currentRequests.map((request, index) => [
+    index + 1,
+    request.title || '',
+    request.developmentType || '',
+    request.detail || '',
+    request.requesterName || '',
+    request.status || '',
+    request.priority || '',
+    request.createdAt ? formatDate(request.createdAt) : '',
+    request.updatedAt ? formatDate(request.updatedAt) : ''
+  ]);
+  
+  // CSV 문자열 생성
+  const csvContent = [
+    headers.join(','),
+    ...csvData.map(row => 
+      row.map(field => `"${String(field).replace(/"/g, '""')}"`).join(',')
+    )
+  ].join('\n');
+  
+  // BOM 추가 (한글 깨짐 방지)
+  const BOM = '\uFEFF';
+  const blob = new Blob([BOM + csvContent], { type: 'text/csv;charset=utf-8;' });
+  
+  // 다운로드 실행
+  const link = document.createElement('a');
+  const url = URL.createObjectURL(blob);
+  link.setAttribute('href', url);
+  link.setAttribute('download', `기술개발요청_${new Date().toISOString().split('T')[0]}.csv`);
+  link.style.visibility = 'hidden';
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+  
+  console.log('CSV 다운로드 완료');
 }
 
 // 엑셀 내보내기 함수

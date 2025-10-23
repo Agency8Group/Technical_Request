@@ -1897,6 +1897,17 @@ select:focus {
     overflow: hidden;
 }
 
+.work-guide-btn::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+    transition: left 0.5s;
+}
+
 .work-guide-btn-primary {
     background: var(--primary);
     color: white;
@@ -1907,6 +1918,10 @@ select:focus {
     background: var(--primary-hover);
     box-shadow: 0 4px 8px var(--shadow-medium);
     transform: translateY(-1px);
+}
+
+.work-guide-btn:hover::before {
+    left: 100%;
 }
 
 .work-guide-btn-primary:active {
@@ -2325,6 +2340,287 @@ select:focus {
 
 .notice-btn-primary:hover svg {
     transform: translateY(-1px);
+}
+
+/* PIN 입력 모달 스타일 */
+.pin-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 10000;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    box-sizing: border-box;
+}
+
+.pin-modal.show {
+    display: flex;
+}
+
+.pin-backdrop {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(8px);
+    animation: pinBackdropFadeIn 0.3s ease-out;
+}
+
+.pin-content {
+    position: relative;
+    background: #ffffff;
+    border-radius: 20px;
+    box-shadow: 0 25px 50px rgba(0, 0, 0, 0.25);
+    max-width: 400px;
+    width: 100%;
+    max-height: 90vh;
+    overflow: hidden;
+    animation: pinSlideIn 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.pin-header {
+    padding: 24px 28px 20px;
+    background: var(--surface-elevated);
+    color: var(--fg);
+    text-align: center;
+    border-bottom: 1px solid var(--border);
+}
+
+.pin-icon {
+    width: 48px;
+    height: 48px;
+    background: var(--primary-light);
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--primary);
+    margin: 0 auto 16px;
+    border: 1px solid var(--border);
+}
+
+.pin-header h2 {
+    margin: 0 0 8px 0;
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--fg);
+}
+
+.pin-header p {
+    margin: 0;
+    font-size: 14px;
+    color: var(--muted);
+}
+
+.pin-body {
+    padding: 28px;
+    background: var(--surface);
+}
+
+.pin-input-container {
+    margin-bottom: 24px;
+    text-align: center;
+}
+
+.pin-display {
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+    margin-bottom: 16px;
+}
+
+.pin-dot {
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background: var(--border);
+    transition: all 0.3s ease;
+}
+
+.pin-dot.filled {
+    background: var(--primary);
+    transform: scale(1.1);
+}
+
+.pin-keypad {
+    display: grid;
+    gap: 12px;
+}
+
+.pin-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 12px;
+}
+
+.pin-key {
+    width: 100%;
+    height: 60px;
+    border: 2px solid var(--border);
+    border-radius: 12px;
+    background: var(--surface);
+    color: var(--fg);
+    font-size: 18px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    overflow: hidden;
+}
+
+.pin-key::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(59, 130, 246, 0.2), transparent);
+    transition: left 0.3s;
+}
+
+.pin-key:hover {
+    border-color: var(--primary);
+    background: var(--primary-light);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.2);
+}
+
+.pin-key:hover::before {
+    left: 100%;
+}
+
+.pin-key:active {
+    transform: translateY(0);
+    background: var(--primary);
+    color: white;
+}
+
+.pin-key-clear,
+.pin-key-backspace {
+    font-size: 14px;
+    font-weight: 500;
+}
+
+.pin-key-backspace {
+    color: var(--muted);
+}
+
+.pin-error {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 16px;
+    background: var(--error-light);
+    color: var(--error);
+    border: 1px solid var(--error);
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 500;
+    margin-top: 16px;
+    animation: pinErrorShake 0.5s ease-in-out;
+}
+
+.pin-footer {
+    padding: 20px 28px 24px;
+    background: var(--surface-elevated);
+    border-top: 1px solid var(--border);
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+}
+
+.pin-btn {
+    flex: 1;
+    padding: 12px 20px;
+    border: none;
+    border-radius: 12px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    overflow: hidden;
+}
+
+.pin-btn::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+    transition: left 0.5s;
+}
+
+.pin-btn:hover::before {
+    left: 100%;
+}
+
+.pin-btn-cancel {
+    background: var(--surface);
+    color: var(--fg);
+    border: 2px solid var(--border);
+}
+
+.pin-btn-cancel:hover {
+    background: var(--surface-elevated);
+    border-color: var(--border-light);
+    transform: translateY(-1px);
+}
+
+.pin-btn-confirm {
+    background: var(--primary);
+    color: white;
+    border: 2px solid var(--primary);
+    box-shadow: 0 2px 4px var(--shadow-light);
+}
+
+.pin-btn-confirm:hover:not(:disabled) {
+    background: var(--primary-hover);
+    box-shadow: 0 4px 8px var(--shadow-medium);
+    transform: translateY(-1px);
+}
+
+.pin-btn-confirm:disabled {
+    background: var(--muted);
+    border-color: var(--muted);
+    cursor: not-allowed;
+    opacity: 0.6;
+}
+
+/* 애니메이션 */
+@keyframes pinBackdropFadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes pinSlideIn {
+    from {
+        opacity: 0;
+        transform: scale(0.9) translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+    }
+}
+
+@keyframes pinErrorShake {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-5px); }
+    75% { transform: translateX(5px); }
 }
 
 /* Google Translate Widget 스타일 */

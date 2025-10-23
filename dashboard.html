@@ -645,6 +645,72 @@
         </div>
     </div>
 
+    <!-- PIN 입력 모달 -->
+    <div id="pinModal" class="pin-modal">
+        <div class="pin-backdrop"></div>
+        <div class="pin-content">
+            <div class="pin-header">
+                <div class="pin-icon">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M12 1L3 5V11C3 16.55 6.84 21.74 12 23C17.16 21.74 21 16.55 21 11V5L12 1Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                </div>
+               
+                <p>데이터 다운로드를 위해 PIN을 입력해주세요</p>
+            </div>
+            <div class="pin-body">
+                <div class="pin-input-container">
+                    <div class="pin-display">
+                        <div class="pin-dot" id="pinDot1"></div>
+                        <div class="pin-dot" id="pinDot2"></div>
+                        <div class="pin-dot" id="pinDot3"></div>
+                        <div class="pin-dot" id="pinDot4"></div>
+                        <div class="pin-dot" id="pinDot5"></div>
+                        <div class="pin-dot" id="pinDot6"></div>
+                    </div>
+                    <input type="password" id="pinInput" maxlength="6" style="position: absolute; opacity: 0; pointer-events: none;">
+                </div>
+                <div class="pin-keypad">
+                    <div class="pin-row">
+                        <button class="pin-key" data-key="1">1</button>
+                        <button class="pin-key" data-key="2">2</button>
+                        <button class="pin-key" data-key="3">3</button>
+                    </div>
+                    <div class="pin-row">
+                        <button class="pin-key" data-key="4">4</button>
+                        <button class="pin-key" data-key="5">5</button>
+                        <button class="pin-key" data-key="6">6</button>
+                    </div>
+                    <div class="pin-row">
+                        <button class="pin-key" data-key="7">7</button>
+                        <button class="pin-key" data-key="8">8</button>
+                        <button class="pin-key" data-key="9">9</button>
+                    </div>
+                    <div class="pin-row">
+                        <button class="pin-key pin-key-clear" id="pinClear">지우기</button>
+                        <button class="pin-key" data-key="0">0</button>
+                        <button class="pin-key pin-key-backspace" id="pinBackspace">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M21 4H8L1 12L8 20H21C21.55 20 22 19.55 22 19V5C22 4.45 21.55 4 21 4Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                <path d="M18 9L15 12L18 15" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+                <div class="pin-error" id="pinError" style="display: none;">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M12 2L13.09 8.26L22 9L13.09 9.74L12 16L10.91 9.74L2 9L10.91 8.26L12 2Z" fill="currentColor"/>
+                    </svg>
+                    <span>잘못된 PIN입니다. 다시 시도해주세요.</span>
+                </div>
+            </div>
+            <div class="pin-footer">
+                <button class="pin-btn pin-btn-cancel" id="pinCancel">취소</button>
+                <button class="pin-btn pin-btn-confirm" id="pinConfirm" disabled>확인</button>
+            </div>
+        </div>
+    </div>
+
     <!-- 업무 가이드 모달 -->
     <div id="workGuideModal" class="work-guide-modal">
         <div class="work-guide-backdrop"></div>
