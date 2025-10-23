@@ -3647,20 +3647,7 @@ select option:disabled:hover {
   background: var(--surface);
 }
 
-/* ERP/WMS 전체화면 모드 - 사이드바 제외한 전체 영역 사용 */
-#erp-wms.fullscreen-mode {
-  position:auto ;
-  top: 0;
-  left: 0; /* 사이드바 너비만큼 오프셋 */
-  right: 0;
-  bottom: 0;
-  z-index: 999;
-  background: var(--surface);
-  padding: 0;
-  margin: 0;
-  border-radius: 0;
-  box-shadow: none;
-}
+
 
 #erp-wms.fullscreen-mode .section-header {
   display: none; /* 헤더 숨김 */
