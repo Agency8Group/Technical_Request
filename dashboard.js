@@ -246,6 +246,20 @@ function switchSection(sectionName) {
     updateQnAList();
   } else if (sectionName === 'menu-guide') {
     loadMenuGuide();
+  } else if (sectionName === 'erp-wms') {
+    // ERP/WMS 섹션 진입 시 전체화면 모드 활성화
+    const erpSection = document.getElementById('erp-wms');
+    if (erpSection) {
+      erpSection.classList.add('fullscreen-mode');
+      document.body.style.overflow = 'hidden'; // 배경 스크롤 방지
+    }
+  } else {
+    // 다른 섹션으로 이동 시 ERP/WMS 전체화면 모드 비활성화
+    const erpSection = document.getElementById('erp-wms');
+    if (erpSection) {
+      erpSection.classList.remove('fullscreen-mode');
+      document.body.style.overflow = 'auto'; // 스크롤 복원
+    }
   }
 }
 

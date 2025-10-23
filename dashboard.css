@@ -3631,7 +3631,7 @@ select option:disabled:hover {
 /* ERP/WMS iframe 스타일 */
 .erp-wms-container {
   width: 100%;
-  height: calc(100vh - 200px);
+  height: calc(100vh - 120px);
   min-height: 600px;
   border: 1px solid var(--border);
   border-radius: 12px;
@@ -3645,6 +3645,54 @@ select option:disabled:hover {
   height: 100%;
   border: none;
   background: var(--surface);
+}
+
+/* ERP/WMS 전체화면 모드 - 사이드바 제외한 전체 영역 사용 */
+#erp-wms.fullscreen-mode {
+  position:auto ;
+  top: 0;
+  left: 0; /* 사이드바 너비만큼 오프셋 */
+  right: 0;
+  bottom: 0;
+  z-index: 999;
+  background: var(--surface);
+  padding: 0;
+  margin: 0;
+  border-radius: 0;
+  box-shadow: none;
+}
+
+#erp-wms.fullscreen-mode .section-header {
+  display: none; /* 헤더 숨김 */
+}
+
+#erp-wms.fullscreen-mode .erp-wms-container {
+  width: 100%;
+  height: 100vh;
+  border: none;
+  border-radius: 0;
+  box-shadow: none;
+  background: var(--surface);
+  position: relative;
+  overflow: hidden;
+}
+
+#erp-wms.fullscreen-mode .erp-iframe {
+  width: 100%;
+  height: 100%;
+  border: none;
+  background: var(--surface);
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+/* 반응형 처리 - 모바일에서는 사이드바가 상단으로 이동 */
+@media (max-width: 768px) {
+  #erp-wms.fullscreen-mode {
+    left: 0;
+    top: 0;
+  }
 }
 
 /* ERP/WMS 전체화면 모달 스타일 */
