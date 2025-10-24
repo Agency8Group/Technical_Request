@@ -1,5 +1,67 @@
 /* 대시보드 전용 스타일 */
 
+/* 네비게이션 툴팁 스타일 */
+.nav-tooltip {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: linear-gradient(135deg, var(--surface-elevated) 0%, rgba(255, 255, 255, 0.95) 100%);
+    color: var(--fg);
+    padding: 32px 40px;
+    border-radius: 20px;
+    box-shadow: 
+        0 25px 50px rgba(0, 0, 0, 0.15),
+        0 0 0 1px rgba(255, 255, 255, 0.1),
+        inset 0 1px 0 rgba(255, 255, 255, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    z-index: 1000;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    max-width: 480px;
+    text-align: center;
+    font-size: 16px;
+    font-weight: 500;
+    line-height: 1.6;
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    letter-spacing: -0.01em;
+}
+
+[data-theme="dark"] .nav-tooltip {
+    background: linear-gradient(135deg, var(--surface-elevated) 0%, rgba(30, 41, 59, 0.95) 100%);
+    box-shadow: 
+        0 25px 50px rgba(0, 0, 0, 0.4),
+        0 0 0 1px rgba(255, 255, 255, 0.05),
+        inset 0 1px 0 rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.nav-tooltip.show {
+    opacity: 1;
+    visibility: visible;
+    transform: translate(-50%, -50%) scale(1);
+}
+
+.nav-tooltip .tooltip-title {
+    font-size: 20px;
+    font-weight: 700;
+    margin-bottom: 12px;
+    color: var(--primary);
+    letter-spacing: -0.02em;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+.nav-tooltip .tooltip-description {
+    font-size: 15px;
+    color: var(--fg-secondary);
+    line-height: 1.7;
+    font-weight: 400;
+    letter-spacing: -0.005em;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+
 /* 다크모드 CSS 변수 */
 :root {
   /* 라이트 모드 (기본) */

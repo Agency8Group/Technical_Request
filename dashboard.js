@@ -57,6 +57,7 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // 기본 UI 초기화
     initializeNavigation();
+    initializeNavigationTooltips();
     initializeConnectionStatus();
     initializeRefreshButton();
     initializeMenuGuide();
@@ -3266,4 +3267,58 @@ function showCopySuccess() {
       document.body.removeChild(toast);
     }, 300);
   }, 2000);
+}
+
+// 네비게이션 툴팁 기능
+function initializeNavigationTooltips() {
+  const navItems = document.querySelectorAll('.nav-item');
+  const tooltip = document.getElementById('navTooltip');
+  const tooltipTitle = document.getElementById('tooltipTitle');
+  const tooltipDescription = document.getElementById('tooltipDescription');
+  
+  // 각 네비게이션 메뉴별 툴팁 데이터
+  const tooltipData = {
+    'overview': {
+      title: '대시보드',
+      description: '개발 요청 처리 현황과 부서별 최종 승인 상태를<br>한눈에 확인할 수 있는 통합 모니터링 화면입니다.'
+    },
+    'erp-wms': {
+      title: 'ERP/WMS',
+      description: '도입 예정인 ERP/WMS 시스템의 구조와 기능을<br>미리 체험해볼 수 있는 미리보기 공간입니다.'
+    },
+    'requests': {
+      title: '기술개발 요청',
+      description: '업무 중 발견한 개선사항이나 새로운 기능 개발을<br>요청하고 진행 상황을 추적할 수 있습니다.'
+    },
+    'qna': {
+      title: '질의응답',
+      description: '시스템 사용법, 기능 문의, 개선 의견 등을<br>자유롭게 질문하고 답변을 받을 수 있습니다.'
+    },
+    'menu-guide': {
+      title: '메뉴별 상세 설명',
+      description: 'ERP/WMS 시스템의 각 메뉴별 기능과 사용법을<br>상세히 안내하는 참고 가이드 자료입니다.'
+    },
+    'departments': {
+      title: '부서 최종 확인',
+      description: '부서별 개발 요청 완료 여부를 최종 점검하고<br>2차 개발 단계로 진행하기 위한 승인 체크포인트입니다.'
+    }
+  };
+
+  // 마우스 호버 이벤트 추가
+  navItems.forEach(item => {
+    const section = item.getAttribute('data-section');
+    const data = tooltipData[section];
+    
+    if (data) {
+      item.addEventListener('mouseenter', () => {
+        tooltipTitle.textContent = data.title;
+        tooltipDescription.innerHTML = data.description;
+        tooltip.classList.add('show');
+      });
+      
+      item.addEventListener('mouseleave', () => {
+        tooltip.classList.remove('show');
+      });
+    }
+  });
 }
