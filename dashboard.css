@@ -2459,8 +2459,8 @@ select:focus {
 }
 
 .loading-animation {
-  width: 400px !important;
-  height: 200px !important;
+  width: 200px !important;
+  height: 100px !important;
 }
 
 .loading-text {
