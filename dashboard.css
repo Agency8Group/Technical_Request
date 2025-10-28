@@ -4206,6 +4206,64 @@ select option:disabled:hover {
   transform: translate(-50%, -50%) scale(1);
 }
 
+/* 다크모드에서 확인완료 체크박스 스타일 */
+[data-theme="dark"] .completion-label {
+  background: rgba(26, 29, 35, 0.8);
+  border: 2px solid rgba(16, 185, 129, 0.3);
+}
+
+[data-theme="dark"] .completion-label:hover {
+  background: rgba(16, 185, 129, 0.1);
+  border-color: var(--success);
+}
+
+[data-theme="dark"] .completion-checkbox:checked + .completion-label {
+  background: rgba(16, 185, 129, 0.15);
+  border-color: var(--success);
+}
+
+[data-theme="dark"] .completion-checkbox:checked + .completion-label .completion-text {
+  color: var(--success);
+}
+
+[data-theme="dark"] .completion-indicator {
+  background: rgba(26, 29, 35, 0.9);
+  border: 2px solid rgba(16, 185, 129, 0.3);
+}
+
+[data-theme="dark"] .completion-checkbox:checked + .completion-label .completion-indicator {
+  background: var(--success);
+  border-color: var(--success);
+}
+
+[data-theme="dark"] .completion-checkbox:checked + .completion-label .completion-indicator::after {
+  background: white;
+}
+
+/* 다크모드에서 확인완료 체크박스 추가 가시성 개선 */
+[data-theme="dark"] .completion-label::before {
+  background: linear-gradient(135deg, rgba(16, 185, 129, 0.15) 0%, rgba(5, 150, 105, 0.08) 100%);
+}
+
+[data-theme="dark"] .completion-label:hover::before {
+  background: linear-gradient(135deg, rgba(16, 185, 129, 0.2) 0%, rgba(5, 150, 105, 0.1) 100%);
+}
+
+/* 다크모드에서 체크박스 텍스트 색상 개선 */
+[data-theme="dark"] .completion-text {
+  color: var(--fg);
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+/* 다크모드에서 체크박스 인디케이터 그림자 추가 */
+[data-theme="dark"] .completion-indicator {
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+[data-theme="dark"] .completion-checkbox:checked + .completion-label .completion-indicator {
+  box-shadow: 0 2px 8px rgba(16, 185, 129, 0.4);
+}
+
 .completion-message {
   margin-top: 16px;
   padding: 16px 20px;
