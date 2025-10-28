@@ -570,26 +570,26 @@ p, span, div, button, input, textarea, select {
   text-shadow: 0 0 10px rgba(99, 102, 241, 0.3);
 }
 
-/* 다크모드 전환 애니메이션 - 고급 효과 */
+/* 테마 전환 애니메이션 - 통일된 속도 */
 * {
   transition: 
-    background-color 0.4s cubic-bezier(0.4, 0, 0.2, 1), 
-    border-color 0.4s cubic-bezier(0.4, 0, 0.2, 1), 
-    color 0.4s cubic-bezier(0.4, 0, 0.2, 1), 
-    box-shadow 0.4s cubic-bezier(0.4, 0, 0.2, 1),
+    background-color 0.3s cubic-bezier(0.4, 0, 0.2, 1), 
+    border-color 0.3s cubic-bezier(0.4, 0, 0.2, 1), 
+    color 0.3s cubic-bezier(0.4, 0, 0.2, 1), 
+    box-shadow 0.3s cubic-bezier(0.4, 0, 0.2, 1),
     transform 0.3s cubic-bezier(0.4, 0, 0.2, 1),
     filter 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-/* 다크모드 전환 시 특별 효과 */
+/* 다크모드 전환 시 동일한 속도 적용 */
 [data-theme="dark"] * {
   transition: 
-    background-color 0.5s cubic-bezier(0.4, 0, 0.2, 1), 
-    border-color 0.5s cubic-bezier(0.4, 0, 0.2, 1), 
-    color 0.5s cubic-bezier(0.4, 0, 0.2, 1), 
-    box-shadow 0.5s cubic-bezier(0.4, 0, 0.2, 1),
-    transform 0.4s cubic-bezier(0.4, 0, 0.2, 1),
-    filter 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    background-color 0.3s cubic-bezier(0.4, 0, 0.2, 1), 
+    border-color 0.3s cubic-bezier(0.4, 0, 0.2, 1), 
+    color 0.3s cubic-bezier(0.4, 0, 0.2, 1), 
+    box-shadow 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+    transform 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+    filter 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 /* 다크모드 전환 시 글로우 페이드 인 효과 */
