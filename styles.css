@@ -98,18 +98,68 @@ select option { background: var(--bg); color: var(--fg); }
 textarea { min-height: 120px; resize: vertical; }
 
 .btn { 
-  background: var(--primary); 
+  background: linear-gradient(135deg, 
+    rgba(37, 99, 235, 0.9) 0%, 
+    rgba(29, 78, 216, 0.9) 100%); 
   color: #fff; 
   border: 0; 
-  padding: 12px 20px; 
-  border-radius: 8px; 
+  padding: 12px 24px; 
+  border-radius: 12px; 
   cursor: pointer; 
   font-weight: 600; 
   font-size: 14px;
-  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-  box-shadow: 0 2px 4px var(--shadow-light);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 
+    0 6px 20px rgba(37, 99, 235, 0.3),
+    0 2px 8px rgba(0, 0, 0, 0.1);
   position: relative;
   overflow: hidden;
+  border: 1px solid rgba(37, 99, 235, 0.2);
+  backdrop-filter: blur(10px);
+}
+
+/* 라이트모드 버튼 특별 효과 */
+.btn::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(45deg, 
+    transparent 0%, 
+    rgba(255, 255, 255, 0.1) 50%, 
+    transparent 100%);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+/* 다크모드 버튼 특별 효과 */
+[data-theme="dark"] .btn {
+  background: linear-gradient(135deg, 
+    rgba(99, 102, 241, 0.9) 0%, 
+    rgba(79, 70, 229, 0.9) 100%);
+  border: 1px solid rgba(99, 102, 241, 0.3);
+  box-shadow: 
+    0 6px 20px rgba(99, 102, 241, 0.4),
+    0 2px 8px rgba(0, 0, 0, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+}
+
+[data-theme="dark"] .btn::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(45deg, 
+    transparent 0%, 
+    rgba(255, 255, 255, 0.1) 50%, 
+    transparent 100%);
+  opacity: 0;
+  transition: opacity 0.3s ease;
 }
 
 .btn::before {
@@ -124,9 +174,34 @@ textarea { min-height: 120px; resize: vertical; }
 }
 
 .btn:hover {
-  background: var(--primary-hover);
-  box-shadow: 0 4px 8px var(--shadow-medium);
-  transform: translateY(-1px);
+  background: linear-gradient(135deg, 
+    rgba(37, 99, 235, 1) 0%, 
+    rgba(29, 78, 216, 1) 100%);
+  box-shadow: 
+    0 12px 30px rgba(37, 99, 235, 0.4),
+    0 6px 15px rgba(0, 0, 0, 0.15),
+    0 0 25px rgba(37, 99, 235, 0.2);
+  transform: translateY(-3px) scale(1.03);
+}
+
+.btn:hover::before {
+  opacity: 1;
+}
+
+/* 다크모드 버튼 호버 효과 */
+[data-theme="dark"] .btn:hover {
+  background: linear-gradient(135deg, 
+    rgba(99, 102, 241, 1) 0%, 
+    rgba(79, 70, 229, 1) 100%);
+  box-shadow: 
+    0 12px 30px rgba(99, 102, 241, 0.5),
+    0 6px 15px rgba(0, 0, 0, 0.4),
+    0 0 25px rgba(99, 102, 241, 0.3);
+  transform: translateY(-3px) scale(1.03);
+}
+
+[data-theme="dark"] .btn:hover::before {
+  opacity: 1;
 }
 
 .btn:hover::before {
@@ -134,8 +209,18 @@ textarea { min-height: 120px; resize: vertical; }
 }
 
 .btn:active {
-  transform: translateY(0);
-  box-shadow: 0 2px 4px var(--shadow-light);
+  transform: translateY(0) scale(0.97);
+  box-shadow: 
+    0 4px 15px rgba(37, 99, 235, 0.3),
+    0 2px 6px rgba(0, 0, 0, 0.2);
+}
+
+/* 다크모드 버튼 액티브 효과 */
+[data-theme="dark"] .btn:active {
+  transform: translateY(0) scale(0.97);
+  box-shadow: 
+    0 4px 15px rgba(99, 102, 241, 0.4),
+    0 2px 6px rgba(0, 0, 0, 0.3);
 }
 .btn:disabled { opacity: .6; cursor: not-allowed; }
 .status { 
