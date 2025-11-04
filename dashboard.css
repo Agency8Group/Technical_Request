@@ -1815,7 +1815,9 @@ p, span, div, button, input, textarea, select {
 
 /* 상태 배지 */
 .status-badge {
-  display: inline-block;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   padding: 6px 12px;
   border-radius: 16px;
   font-size: 12px;
@@ -1824,6 +1826,10 @@ p, span, div, button, input, textarea, select {
   letter-spacing: 0.5px;
   transition: all 0.2s ease;
   box-shadow: 0 1px 2px var(--shadow-light);
+  text-align: center;
+  line-height: 1;
+  vertical-align: middle;
+  min-height: 24px;
 }
 
 .status-badge.접수 { background: #6c757d; color: #ffffff; }
@@ -1835,7 +1841,9 @@ p, span, div, button, input, textarea, select {
 .status-badge.취소 { background: var(--error); color: #ffffff; }
 
 .priority-badge {
-  display: inline-block;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   padding: 4px 10px;
   border-radius: 12px;
   font-size: 11px;
@@ -1843,6 +1851,10 @@ p, span, div, button, input, textarea, select {
   text-transform: uppercase;
   letter-spacing: 0.5px;
   box-shadow: 0 1px 2px var(--shadow-light);
+  text-align: center;
+  line-height: 1;
+  vertical-align: middle;
+  min-height: 20px;
 }
 
 .priority-badge.긴급 { background: var(--error); color: #ffffff; }
