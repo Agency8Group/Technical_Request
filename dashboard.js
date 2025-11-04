@@ -1854,9 +1854,22 @@ function showRequestModal(request) {
             <div class="readonly-field" translate="yes">${request.requesterName || request.requester || ''}</div>
           </div>
           <div class="form-group">
+            <label>요청자 계정 (등록 계정)</label>
+            <div class="readonly-field">${request.requester || currentUser?.email || '-'}</div>
+          </div>
+        </div>
+        
+        <div class="form-grid">
+          <div class="form-group">
             <label>등록일시</label>
             <div class="readonly-field">${formatDate(request.createdAt)}</div>
           </div>
+          ${request.updatedBy ? `
+          <div class="form-group">
+            <label>최종 수정자</label>
+            <div class="readonly-field">${request.updatedBy}</div>
+          </div>
+          ` : '<div class="form-group"></div>'}
         </div>
         
         <div class="form-group">
