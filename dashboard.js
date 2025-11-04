@@ -1213,6 +1213,48 @@ const paginationState = {
   generation2: { currentPage: 1, itemsPerPage: 10 }
 };
 
+// 팀 이메일 매핑 (요청자 계정 -> 확인부서)
+const TEAM_EMAIL_MAP = {
+  '전략기획': 'strategy@eibe.co.kr',
+  '경영관리': 'management@eibe.co.kr',
+  '압타밀': 'aptamil@eibe.co.kr',
+  '드리미': 'dreame@eibe.co.kr',
+  '레이레이': 'rayray@eibe.co.kr',
+  '마케팅': 'maketing@eibe.co.kr',
+  'SCM': 'scm@eibe.co.kr',
+  'CS(고객센터)': 'cs@eibe.co.kr'
+};
+
+function renderTeamRequestCounts() {
+  const tbody = document.getElementById('teamRequestsTableBody');
+  if (!tbody) return;
+  const emailToCount = {};
+  // 초기화
+  Object.values(TEAM_EMAIL_MAP).forEach(email => {
+    emailToCount[email.toLowerCase()] = 0;
+  });
+  // 집계
+  currentRequests.forEach(req => {
+    const email = (req.requester || '').toLowerCase();
+    if (email && emailToCount.hasOwnProperty(email)) {
+      emailToCount[email] += 1;
+    }
+  });
+  // 렌더링 (정해진 팀 순서 유지)
+  tbody.innerHTML = '';
+  Object.keys(TEAM_EMAIL_MAP).forEach(team => {
+    const email = TEAM_EMAIL_MAP[team];
+    const count = emailToCount[email.toLowerCase()] || 0;
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td>${team}</td>
+      <td>${email}</td>
+      <td style="text-align:right; font-variant-numeric: tabular-nums;">${count}</td>
+    `;
+    tbody.appendChild(tr);
+  });
+}
+
 // 요청 아코디언 업데이트
 function updateRequestsTable() {
   // 1차/2차 요청 분류
@@ -1237,6 +1279,9 @@ function updateRequestsTable() {
   if (accordion2 && !accordion2.classList.contains('active')) {
     accordion2.classList.add('active');
   }
+
+  // 팀별 등록 건수 렌더링
+  renderTeamRequestCounts();
 }
 
 // 차수별 요청 목록 렌더링 (페이지네이션 포함)
