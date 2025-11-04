@@ -353,11 +353,11 @@
                     </form>
                 </div>
 
-                <!-- 요청 목록 테이블 -->
-                <div class="data-table-container">
-                    <div class="table-header">
+                <!-- 요청 목록 아코디언 -->
+                <div class="requests-accordion-container">
+                    <div class="accordion-header">
                         <h3>요청 목록</h3>
-                        <div class="table-actions">
+                        <div class="accordion-actions">
                             <div class="search-container" style="display: flex; gap: 8px; align-items: center; margin-right: 12px;">
                                 <input type="text" id="requestSearchInput" placeholder="제목, 내용, 요청자로 검색..." style="padding: 8px 12px; border: 1px solid var(--border); border-radius: 6px; font-size: 14px; width: 280px;">
                                 <button class="btn btn-secondary" id="clearSearchBtn" style="padding: 8px 12px; font-size: 14px;">초기화</button>
@@ -365,23 +365,53 @@
                             <button class="btn btn-secondary" id="exportRequestsBtn">요청 데이터 다운로드 (CSV)</button>
                         </div>
                     </div>
-                    <div class="table-wrapper">
-                        <table id="requestsTable" class="data-table">
-                            <thead>
-                                <tr>
-                                    <th>제목</th>
-                                    <th>개발유형</th>
-                                    <th>우선순위</th>
-                                    <th>상태</th>
-                                    <th>작성자</th>
-                                    <th>등록일</th>
-                                    <th>액션</th>
-                                </tr>
-                            </thead>
-                            <tbody id="requestsTableBody">
-                                <!-- 요청 목록이 여기에 표시됩니다 -->
-                            </tbody>
-                        </table>
+                    
+                    <!-- 2차 개발요청 아코디언 -->
+                    <div class="accordion-item">
+                        <div class="accordion-header-item" id="accordionHeader2">
+                            <div class="accordion-title">
+                                <svg class="accordion-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                                </svg>
+                                <span>2차 개발요청</span>
+                                <span class="accordion-count" id="generation2Count">0</span>
+                            </div>
+                            <svg class="accordion-arrow" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                            </svg>
+                        </div>
+                        <div class="accordion-content" id="accordionContent2">
+                            <div class="accordion-requests-list" id="generation2List">
+                                <!-- 2차 개발요청 목록이 여기에 표시됩니다 -->
+                            </div>
+                            <div class="pagination-container" id="generation2Pagination" style="display: none;">
+                                <!-- 페이지네이션이 여기에 표시됩니다 -->
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 1차 개발요청 아코디언 -->
+                    <div class="accordion-item">
+                        <div class="accordion-header-item" id="accordionHeader1">
+                            <div class="accordion-title">
+                                <svg class="accordion-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path>
+                                </svg>
+                                <span>1차 개발요청</span>
+                                <span class="accordion-count" id="generation1Count">0</span>
+                            </div>
+                            <svg class="accordion-arrow" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                            </svg>
+                        </div>
+                        <div class="accordion-content" id="accordionContent1">
+                            <div class="accordion-requests-list" id="generation1List">
+                                <!-- 1차 개발요청 목록이 여기에 표시됩니다 -->
+                            </div>
+                            <div class="pagination-container" id="generation1Pagination" style="display: none;">
+                                <!-- 페이지네이션이 여기에 표시됩니다 -->
+                            </div>
+                        </div>
                     </div>
                 </div>
             </section>

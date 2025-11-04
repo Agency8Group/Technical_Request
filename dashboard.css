@@ -1529,6 +1529,290 @@ p, span, div, button, input, textarea, select {
   background: var(--primary-light);
 }
 
+/* 요청 목록 아코디언 스타일 */
+.requests-accordion-container {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px var(--shadow-light);
+  margin-bottom: 24px;
+}
+
+.accordion-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 24px;
+  border-bottom: 1px solid var(--border);
+  background: var(--surface-elevated);
+}
+
+.accordion-header h3 {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--fg);
+}
+
+.accordion-actions {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.accordion-item {
+  border-bottom: 1px solid var(--border);
+  transition: all 0.3s ease;
+}
+
+.accordion-item:last-child {
+  border-bottom: none;
+}
+
+.accordion-header-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 24px;
+  cursor: pointer;
+  background: var(--surface-elevated);
+  transition: all 0.3s ease;
+  user-select: none;
+}
+
+.accordion-header-item:hover {
+  background: var(--primary-light);
+}
+
+.accordion-title {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--fg);
+}
+
+.accordion-icon {
+  width: 20px;
+  height: 20px;
+  color: var(--primary);
+  flex-shrink: 0;
+}
+
+.accordion-count {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 24px;
+  height: 24px;
+  padding: 0 8px;
+  background: var(--primary);
+  color: white;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 600;
+  margin-left: 8px;
+}
+
+.accordion-arrow {
+  width: 20px;
+  height: 20px;
+  color: var(--muted);
+  transition: transform 0.3s ease;
+  flex-shrink: 0;
+}
+
+.accordion-item.active .accordion-arrow {
+  transform: rotate(180deg);
+}
+
+.accordion-item.active .accordion-header-item {
+  background: var(--primary-light);
+  border-bottom: 1px solid var(--border);
+}
+
+.accordion-content {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.3s ease;
+  background: var(--surface);
+}
+
+.accordion-item.active .accordion-content {
+  max-height: none;
+  overflow: visible;
+}
+
+.accordion-requests-list {
+  padding: 16px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.request-card {
+  background: var(--surface-elevated);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 20px;
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+
+.request-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px var(--shadow-medium);
+  border-color: var(--primary);
+}
+
+.request-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 12px;
+}
+
+.request-card-title {
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--fg);
+  margin: 0;
+  flex: 1;
+}
+
+.request-card-badges {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.request-card-body {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.request-card-info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.request-card-label {
+  font-size: 12px;
+  color: var(--muted);
+  font-weight: 500;
+}
+
+.request-card-value {
+  font-size: 14px;
+  color: var(--fg);
+  font-weight: 500;
+}
+
+.request-card-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: 12px;
+  border-top: 1px solid var(--border);
+}
+
+.request-card-actions {
+  display: flex;
+  gap: 8px;
+}
+
+/* 다크모드 아코디언 스타일 */
+[data-theme="dark"] .accordion-header-item:hover {
+  background: rgba(99, 102, 241, 0.1);
+}
+
+[data-theme="dark"] .accordion-item.active .accordion-header-item {
+  background: rgba(99, 102, 241, 0.15);
+}
+
+[data-theme="dark"] .request-card:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+}
+
+/* 페이지네이션 스타일 */
+.pagination-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+  padding: 20px 24px;
+  border-top: 1px solid var(--border);
+  background: var(--surface-elevated);
+}
+
+.pagination-info {
+  font-size: 14px;
+  color: var(--muted);
+  margin-right: 16px;
+}
+
+.pagination-buttons {
+  display: flex;
+  gap: 4px;
+  align-items: center;
+}
+
+.pagination-btn {
+  min-width: 36px;
+  height: 36px;
+  padding: 0 12px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--surface);
+  color: var(--fg);
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.pagination-btn:hover:not(:disabled) {
+  background: var(--primary-light);
+  border-color: var(--primary);
+  color: var(--primary);
+}
+
+.pagination-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.pagination-btn.active {
+  background: var(--primary);
+  border-color: var(--primary);
+  color: white;
+}
+
+.pagination-btn.active:hover {
+  background: var(--primary-hover);
+}
+
+/* 다크모드 페이지네이션 */
+[data-theme="dark"] .pagination-btn:hover:not(:disabled) {
+  background: rgba(99, 102, 241, 0.15);
+  border-color: var(--primary);
+  color: #c7d2fe;
+}
+
+[data-theme="dark"] .pagination-btn.active {
+  background: var(--primary);
+  border-color: var(--primary);
+  color: white;
+}
+
 /* 상태 배지 */
 .status-badge {
   display: inline-block;

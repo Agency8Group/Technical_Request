@@ -32,7 +32,7 @@ let loadingOverlay;
 let newRequestBtn, requestForm, requestFormElement, cancelBtn, submitBtn, statusMsg;
 let qnaQuestion, qnaRequesterName, submitQuestionBtn, qnaList;
 let saveDeptBtn, deptStatus;
-let requestsTableBody, exportRequestsBtn;
+let exportRequestsBtn;
 let newMenuName, newSubMenuName, newMenuDescription, addRowBtn, menuTableBody, exportGuideBtn, importGuideBtn, excelFileInput, refreshGuideBtn, guideDisplay, guideStats;
 
 // PIN 관련 변수
@@ -68,6 +68,7 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // 필터링 기능 초기화
     initializeRequestFilters();
+    initializeAccordion();
     setNow();
     
     // 인증 초기화 (마지막에)
@@ -132,8 +133,7 @@ function initializeDOMElements() {
   saveDeptBtn = document.getElementById('saveDeptBtn');
   deptStatus = document.getElementById('deptStatus');
   
-  // 테이블 요소들
-  requestsTableBody = document.getElementById('requestsTableBody');
+  // 아코디언 요소들 (테이블에서 아코디언으로 변경)
   exportRequestsBtn = document.getElementById('exportRequestsBtn');
   
   // 메뉴 가이드 요소들
@@ -347,7 +347,8 @@ async function handleRequestSubmit(e) {
       createdAt: formData.get('createdAt'),
       detail: formData.get('detail').trim(),
       photos: await processFiles(formData.getAll('photo')),
-      excel: await processExcelFile(formData.get('excel'))
+      excel: await processExcelFile(formData.get('excel')),
+      generation: '2차'          // 신규 요청은 2차로 구분
     };
 
     // 필수 항목 검증 (사용자 입력 필드만)
@@ -1078,7 +1079,9 @@ async function loadData() {
       const requestsData = requestsSnapshot.val();
       currentRequests = Object.entries(requestsData).map(([id, data]) => ({
         id,
-        ...data
+        ...data,
+        // generation 필드가 없으면 기본값 '1차'로 설정 (기존 데이터 호환)
+        generation: data.generation || '1차'
       }));
       console.log('요청 데이터 로드:', currentRequests.length, '개');
     } else {
@@ -1204,29 +1207,245 @@ function updateRecentActivity() {
   });
 }
 
-// 요청 테이블 업데이트
+// 페이지네이션 상태 관리
+const paginationState = {
+  generation1: { currentPage: 1, itemsPerPage: 10 },
+  generation2: { currentPage: 1, itemsPerPage: 10 }
+};
+
+// 요청 아코디언 업데이트
 function updateRequestsTable() {
-  if (!requestsTableBody) return;
+  // 1차/2차 요청 분류
+  const generation1Requests = currentRequests.filter(req => req.generation === '1차');
+  const generation2Requests = currentRequests.filter(req => req.generation === '2차');
   
-  requestsTableBody.innerHTML = '';
+  // 카운트 업데이트
+  const count1El = document.getElementById('generation1Count');
+  const count2El = document.getElementById('generation2Count');
+  if (count1El) count1El.textContent = generation1Requests.length;
+  if (count2El) count2El.textContent = generation2Requests.length;
   
-  currentRequests.forEach(req => {
-    const row = document.createElement('tr');
-    // 상세내용을 숨겨진 데이터 속성으로 저장 (검색용)
-    row.setAttribute('data-detail', req.detail || '');
-    row.innerHTML = `
-      <td>${req.title}</td>
-      <td>${req.developmentType || '-'}</td>
-      <td><span class="priority-badge ${req.priority}">${req.priority || '-'}</span></td>
-      <td><span class="status-badge ${req.status}">${req.status}</span></td>
-      <td>${req.requesterName || req.requester || '-'}</td>
-      <td>${formatDate(req.createdAt)}</td>
-      <td>
-        <button class="btn btn-secondary" onclick="viewRequest('${req.id}')">보기</button>
-      </td>
-    `;
-    requestsTableBody.appendChild(row);
+  // 2차 개발요청 목록 렌더링 (페이지네이션 적용) - 위로 올라오도록 먼저 렌더링
+  renderGenerationRequests('generation2', generation2Requests);
+  
+  // 1차 개발요청 목록 렌더링 (페이지네이션 적용)
+  renderGenerationRequests('generation1', generation1Requests);
+  
+  // 기본적으로 2차 아코디언은 열려있고, 1차 아코디언은 닫혀있음
+  const accordion1 = document.querySelector('#accordionHeader1')?.closest('.accordion-item');
+  const accordion2 = document.querySelector('#accordionHeader2')?.closest('.accordion-item');
+  if (accordion2 && !accordion2.classList.contains('active')) {
+    accordion2.classList.add('active');
+  }
+}
+
+// 차수별 요청 목록 렌더링 (페이지네이션 포함)
+function renderGenerationRequests(generation, requests) {
+  const listId = generation === 'generation1' ? 'generation1List' : 'generation2List';
+  const paginationId = generation === 'generation1' ? 'generation1Pagination' : 'generation2Pagination';
+  const listEl = document.getElementById(listId);
+  const paginationEl = document.getElementById(paginationId);
+  
+  if (!listEl) return;
+  
+  listEl.innerHTML = '';
+  
+  if (requests.length === 0) {
+    listEl.innerHTML = `<div style="text-align: center; padding: 40px; color: var(--muted);">등록된 ${generation === 'generation1' ? '1차' : '2차'} 개발요청이 없습니다.</div>`;
+    if (paginationEl) paginationEl.style.display = 'none';
+    return;
+  }
+  
+  // 날짜 내림차순 정렬 (최신순)
+  const sorted = [...requests].sort((a, b) => {
+    const timeA = a.createdAt ? new Date(a.createdAt).getTime() : 0;
+    const timeB = b.createdAt ? new Date(b.createdAt).getTime() : 0;
+    return timeB - timeA;
   });
+  
+  // 페이지네이션 계산
+  const state = paginationState[generation];
+  const totalPages = Math.ceil(sorted.length / state.itemsPerPage);
+  const startIndex = (state.currentPage - 1) * state.itemsPerPage;
+  const endIndex = startIndex + state.itemsPerPage;
+  const currentPageRequests = sorted.slice(startIndex, endIndex);
+  
+  // 현재 페이지 요청만 렌더링
+  currentPageRequests.forEach(req => {
+    const card = createRequestCard(req);
+    listEl.appendChild(card);
+  });
+  
+  // 페이지네이션 렌더링
+  if (paginationEl) {
+    if (sorted.length > state.itemsPerPage) {
+      paginationEl.style.display = 'flex';
+      renderPagination(generation, state.currentPage, totalPages, sorted.length, state.itemsPerPage);
+    } else {
+      paginationEl.style.display = 'none';
+    }
+  }
+}
+
+// 페이지네이션 렌더링
+function renderPagination(generation, currentPage, totalPages, totalItems, itemsPerPage) {
+  const paginationId = generation === 'generation1' ? 'generation1Pagination' : 'generation2Pagination';
+  const paginationEl = document.getElementById(paginationId);
+  
+  if (!paginationEl) return;
+  
+  const startItem = (currentPage - 1) * itemsPerPage + 1;
+  const endItem = Math.min(currentPage * itemsPerPage, totalItems);
+  
+  const infoDiv = document.createElement('div');
+  infoDiv.className = 'pagination-info';
+  infoDiv.textContent = `${startItem}-${endItem} / 총 ${totalItems}개`;
+  
+  const buttonsDiv = document.createElement('div');
+  buttonsDiv.className = 'pagination-buttons';
+  
+  // 이전 페이지 버튼
+  const prevBtn = document.createElement('button');
+  prevBtn.className = 'pagination-btn';
+  prevBtn.textContent = '이전';
+  prevBtn.disabled = currentPage === 1;
+  prevBtn.addEventListener('click', () => changePage(generation, currentPage - 1));
+  buttonsDiv.appendChild(prevBtn);
+  
+  // 페이지 번호 버튼들
+  const maxVisiblePages = 5;
+  let startPage = Math.max(1, currentPage - Math.floor(maxVisiblePages / 2));
+  let endPage = Math.min(totalPages, startPage + maxVisiblePages - 1);
+  
+  if (endPage - startPage < maxVisiblePages - 1) {
+    startPage = Math.max(1, endPage - maxVisiblePages + 1);
+  }
+  
+  if (startPage > 1) {
+    const firstBtn = document.createElement('button');
+    firstBtn.className = 'pagination-btn';
+    firstBtn.textContent = '1';
+    firstBtn.addEventListener('click', () => changePage(generation, 1));
+    buttonsDiv.appendChild(firstBtn);
+    
+    if (startPage > 2) {
+      const ellipsis = document.createElement('span');
+      ellipsis.style.padding = '0 8px';
+      ellipsis.style.color = 'var(--muted)';
+      ellipsis.textContent = '...';
+      buttonsDiv.appendChild(ellipsis);
+    }
+  }
+  
+  for (let i = startPage; i <= endPage; i++) {
+    const pageBtn = document.createElement('button');
+    pageBtn.className = `pagination-btn ${i === currentPage ? 'active' : ''}`;
+    pageBtn.textContent = i.toString();
+    pageBtn.addEventListener('click', () => changePage(generation, i));
+    buttonsDiv.appendChild(pageBtn);
+  }
+  
+  if (endPage < totalPages) {
+    if (endPage < totalPages - 1) {
+      const ellipsis = document.createElement('span');
+      ellipsis.style.padding = '0 8px';
+      ellipsis.style.color = 'var(--muted)';
+      ellipsis.textContent = '...';
+      buttonsDiv.appendChild(ellipsis);
+    }
+    
+    const lastBtn = document.createElement('button');
+    lastBtn.className = 'pagination-btn';
+    lastBtn.textContent = totalPages.toString();
+    lastBtn.addEventListener('click', () => changePage(generation, totalPages));
+    buttonsDiv.appendChild(lastBtn);
+  }
+  
+  // 다음 페이지 버튼
+  const nextBtn = document.createElement('button');
+  nextBtn.className = 'pagination-btn';
+  nextBtn.textContent = '다음';
+  nextBtn.disabled = currentPage === totalPages;
+  nextBtn.addEventListener('click', () => changePage(generation, currentPage + 1));
+  buttonsDiv.appendChild(nextBtn);
+  
+  // 기존 내용 제거 후 새로 추가
+  paginationEl.innerHTML = '';
+  paginationEl.appendChild(infoDiv);
+  paginationEl.appendChild(buttonsDiv);
+}
+
+// 페이지 변경 함수 (전역 접근 가능하도록 window에 등록)
+window.changePage = function(generation, page) {
+  const state = paginationState[generation];
+  const requests = currentRequests.filter(req => req.generation === (generation === 'generation1' ? '1차' : '2차'));
+  const totalPages = Math.ceil(requests.length / state.itemsPerPage);
+  
+  if (page < 1 || page > totalPages) return;
+  
+  state.currentPage = page;
+  renderGenerationRequests(generation, requests);
+  
+  // 페이지 변경 시 스크롤을 아코디언 헤더로 이동
+  const accordionHeader = document.getElementById(generation === 'generation1' ? 'accordionHeader1' : 'accordionHeader2');
+  if (accordionHeader) {
+    accordionHeader.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+}
+
+// 요청 카드 생성 함수
+function createRequestCard(req) {
+  const card = document.createElement('div');
+  card.className = 'request-card';
+  card.setAttribute('data-detail', req.detail || '');
+  card.setAttribute('data-title', req.title || '');
+  card.setAttribute('data-requester', req.requesterName || req.requester || '');
+  
+  card.innerHTML = `
+    <div class="request-card-header">
+      <h4 class="request-card-title">${escapeHtml(req.title || '제목 없음')}</h4>
+      <div class="request-card-badges">
+        <span class="priority-badge ${req.priority || '보통'}">${req.priority || '보통'}</span>
+        <span class="status-badge ${req.status || '접수'}">${req.status || '접수'}</span>
+      </div>
+    </div>
+    <div class="request-card-body">
+      <div class="request-card-info">
+        <span class="request-card-label">개발유형</span>
+        <span class="request-card-value">${escapeHtml(req.developmentType || '-')}</span>
+      </div>
+      <div class="request-card-info">
+        <span class="request-card-label">작성자</span>
+        <span class="request-card-value">${escapeHtml(req.requesterName || req.requester || '-')}</span>
+      </div>
+      <div class="request-card-info">
+        <span class="request-card-label">등록일</span>
+        <span class="request-card-value">${formatDate(req.createdAt)}</span>
+      </div>
+      ${req.expectedDuration ? `
+      <div class="request-card-info">
+        <span class="request-card-label">예상기간</span>
+        <span class="request-card-value">${escapeHtml(req.expectedDuration)}</span>
+      </div>
+      ` : ''}
+    </div>
+    <div class="request-card-footer">
+      <span style="font-size: 12px; color: var(--muted);">${req.generation || '1차'} 개발요청</span>
+      <div class="request-card-actions">
+        <button class="btn btn-secondary" onclick="viewRequest('${req.id}')">보기</button>
+      </div>
+    </div>
+  `;
+  
+  return card;
+}
+
+// HTML 이스케이프 함수
+function escapeHtml(text) {
+  if (!text) return '';
+  const div = document.createElement('div');
+  div.textContent = text;
+  return div.innerHTML;
 }
 
 // 부서 진행률 업데이트
@@ -1333,6 +1552,7 @@ function downloadRequestsCSV() {
   // CSV 헤더
   const headers = [
     '번호',
+    '차수',
     '제목', 
     '개발유형',
     '상세내용',
@@ -1346,6 +1566,7 @@ function downloadRequestsCSV() {
   // CSV 데이터 생성
   const csvData = currentRequests.map((request, index) => [
     index + 1,
+    request.generation || '1차',
     request.title || '',
     request.developmentType || '',
     request.detail || '',
@@ -2947,50 +3168,84 @@ function initializeRequestFilters() {
   }
 }
 
-// 요청 검색 함수
-function searchRequests(searchTerm) {
-  const tableBody = document.getElementById('requestsTableBody');
-  if (!tableBody) return;
+// 아코디언 토글 기능 초기화
+function initializeAccordion() {
+  const accordionHeader1 = document.getElementById('accordionHeader1');
+  const accordionHeader2 = document.getElementById('accordionHeader2');
   
-  const rows = tableBody.querySelectorAll('tr');
-  
-  if (!searchTerm) {
-    // 검색어가 없으면 모든 행 표시하고 하이라이트 제거
-    rows.forEach(row => {
-      row.style.display = '';
-      removeHighlight(row);
+  if (accordionHeader1) {
+    accordionHeader1.addEventListener('click', () => {
+      const accordionItem = accordionHeader1.closest('.accordion-item');
+      if (accordionItem) {
+        accordionItem.classList.toggle('active');
+      }
     });
+  }
+  
+  if (accordionHeader2) {
+    accordionHeader2.addEventListener('click', () => {
+      const accordionItem = accordionHeader2.closest('.accordion-item');
+      if (accordionItem) {
+        accordionItem.classList.toggle('active');
+      }
+    });
+  }
+  
+  // 기본적으로 2차 아코디언은 열려있음 (위에 있으므로)
+  const accordion2 = accordionHeader2?.closest('.accordion-item');
+  if (accordion2) {
+    accordion2.classList.add('active');
+  }
+}
+
+// 요청 검색 함수 (아코디언 구조용, 페이지네이션 고려)
+function searchRequests(searchTerm) {
+  // 검색 시 페이지를 1페이지로 리셋
+  paginationState.generation1.currentPage = 1;
+  paginationState.generation2.currentPage = 1;
+  
+  // 전체 데이터 다시 렌더링 (검색 필터링은 데이터 레벨에서 처리)
+  if (!searchTerm) {
+    // 검색어가 없으면 전체 데이터 다시 렌더링
+    updateRequestsTable();
     return;
   }
   
-  rows.forEach(row => {
-    const cells = row.querySelectorAll('td');
-    let isMatch = false;
-    
-    // 각 셀의 내용을 검색
-    cells.forEach(cell => {
-      const cellText = cell.textContent.toLowerCase();
-      if (cellText.includes(searchTerm)) {
-        isMatch = true;
-        highlightText(cell, searchTerm);
-      } else {
-        removeHighlight(cell);
-      }
-    });
-    
-    // 숨겨진 상세내용도 검색
-    const detailData = row.getAttribute('data-detail');
-    if (detailData && detailData.toLowerCase().includes(searchTerm)) {
-      isMatch = true;
-    }
-    
-    // 매치되는 행만 표시
-    row.style.display = isMatch ? '' : 'none';
+  // 검색어가 있으면 필터링된 데이터로 다시 렌더링
+  const generation1Requests = currentRequests.filter(req => {
+    if (req.generation !== '1차') return false;
+    const searchLower = searchTerm.toLowerCase();
+    return (req.title || '').toLowerCase().includes(searchLower) ||
+           (req.detail || '').toLowerCase().includes(searchLower) ||
+           (req.requesterName || req.requester || '').toLowerCase().includes(searchLower) ||
+           (req.developmentType || '').toLowerCase().includes(searchLower);
   });
   
-  // 검색 결과 표시
-  const visibleRows = Array.from(rows).filter(row => row.style.display !== 'none');
-  console.log(`검색 결과: ${visibleRows.length}개 항목 표시 (검색어: "${searchTerm}")`);
+  const generation2Requests = currentRequests.filter(req => {
+    if (req.generation !== '2차') return false;
+    const searchLower = searchTerm.toLowerCase();
+    return (req.title || '').toLowerCase().includes(searchLower) ||
+           (req.detail || '').toLowerCase().includes(searchLower) ||
+           (req.requesterName || req.requester || '').toLowerCase().includes(searchLower) ||
+           (req.developmentType || '').toLowerCase().includes(searchLower);
+  });
+  
+  // 필터링된 데이터로 렌더링
+  renderGenerationRequests('generation1', generation1Requests);
+  renderGenerationRequests('generation2', generation2Requests);
+  
+  // 검색 결과가 있으면 해당 아코디언 펼치기
+  const accordion1 = document.querySelector('#accordionHeader1')?.closest('.accordion-item');
+  const accordion2 = document.querySelector('#accordionHeader2')?.closest('.accordion-item');
+  
+  if (generation1Requests.length > 0 && accordion1) {
+    accordion1.classList.add('active');
+  }
+  if (generation2Requests.length > 0 && accordion2) {
+    accordion2.classList.add('active');
+  }
+  
+  console.log(`검색 결과: 1차 ${generation1Requests.length}개, 2차 ${generation2Requests.length}개 (검색어: "${searchTerm}")`);
 }
 
 // 텍스트 하이라이트 함수
@@ -3009,29 +3264,39 @@ function removeHighlight(element) {
   });
 }
 
-// 요청 필터링 함수
+// 요청 필터링 함수 (페이지네이션 고려)
 function filterRequests(status) {
-  const tableBody = document.getElementById('requestsTableBody');
-  if (!tableBody) return;
+  // 필터링 시 페이지를 1페이지로 리셋
+  paginationState.generation1.currentPage = 1;
+  paginationState.generation2.currentPage = 1;
   
-  const rows = tableBody.querySelectorAll('tr');
-  
-  rows.forEach(row => {
-    const statusCell = row.querySelector('td:nth-child(4)'); // 상태 컬럼
-    if (!statusCell) return;
-    
-    const rowStatus = statusCell.textContent.trim();
-    
-    if (status === 'all' || rowStatus === status) {
-      row.style.display = '';
-    } else {
-      row.style.display = 'none';
-    }
+  // 필터링된 데이터로 다시 렌더링
+  const generation1Requests = currentRequests.filter(req => {
+    if (req.generation !== '1차') return false;
+    return status === 'all' || req.status === status;
   });
   
-  // 필터링 결과 표시
-  const visibleRows = Array.from(rows).filter(row => row.style.display !== 'none');
-  console.log(`필터링 결과: ${visibleRows.length}개 항목 표시 (${status === 'all' ? '전체' : status})`);
+  const generation2Requests = currentRequests.filter(req => {
+    if (req.generation !== '2차') return false;
+    return status === 'all' || req.status === status;
+  });
+  
+  // 필터링된 데이터로 렌더링
+  renderGenerationRequests('generation1', generation1Requests);
+  renderGenerationRequests('generation2', generation2Requests);
+  
+  // 필터링 결과가 있으면 해당 아코디언 펼치기
+  const accordion1 = document.querySelector('#accordionHeader1')?.closest('.accordion-item');
+  const accordion2 = document.querySelector('#accordionHeader2')?.closest('.accordion-item');
+  
+  if (generation1Requests.length > 0 && accordion1) {
+    accordion1.classList.add('active');
+  }
+  if (generation2Requests.length > 0 && accordion2) {
+    accordion2.classList.add('active');
+  }
+  
+  console.log(`필터링 결과: 1차 ${generation1Requests.length}개, 2차 ${generation2Requests.length}개 (${status === 'all' ? '전체' : status})`);
 }
 
 // 공지사항 표시 여부 확인
