@@ -64,6 +64,7 @@ document.addEventListener('DOMContentLoaded', function() {
     initializeNoticePopup();
     initializeWorkGuideModal();
     initializePinModal();
+    initializeDownloadSelectionModal();
     initializeThemeToggle();
     
     // 필터링 기능 초기화
@@ -972,7 +973,8 @@ function updatePinConfirmButton() {
   function executePinAction() {
     switch (currentPinAction) {
       case 'exportRequests':
-        downloadRequestsCSV();
+        // 다운로드 선택 모달 표시
+        showDownloadSelectionModal();
         break;
       case 'exportGuide':
         exportMenuGuideToCSV();
@@ -1587,10 +1589,89 @@ function initializeExportButtons() {
   
 }
 
-// CSV 다운로드 함수
-function downloadRequestsCSV() {
+// 다운로드 선택 모달 초기화
+function initializeDownloadSelectionModal() {
+  const modal = document.getElementById('downloadSelectionModal');
+  const closeBtn = document.getElementById('downloadSelectionClose');
+  const cancelBtn = document.getElementById('downloadSelectionCancel');
+  const confirmBtn = document.getElementById('downloadSelectionConfirm');
+  
+  if (!modal) return;
+  
+  // 닫기 버튼
+  if (closeBtn) {
+    closeBtn.addEventListener('click', closeDownloadSelectionModal);
+  }
+  
+  // 취소 버튼
+  if (cancelBtn) {
+    cancelBtn.addEventListener('click', closeDownloadSelectionModal);
+  }
+  
+  // 확인 버튼
+  if (confirmBtn) {
+    confirmBtn.addEventListener('click', () => {
+      const selectedOption = document.querySelector('input[name="downloadType"]:checked');
+      if (selectedOption) {
+        const value = selectedOption.value;
+        closeDownloadSelectionModal();
+        downloadRequestsCSV(value);
+      }
+    });
+  }
+  
+  // 백드롭 클릭 시 닫기
+  const backdrop = modal.querySelector('.download-selection-backdrop');
+  if (backdrop) {
+    backdrop.addEventListener('click', closeDownloadSelectionModal);
+  }
+  
+  // ESC 키로 닫기
+  modal.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') {
+      closeDownloadSelectionModal();
+    }
+  });
+}
+
+// 다운로드 선택 모달 표시
+function showDownloadSelectionModal() {
+  const modal = document.getElementById('downloadSelectionModal');
+  if (modal) {
+    modal.classList.add('show');
+    document.body.style.overflow = 'hidden';
+    // 기본값으로 전체 선택
+    document.getElementById('downloadAll').checked = true;
+  }
+}
+
+// 다운로드 선택 모달 닫기
+function closeDownloadSelectionModal() {
+  const modal = document.getElementById('downloadSelectionModal');
+  if (modal) {
+    modal.classList.remove('show');
+    document.body.style.overflow = '';
+  }
+}
+
+// CSV 다운로드 함수 (generation 필터 파라미터 추가)
+function downloadRequestsCSV(generationFilter = 'all') {
   if (!currentRequests || currentRequests.length === 0) {
     alert('다운로드할 데이터가 없습니다.');
+    return;
+  }
+  
+  // generation 필터에 따라 데이터 필터링
+  let filteredRequests = currentRequests;
+  if (generationFilter === '1차') {
+    filteredRequests = currentRequests.filter(req => (req.generation || '1차') === '1차');
+  } else if (generationFilter === '2차') {
+    filteredRequests = currentRequests.filter(req => (req.generation || '1차') === '2차');
+  }
+  // 'all'이면 전체 데이터 사용
+  
+  if (filteredRequests.length === 0) {
+    alert('선택한 범위에 다운로드할 데이터가 없습니다.');
     return;
   }
   
@@ -1609,7 +1690,7 @@ function downloadRequestsCSV() {
   ];
   
   // CSV 데이터 생성
-  const csvData = currentRequests.map((request, index) => [
+  const csvData = filteredRequests.map((request, index) => [
     index + 1,
     request.generation || '1차',
     request.title || '',
@@ -1634,17 +1715,27 @@ function downloadRequestsCSV() {
   const BOM = '\uFEFF';
   const blob = new Blob([BOM + csvContent], { type: 'text/csv;charset=utf-8;' });
   
+  // 파일명에 필터 정보 포함
+  let filename = `기술개발요청_${new Date().toISOString().split('T')[0]}`;
+  if (generationFilter === '1차') {
+    filename += '_1차';
+  } else if (generationFilter === '2차') {
+    filename += '_2차';
+  }
+  filename += '.csv';
+  
   // 다운로드 실행
   const link = document.createElement('a');
   const url = URL.createObjectURL(blob);
   link.setAttribute('href', url);
-  link.setAttribute('download', `기술개발요청_${new Date().toISOString().split('T')[0]}.csv`);
+  link.setAttribute('download', filename);
   link.style.visibility = 'hidden';
   document.body.appendChild(link);
   link.click();
   document.body.removeChild(link);
   
-  console.log('CSV 다운로드 완료');
+  console.log('CSV 다운로드 완료:', generationFilter, filteredRequests.length, '개');
+  showSuccess(`${filteredRequests.length}개의 데이터가 다운로드되었습니다.`);
 }
 
 // 엑셀 내보내기 함수

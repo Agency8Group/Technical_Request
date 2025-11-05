@@ -858,6 +858,47 @@
         </div>
     </div>
 
+    <!-- 다운로드 선택 모달 -->
+    <div id="downloadSelectionModal" class="download-selection-modal">
+        <div class="download-selection-backdrop"></div>
+        <div class="download-selection-content">
+            <div class="download-selection-header">
+                <h3>다운로드 범위 선택</h3>
+                <button class="download-selection-close" id="downloadSelectionClose">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M18 6L6 18M6 6L18 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                </button>
+            </div>
+            <div class="download-selection-body">
+                <div class="download-option">
+                    <input type="radio" id="downloadAll" name="downloadType" value="all" checked>
+                    <label for="downloadAll">
+                        <span class="option-title">전체 다운로드</span>
+                        <span class="option-description">1차 및 2차 개발요청 모두 포함</span>
+                    </label>
+                </div>
+                <div class="download-option">
+                    <input type="radio" id="downloadGen1" name="downloadType" value="1차">
+                    <label for="downloadGen1">
+                        <span class="option-title">1차 개발요청만</span>
+                        <span class="option-description">1차 개발요청 데이터만 다운로드</span>
+                    </label>
+                </div>
+                <div class="download-option">
+                    <input type="radio" id="downloadGen2" name="downloadType" value="2차">
+                    <label for="downloadGen2">
+                        <span class="option-title">2차 개발요청만</span>
+                        <span class="option-description">2차 개발요청 데이터만 다운로드</span>
+                    </label>
+                </div>
+            </div>
+            <div class="download-selection-footer">
+                <button class="download-btn download-btn-cancel" id="downloadSelectionCancel">취소</button>
+                <button class="download-btn download-btn-confirm" id="downloadSelectionConfirm">다운로드</button>
+            </div>
+        </div>
+    </div>
 
     <!-- ERP/WMS 접속 안내 모달 -->
     <div id="erpAccessModal" class="erp-access-modal">
