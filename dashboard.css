@@ -5212,3 +5212,79 @@ select option:disabled:hover {
   background: var(--primary-hover);
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
 }
+
+/* 새 요청 등록 버튼 깜빡임 애니메이션 - 주황색 음영 */
+@keyframes newRequestBtnBlink {
+  0%, 100% {
+    opacity: 1;
+    box-shadow: 
+      0 6px 20px rgba(37, 99, 235, 0.3),
+      0 0 30px rgba(255, 140, 0, 0.4),
+      0 2px 8px rgba(0, 0, 0, 0.1);
+  }
+  50% {
+    opacity: 0.9;
+    box-shadow: 
+      0 8px 30px rgba(37, 99, 235, 0.5),
+      0 0 40px rgba(255, 140, 0, 0.7),
+      0 4px 12px rgba(255, 140, 0, 0.5),
+      0 0 25px rgba(255, 140, 0, 0.6);
+  }
+}
+
+@keyframes newRequestBtnBlinkDark {
+  0%, 100% {
+    opacity: 1;
+    box-shadow: 
+      0 6px 20px rgba(99, 102, 241, 0.4),
+      0 0 30px rgba(255, 165, 0, 0.5),
+      0 2px 8px rgba(0, 0, 0, 0.3);
+  }
+  50% {
+    opacity: 0.9;
+    box-shadow: 
+      0 8px 30px rgba(99, 102, 241, 0.6),
+      0 0 40px rgba(255, 165, 0, 0.8),
+      0 4px 12px rgba(255, 165, 0, 0.6),
+      0 0 25px rgba(255, 165, 0, 0.7);
+  }
+}
+
+#newRequestBtn {
+  animation: newRequestBtnBlink 2s ease-in-out infinite;
+  position: relative;
+  border: 2px solid rgba(255, 140, 0, 0.3);
+}
+
+#newRequestBtn::before {
+  content: '';
+  position: absolute;
+  top: -2px;
+  left: -2px;
+  right: -2px;
+  bottom: -2px;
+  border-radius: 12px;
+  background: linear-gradient(135deg, rgba(255, 140, 0, 0.2), rgba(255, 165, 0, 0.1));
+  z-index: -1;
+  animation: newRequestBtnGlow 2s ease-in-out infinite;
+}
+
+@keyframes newRequestBtnGlow {
+  0%, 100% {
+    opacity: 0.6;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.05);
+  }
+}
+
+[data-theme="dark"] #newRequestBtn {
+  animation: newRequestBtnBlinkDark 2s ease-in-out infinite;
+  border-color: rgba(255, 165, 0, 0.4);
+}
+
+[data-theme="dark"] #newRequestBtn::before {
+  background: linear-gradient(135deg, rgba(255, 165, 0, 0.3), rgba(255, 140, 0, 0.2));
+}
