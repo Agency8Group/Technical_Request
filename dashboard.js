@@ -1242,16 +1242,23 @@ function renderTeamRequestCounts() {
       emailToCount[email] += 1;
     }
   });
-  // 렌더링 (정해진 팀 순서 유지)
+  // 렌더링 (등록 건수 기준 내림차순 정렬)
   tbody.innerHTML = '';
-  Object.keys(TEAM_EMAIL_MAP).forEach(team => {
+  // 팀별 데이터를 배열로 변환
+  const teamData = Object.keys(TEAM_EMAIL_MAP).map(team => {
     const email = TEAM_EMAIL_MAP[team];
     const count = emailToCount[email.toLowerCase()] || 0;
+    return { team, email, count };
+  });
+  // 등록 건수 기준 내림차순 정렬
+  teamData.sort((a, b) => b.count - a.count);
+  // 정렬된 순서대로 렌더링
+  teamData.forEach(({ team, email, count }) => {
     const tr = document.createElement('tr');
     tr.innerHTML = `
       <td>${team}</td>
       <td>${email}</td>
-      <td style="text-align:right; font-variant-numeric: tabular-nums;">${count}</td>
+      <td style="text-align:center; font-variant-numeric: tabular-nums;">${count}</td>
     `;
     tbody.appendChild(tr);
   });

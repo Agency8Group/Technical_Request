@@ -1521,6 +1521,12 @@ p, span, div, button, input, textarea, select {
   font-size: 14px;
 }
 
+/* 팀별 등록 건수 테이블의 세 번째 열(등록 건수) 가운데 정렬 */
+#teamRequestsTable th:nth-child(3),
+#teamRequestsTable td:nth-child(3) {
+  text-align: center;
+}
+
 .data-table tbody tr {
   transition: all 0.2s ease;
 }
