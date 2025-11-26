@@ -2813,8 +2813,8 @@ select:focus {
     border: 1px solid var(--border);
     border-radius: 12px;
     box-shadow: 0 8px 32px var(--shadow-heavy);
-    max-width: 460px;
-    width: 90%;
+    max-width: 420px;
+    width: min(420px, 88%);
     max-height: 85vh;
     overflow: hidden;
     animation: noticePopupSlideIn 0.5s cubic-bezier(0.16, 1, 0.3, 1);
@@ -3292,7 +3292,7 @@ select:focus {
 
 
 .notice-popup-body {
-    padding: 24px;
+    padding: 20px;
     background: var(--surface);
 }
 
@@ -3393,13 +3393,13 @@ select:focus {
 }
 
 .notice-popup-footer {
-    padding: 20px 24px 24px;
+    padding: 18px 20px 20px;
     background: var(--surface-elevated);
     border-top: 1px solid var(--border);
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: 16px;
+    gap: 14px;
 }
 
 .notice-checkbox-container {
@@ -3462,18 +3462,18 @@ select:focus {
 }
 
 .notice-btn {
-    padding: 12px 20px;
+    padding: 10px 16px;
     border: none;
-    border-radius: 12px;
-    font-size: 14px;
+    border-radius: 10px;
+    font-size: 13px;
     font-weight: 600;
     cursor: pointer;
     transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-    min-width: 100px;
+    min-width: 90px;
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 8px;
+    gap: 6px;
     position: relative;
     overflow: hidden;
 }
