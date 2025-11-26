@@ -98,6 +98,9 @@ export function subscribeConnection(callback) {
   const connRef = ref(db, '.info/connected');
   onValue(connRef, (snap) => {
     callback(!!snap.val());
+  }, (error) => {
+    console.error('연결 상태 구독 오류:', error);
+    callback(false);
   });
 }
 

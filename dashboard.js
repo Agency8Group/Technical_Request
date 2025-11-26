@@ -25,6 +25,9 @@ let currentUser = null;
 
 // DOM 요소들 (지연 로딩)
 let navItems, contentSections, connDot, connText;
+const CONNECTION_STATUS_DELAY_MS = 2500;
+let connectionStatusTimeout = null;
+let connectionStateDetermined = false;
 
 // DOM 요소들 (지연 로딩)
 let totalRequestsEl, pendingRequestsEl, completedRequestsEl, totalQnAEl, completionRateEl;
@@ -285,19 +288,54 @@ function switchSection(sectionName) {
   }
 }
 
+// 연결 상태 UI 업데이트
+function updateConnectionIndicator(connected, { message, final } = {}) {
+  if (!connDot || !connText) return;
+  connDot.classList.toggle('on', connected);
+  connText.textContent = message ?? (connected ? '정상 연결' : '오프라인');
+
+  if (final) {
+    connectionStateDetermined = true;
+    if (connectionStatusTimeout) {
+      clearTimeout(connectionStatusTimeout);
+      connectionStatusTimeout = null;
+    }
+  }
+}
+
 // 연결 상태 초기화
 function initializeConnectionStatus() {
   if (!connDot || !connText) return;
-  
+
+  connectionStateDetermined = false;
+  if (connectionStatusTimeout) {
+    clearTimeout(connectionStatusTimeout);
+    connectionStatusTimeout = null;
+  }
+
+  const initialOnlineState = navigator.onLine;
+  const initialMessage = initialOnlineState ? '브라우저 네트워크 연결됨' : '네트워크 연결 없음';
+  updateConnectionIndicator(initialOnlineState, { message: initialMessage });
+
   subscribeConnection((connected) => {
-    if (connected) {
-      connDot.classList.add('on');
-      connText.textContent = '정상 연결';
-    } else {
-      connDot.classList.remove('on');
-      connText.textContent = '오프라인';
-    }
+    console.log('Firebase 연결 상태:', connected ? '정상 연결' : '오프라인');
+    updateConnectionIndicator(connected, { final: true });
   });
+
+  window.addEventListener('online', () => {
+    updateConnectionIndicator(true, { message: '브라우저 네트워크 연결됨' });
+  });
+  window.addEventListener('offline', () => {
+    updateConnectionIndicator(false, { message: '브라우저 네트워크 끊김' });
+  });
+
+  if (!connectionStateDetermined) {
+    connectionStatusTimeout = setTimeout(() => {
+      if (!connectionStateDetermined && connText) {
+        connText.textContent = 'Firebase 연결을 확인 중입니다...';
+      }
+    }, CONNECTION_STATUS_DELAY_MS);
+  }
 }
 
 // 요청 폼 초기화
