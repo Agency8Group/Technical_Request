@@ -37,6 +37,7 @@ let qnaQuestion, qnaRequesterName, submitQuestionBtn, qnaList;
 let saveDeptBtn, deptStatus;
 let exportRequestsBtn;
 let newMenuName, newSubMenuName, newMenuDescription, addRowBtn, menuTableBody, exportGuideBtn, importGuideBtn, excelFileInput, refreshGuideBtn, guideDisplay, guideStats;
+let hasPerformedInitialRefresh = false;
 
 // PIN 관련 변수
 const CORRECT_PIN = '000000';
@@ -176,7 +177,7 @@ function initializeAuth() {
       initializeDepartments();
       initializeExportButtons();
       initializeModals();
-      loadData();
+      runInitialRefresh();
     }, 100);
       
     } else {
@@ -3198,16 +3199,28 @@ function initializeRefreshButton() {
   const refreshBtn = document.getElementById('refreshBtn');
   if (refreshBtn) {
     refreshBtn.addEventListener('click', () => {
-      // 로딩 오버레이 표시
-      if (loadingOverlay) {
-        loadingOverlay.style.display = 'flex';
-        loadingOverlay.classList.remove('hidden');
-      }
-      
-      loadData();
-      setStatus('데이터를 새로고침했습니다.', 'success');
+      performRefreshAction({ statusMessage: '데이터를 새로고침했습니다.' });
     });
   }
+}
+
+function performRefreshAction({ statusMessage } = {}) {
+  if (loadingOverlay) {
+    loadingOverlay.style.display = 'flex';
+    loadingOverlay.classList.remove('hidden');
+  }
+
+  if (statusMessage) {
+    setStatus(statusMessage, 'success');
+  }
+
+  loadData();
+}
+
+function runInitialRefresh() {
+  if (hasPerformedInitialRefresh) return;
+  hasPerformedInitialRefresh = true;
+  performRefreshAction();
 }
 
 // 공지사항 팝업 초기화
