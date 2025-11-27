@@ -29,6 +29,10 @@ const CONNECTION_STATUS_DELAY_MS = 2500;
 let connectionStatusTimeout = null;
 let connectionStateDetermined = false;
 
+const MIN_LOADING_DISPLAY_MS = 500;
+let loadingOverlayVisibleAt = 0;
+let loadingOverlayHideTimer = null;
+
 // DOM 요소들 (지연 로딩)
 let totalRequestsEl, pendingRequestsEl, completedRequestsEl, totalQnAEl, completionRateEl;
 let loadingOverlay;
@@ -1095,6 +1099,11 @@ function updateDepartmentSelectOptions() {
 
 // 로딩 오버레이 숨기기
 function hideLoadingOverlay() {
+  if (loadingOverlayHideTimer) {
+    clearTimeout(loadingOverlayHideTimer);
+    loadingOverlayHideTimer = null;
+  }
+
   if (loadingOverlay) {
     loadingOverlay.classList.add('hidden');
     setTimeout(() => {
@@ -1103,6 +1112,17 @@ function hideLoadingOverlay() {
       }
     }, 300);
   }
+}
+
+function showLoadingOverlay() {
+  if (!loadingOverlay) return;
+  if (loadingOverlayHideTimer) {
+    clearTimeout(loadingOverlayHideTimer);
+    loadingOverlayHideTimer = null;
+  }
+  loadingOverlayVisibleAt = Date.now();
+  loadingOverlay.style.display = 'flex';
+  loadingOverlay.classList.remove('hidden');
 }
 
 // 데이터 로드
@@ -1158,9 +1178,14 @@ async function loadData() {
     
     // 로딩 오버레이 숨기기 (새로고침 버튼 클릭 시에만) - 최소 3초 표시
     if (loadingOverlay && loadingOverlay.style.display !== 'none') {
-      setTimeout(() => {
+      const elapsed = Math.max(0, Date.now() - loadingOverlayVisibleAt);
+      const delay = Math.max(0, MIN_LOADING_DISPLAY_MS - elapsed);
+      if (loadingOverlayHideTimer) {
+        clearTimeout(loadingOverlayHideTimer);
+      }
+      loadingOverlayHideTimer = setTimeout(() => {
         hideLoadingOverlay();
-      }, 3000);
+      }, delay);
     }
     
   } catch (err) {
@@ -3205,10 +3230,7 @@ function initializeRefreshButton() {
 }
 
 function performRefreshAction({ statusMessage } = {}) {
-  if (loadingOverlay) {
-    loadingOverlay.style.display = 'flex';
-    loadingOverlay.classList.remove('hidden');
-  }
+  showLoadingOverlay();
 
   if (statusMessage) {
     setStatus(statusMessage, 'success');
