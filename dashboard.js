@@ -3268,6 +3268,14 @@ function initializeNoticePopup() {
     });
   }
   
+  // X 버튼 이벤트
+  const closeNoticePopup = document.getElementById('closeNoticePopup');
+  if (closeNoticePopup) {
+    closeNoticePopup.addEventListener('click', () => {
+      handleNoticeClose();
+    });
+  }
+  
   // 백드롭 클릭 시 닫기
   const backdrop = noticePopup.querySelector('.notice-popup-backdrop');
   if (backdrop) {

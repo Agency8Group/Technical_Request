@@ -3290,6 +3290,42 @@ select:focus {
     letter-spacing: 0.01em;
 }
 
+.notice-popup-close {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: transparent;
+    border: none;
+    border-radius: 8px;
+    color: var(--muted);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    z-index: 10;
+    padding: 0;
+    flex-shrink: 0;
+}
+
+.notice-popup-close:hover {
+    background: var(--bg-secondary);
+    color: var(--fg);
+    transform: scale(1.1);
+}
+
+.notice-popup-close:active {
+    transform: scale(0.95);
+}
+
+.notice-popup-close svg {
+    width: 18px;
+    height: 18px;
+    stroke-width: 2.5;
+}
+
 
 .notice-popup-body {
     padding: 20px;
