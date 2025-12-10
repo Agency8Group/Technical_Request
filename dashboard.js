@@ -174,15 +174,13 @@ function initializeAuth() {
       // 사용자 인터페이스 업데이트
       updateUserInterface();
       
-    // 인증 완료 후 기능들 초기화
-    setTimeout(() => {
-      initializeRequestForm();
-      initializeQnA();
-      initializeDepartments();
-      initializeExportButtons();
-      initializeModals();
-      runInitialRefresh();
-    }, 100);
+    // 인증 완료 후 기능들 초기화 (지연 제거)
+    initializeRequestForm();
+    initializeQnA();
+    initializeDepartments();
+    initializeExportButtons();
+    initializeModals();
+    runInitialRefresh();
       
     } else {
       console.log('로그인되지 않음 - 로그인 페이지로 리다이렉트');
@@ -1132,10 +1130,13 @@ async function loadData() {
   try {
     showLoading('데이터를 불러오는 중...');
     
-    // 요청 데이터 로드
-    const requestsRef = ref(db, '/requests/기술개발요청');
-    const requestsSnapshot = await get(requestsRef);
+    // 요청 데이터와 부서 확인 데이터를 병렬로 로드 (성능 최적화)
+    const [requestsSnapshot, deptSnapshot] = await Promise.all([
+      get(ref(db, '/requests/기술개발요청')),
+      get(ref(db, '/requests/부서확인'))
+    ]);
     
+    // 요청 데이터 처리
     if (requestsSnapshot.exists()) {
       const requestsData = requestsSnapshot.val();
       currentRequests = Object.entries(requestsData).map(([id, data]) => ({
@@ -1150,10 +1151,7 @@ async function loadData() {
       console.log('요청 데이터 없음');
     }
 
-    // 부서 확인 데이터 로드
-    const deptRef = ref(db, '/requests/부서확인');
-    const deptSnapshot = await get(deptRef);
-    
+    // 부서 확인 데이터 처리
     if (deptSnapshot.exists()) {
       const deptData = deptSnapshot.val();
       currentDepartments = Object.entries(deptData).map(([id, data]) => ({
