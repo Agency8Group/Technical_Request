@@ -25,7 +25,7 @@ let currentUser = null;
 
 // DOM 요소들 (지연 로딩)
 let navItems, contentSections, connDot, connText;
-const CONNECTION_STATUS_DELAY_MS = 2500;
+const CONNECTION_STATUS_DELAY_MS = 800; // exe 환경 대응: 타임아웃 단축
 let connectionStatusTimeout = null;
 let connectionStateDetermined = false;
 
@@ -317,28 +317,31 @@ function initializeConnectionStatus() {
   }
 
   const initialOnlineState = navigator.onLine;
-  const initialMessage = initialOnlineState ? '브라우저 네트워크 연결됨' : '네트워크 연결 없음';
+  const initialMessage = initialOnlineState ? '연결 확인 중...' : '네트워크 연결 없음';
   updateConnectionIndicator(initialOnlineState, { message: initialMessage });
 
+  // exe 환경 대응: 빠른 피드백을 위해 짧은 타임아웃 설정
+  connectionStatusTimeout = setTimeout(() => {
+    if (!connectionStateDetermined && connText) {
+      connText.textContent = 'Firebase 연결 확인 중...';
+    }
+  }, CONNECTION_STATUS_DELAY_MS);
+
+  // Firebase 연결 상태 구독
   subscribeConnection((connected) => {
     console.log('Firebase 연결 상태:', connected ? '정상 연결' : '오프라인');
     updateConnectionIndicator(connected, { final: true });
   });
 
+  // 네트워크 상태 이벤트 리스너
   window.addEventListener('online', () => {
-    updateConnectionIndicator(true, { message: '브라우저 네트워크 연결됨' });
+    if (!connectionStateDetermined) {
+      updateConnectionIndicator(true, { message: '연결 확인 중...' });
+    }
   });
   window.addEventListener('offline', () => {
-    updateConnectionIndicator(false, { message: '브라우저 네트워크 끊김' });
+    updateConnectionIndicator(false, { message: '네트워크 끊김', final: true });
   });
-
-  if (!connectionStateDetermined) {
-    connectionStatusTimeout = setTimeout(() => {
-      if (!connectionStateDetermined && connText) {
-        connText.textContent = 'Firebase 연결을 확인 중입니다...';
-      }
-    }, CONNECTION_STATUS_DELAY_MS);
-  }
 }
 
 // 요청 폼 초기화
